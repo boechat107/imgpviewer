@@ -1,7 +1,7 @@
 (ns image-processing.test.image
   (:use [clojure.test])
-  (:require [image-processing.image])
-  (:import [image_processing.image Image]))
+  (:use [image-processing.image])
+  (:import [image_processing.image.Image]))
 
 (deftest select-point
   (let [mimg (Image. (vec (range 20)) 4)]
