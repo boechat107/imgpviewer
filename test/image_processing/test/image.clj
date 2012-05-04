@@ -1,6 +1,6 @@
 (ns image-processing.test.image
   (:use [clojure.test])
-  (:require [image-processing.image])
+  (:use [image-processing.image])
   (:import [image_processing.image Image]))
 
 (deftest select-point
