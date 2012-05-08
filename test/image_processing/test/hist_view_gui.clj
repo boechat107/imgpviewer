@@ -1,4 +1,7 @@
 (ns image-processing.test.hist-view-gui
+    (:import
+      (javax.imageio ImageIO) 
+      (java.io File))
     (:use
       [clojure.test]
       [seesaw core make-widget border]
@@ -7,13 +10,18 @@
 ; FIXME: wait for a user action.
 
 
-(def x '("test/image_processing/test/1a7r.gif"
-         "test/image_processing/test/1azc.gif"))
+(def x (map #(ImageIO/read (File. %)) 
+            '("test/image_processing/test/1a7r.gif" 
+              "test/image_processing/test/1azc.gif")))
 
 
 (deftest create-frame
-  (invoke-now (-> (frame :title "Hello",
-             :content  (create-hist-panel x) ,
-             :on-close :exit)
-      pack!
-      show!)))
+         (let [panel-info (create-hist-panel)
+               hist-panel (first panel-info)
+               img-group (second panel-info)]
+           (add-imgs hist-panel img-group (first x) (second x))
+           (-> (frame :title "Hello",
+                      :content  (scrollable hist-panel))
+               ;:on-close :exit) 
+               pack! 
+               show!)))

@@ -1,27 +1,44 @@
 (ns image-processing.hist-view-gui
     (:import 
       (javax.imageio ImageIO) 
-      (java.io File)) 
+      (java.io File)
+      (java.awt.image BufferedImage)) 
     (:use 
       [clojure.java.io] 
-      [seesaw core make-widget border]))
+      [seesaw core make-widget dev])) ;; FIXME: remove dev 
+
+;; TODO: listen the resize event. change the number of columns according to size.
+
+(defn create-hist-panel
+  "Creates and returns a grid-panel and a button-group. The default number
+      of columns is 3."
+      #^{:arglists [n-columns]}
+      ([] (create-hist-panel 3)) 
+      ([n-columns]
+       (let [img-group (button-group)
+             hist-panel (grid-panel
+                          :border 5
+                          :hgap 10 :vgap 10
+                          :columns n-columns)]
+         [hist-panel img-group])))
 
 
-(defn create-hist-panel [img-paths]
-  "Creates a horizontal panel showing the images placed at the input paths."
-  #^ {:arglists [img-paths]}
-  (let [imgs-url (map #(as-url (File. %)) img-paths)]
-    (horizontal-panel :items (vec imgs-url))))
+(defn create-radio-img
+  "Creates a horizontal-panel with a radio button and a BufferedImage."
+  #^{:arglists [buff-img img-group]}
+  [buff-img img-group]
+  (horizontal-panel
+    ;; The image's path can be retrieved by the user-data of the radio
+    ;; button.
+    :items [(radio :group img-group :user-data buff-img) (label :icon buff-img)]))
 
 
-
-;(def x '("test/image_processing/test/1a7r.gif"
-;         "test/image_processing/test/1azc.gif"))
-
-;(defn create-frame [] 
-;  (invoke-later (-> (frame :title "Hello",
-;             :content  (create-hist-panel x) ,
-;             :on-close :exit)
-;      pack!
-;      show!))) 
+(defn add-imgs
+  "Add images to hist-panel."
+  #^{:arglists [hist-panel img-group & buff-imgs]}
+  [hist-panel img-group & buff-imgs]
+  (let [previous-imgs (vec (config hist-panel :items))]
+    (config! hist-panel :items (reduce #(conj %1 (create-radio-img %2 img-group))
+                                       previous-imgs
+                                       buff-imgs))))
 
