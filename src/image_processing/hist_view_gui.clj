@@ -42,3 +42,12 @@
                                        previous-imgs
                                        buff-imgs))))
 
+
+(defn get-selected-img
+  "Returns the BufferedImage selected at the history viewer. If no image was selected, it
+      returns null."
+  #^{:arglists [img-group]}
+  [img-group]
+  (let [selected-radio (selection img-group)]
+    (if (not= nil selected-radio) (config selected-radio :user-data))))
+

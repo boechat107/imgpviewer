@@ -15,13 +15,18 @@
               "test/image_processing/test/1azc.gif")))
 
 
-(deftest create-frame
-         (let [panel-info (create-hist-panel)
-               hist-panel (first panel-info)
-               img-group (second panel-info)]
-           (add-imgs hist-panel img-group (first x) (second x))
-           (-> (frame :title "Hello",
-                      :content  (scrollable hist-panel))
-               ;:on-close :exit) 
-               pack! 
-               show!)))
+(defn create-frame []
+  (let [panel-info (create-hist-panel)
+        hist-panel (first panel-info)
+        img-group (second panel-info)]
+    (add-imgs hist-panel img-group (first x) (second x))
+    (-> (frame :title "Hello",
+               :content  (scrollable hist-panel))
+        ;:on-close :exit) 
+        pack! 
+        show!)
+    [hist-panel img-group]))
+
+(def z (create-frame))
+
+(get-selected-img (second z))
