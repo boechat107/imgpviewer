@@ -47,26 +47,17 @@
        [x y]))
 
 
-(defn get-rgb-only
-  "Returns a vec with [r g b] if COLOR is [a r g b], or returns COLOR if it already is
-      just [r g b]."
-  #^{:arglists [color]}
-  [color]
-  (if (> (count color) 3) (subvec color 1) color))
-
-
 (defn convert-buffImg-to-image
   "Returns a Image from a BufferedImage."
   #^{:arglists [buffered-image]}
   [buffered-image]
-  (let [argb-values (reduce #(conj %1 (get-argb buffered-image %2))
-                            []
-                            (get-img-coords buffered-image))]
+  (let [argb-values (vec (map #(get-argb buffered-image %)
+                         (get-img-coords buffered-image)))]
     (Image. argb-values (.getWidth buffered-image))))
 
 
 (defn convert-image-to-buffImg
-  "Doc"
+  "Returns a BufferedImage from a Image."
   #^{:arglists [img]}
   [img]
   (let [height (/ (count (:points img)) (:width img))
@@ -81,23 +72,32 @@
   "Euclidian distance between two [a r g b] colors."
   [color1 color2]
   (Math/sqrt (reduce + (map #(square (- %1 %2))
-                            (get-rgb-only color1)
-                            (get-rgb-only color2)))))
+                            (rest color1)
+                            (rest color2)))))
 
 
 (defn get-grayscale-values
-  "Returns a lazy sequence of the grayscale value of the image's pixels."
+  "Returns the grayscale value of the Image's pixels."
   #^{:arglists [img]}
   [img]
-  (map #(int (mean (rest (get-argb img %)))) (get-img-coords img)))
+  {:pre [(image? img)]}
+  (Image. (vec (map #(let [gv (int (mean (rest %)))] ; grayscale value
+                       [(first %) gv gv gv])  
+                    (:points img))) 
+          (:width img)))
 
 
 (defn get-binarized-values
-  "Returns a lazy sequence of the binarized value of the image's pixels.
-      If pixel < threshold, then pixel=BLACK (0) else pixel=WHITE (255)."
+  "Returns the binarized value of the Image's pixels.  If pixel < threshold, then
+  pixel=BLACK (0) else pixel=WHITE (255).
+  It uses get-grayscale-values internally."
   #^{:arglists [img threshold]}
   [img threshold]
-  (map #(if (< % threshold) 0 255) (get-grayscale-values img)))
+  (Image. (vec (map #(if (< (second %) threshold)
+                       [(first %) 0 0 0] 
+                       [(first %) 255 255 255])
+                    (:points (get-grayscale-values img))))
+          (:width img)))
 
 
 ;(defn vertical-histogram

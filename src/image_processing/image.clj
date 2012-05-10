@@ -15,5 +15,5 @@
   "Returns true if ARG is a Image, false otherwise."
   #^{:arglists [arg]}
   [arg]
-  (= (type arg) (type (Image. 0 0))))
+  (instance? image_processing.image.Image arg))
 
