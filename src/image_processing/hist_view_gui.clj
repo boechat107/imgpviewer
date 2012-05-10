@@ -9,6 +9,10 @@
 
 ;; TODO: listen the resize event. change the number of columns according to size.
 
+;; TODO: selected-image: returns the matrix of points instead of the BufferedImage
+
+;; TODO: add-image: second version that receives a matrix of points.
+
 (defn create-hist-panel
   "Creates and returns a grid-panel and a button-group. The default number
       of columns is 3."
