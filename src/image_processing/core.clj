@@ -1,12 +1,9 @@
 (ns image-processing.core
     (:use 
-      [image-processing.image] 
+      [image-processing.image]
       [image-processing.basic-math :only (square mean)])
     (:import
-      (java.lang Math)
-      (javax.imageio ImageIO)
-      (java.io File)
-      (java.awt.image BufferedImage)
+      [java.awt.image BufferedImage]
       [image_processing.image Image]))
 
 
@@ -68,14 +65,6 @@
       (set-argb buff-img [x y] (get-point img x y)))))
 
 
-(defn euclidian-argb-distance
-  "Euclidian distance between two [a r g b] colors."
-  [color1 color2]
-  (Math/sqrt (reduce + (map #(square (- %1 %2))
-                            (rest color1)
-                            (rest color2)))))
-
-
 (defn get-grayscale-values
   "Returns the grayscale value of the Image's pixels."
   #^{:arglists [img]}
@@ -91,21 +80,43 @@
   "Returns the binarized value of the Image's pixels.  If pixel < threshold, then
   pixel=BLACK (0) else pixel=WHITE (255).
   It uses get-grayscale-values internally."
-  #^{:arglists [img threshold]}
-  [img threshold]
-  (Image. (vec (map #(if (< (second %) threshold)
-                       [(first %) 0 0 0] 
-                       [(first %) 255 255 255])
-                    (:points (get-grayscale-values img))))
-          (:width img)))
+  #^{:arglists [[img] [img threshold]]}
+  ([img] (get-binarized-values img 127))
+  ([img threshold]
+   (Image. (vec (map #(if (< (second %) threshold)
+                        [(first %) 0 0 0] 
+                        [(first %) 255 255 255])
+                     (:points (get-grayscale-values img))))
+           (:width img))))
 
 
-;(defn vertical-histogram
-;  "Doc"
-;  #^{:arglists [img]}
-;  [img]
-;  )
-;  TODO: partition & interleave
+(defn- histogram
+  "Basic operations to calculate the values of bins for histograms.
+  If ARG1 is the image's height and ARG2 is the image's width, the vertical histogram
+  is returned.
+  If ARG1 is the image's width and ARG2 is the image's height, the horizontal histogram
+  is returned."
+  #^{:arglists [img arg1 arg2]}
+  [img arg1 arg2]
+  (vec (map (fn [col-or-lin & args]
+                (count (filter #(zero? (second %)) col-or-lin)))
+            (partition arg1
+                       (apply interleave (partition arg2 (:points img)))))))
 
-;(def img-path "/home/boechat/Dropbox/Documents/Coding/Hough_transform/straight_lines.png")
-;(def buffered-image (ImageIO/read (File. img-path)))
+
+(defn vertical-histogram
+  "Returns a vector where each element represents the number of black pixels on
+  each column of the Image."
+  #^{:arglists [img]}
+  [img]
+  (let [height (/ (count (:points img)) (:width img))]
+    (histogram img height (:width img))))
+
+
+(defn horizontal-histogram
+  "Returns a vector where each element represents the number of black pixels on
+  each line of the Image."
+  #^{:arglists [img]}
+  [img]
+  (let [height (/ (count (:points img)) (:width img))]
+    (histogram img (:width img) height)))
