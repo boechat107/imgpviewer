@@ -2,7 +2,9 @@
     (:import
       (javax.imageio ImageIO) 
       (java.io File))
-    (:use [image-processing.core])
+    (:use 
+      [image-processing.charts]
+      [image-processing.core])
     (:use [clojure.test]))
 
 
