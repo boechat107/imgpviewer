@@ -1,7 +1,7 @@
 (ns image-processing.core
     (:use 
       [image-processing.image]
-      [image-processing.basic-math :only (square mean)])
+      [image-processing.basic-math :only (square)])
     (:import
       [java.awt.image BufferedImage]
       [image_processing.image Image]))
@@ -64,31 +64,6 @@
     (doseq [[x y] (get-img-coords buff-img)]
       (set-argb buff-img [x y] (get-point img x y)))
     buff-img))
-
-
-(defn get-grayscale-values
-  "Returns the grayscale value of the Image's pixels."
-  #^{:arglists [img]}
-  [img]
-  {:pre [(image? img)]}
-  (Image. (vec (map #(let [gv (int (mean (rest %)))] ; grayscale value
-                       [(first %) gv gv gv])  
-                    (:points img))) 
-          (:width img)))
-
-
-(defn get-binarized-values
-  "Returns the binarized value of the Image's pixels.  If pixel < threshold, then
-  pixel=BLACK (0) else pixel=WHITE (255).
-  It uses get-grayscale-values internally."
-  #^{:arglists [[img] [img threshold]]}
-  ([img] (get-binarized-values img 127))
-  ([img threshold]
-   (Image. (vec (map #(if (< (second %) threshold)
-                        [(first %) 0 0 0] 
-                        [(first %) 255 255 255])
-                     (:points (get-grayscale-values img))))
-           (:width img))))
 
 
 (defn- histogram

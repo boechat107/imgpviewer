@@ -21,4 +21,6 @@
 
 (def w (vertical-histogram-autocrop y))
 
+(def k (horizontal-histogram-autocrop w {:threshold 5}))
+
 
