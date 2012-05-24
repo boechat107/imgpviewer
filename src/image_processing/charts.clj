@@ -11,6 +11,8 @@
                                     DefaultBoxAndWhiskerCategoryDataset]
       [org.jfree.data.xy XYSeries XYSeriesCollection])
     (:use
+      [image-processing.core :only (convert-image-to-buffImg)]
+      [image-processing.image]
       [seesaw core make-widget]))
 
 
@@ -76,3 +78,10 @@
              :content (label :border 10 :icon buff-img))
       pack!
       show!))
+
+(defmethod view image_processing.image.Image
+  [img]
+  (-> (frame :title "Image Viewer" 
+             :content (label :border 10 :icon (convert-image-to-buffImg img)))
+      pack!
+      show!)) 

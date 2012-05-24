@@ -62,7 +62,8 @@
                                  height
                                  BufferedImage/TYPE_INT_ARGB)]
     (doseq [[x y] (get-img-coords buff-img)]
-      (set-argb buff-img [x y] (get-point img x y)))))
+      (set-argb buff-img [x y] (get-point img x y)))
+    buff-img))
 
 
 (defn get-grayscale-values
