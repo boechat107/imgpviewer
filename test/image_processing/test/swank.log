@@ -1,0 +1,1307 @@
+[---Sent---] 99.22
+(:emacs-rex (swank:connection-info) nil t 251)
+
+[-Received-] 99.4
+(:indentation-update (("dothread-keeping-clj" . 1) ("dothread-keeping" . 1) ("dothread" . 0) ("binding-map" . 1) ("print-length-loop" . 1) ("with-pretty-writer" . 1) ("with-pprint-dispatch" . 1) ("with-connection" . 1) ("with-bindings" . 0) ("with-emacs-package" . 0) ("dothread-swank" . 0) ("with-read-line-support" . 0) ("with-package-tracking" . 0) ("doseq" . 1) ("letfn" . 1) ("cond" . 0) ("with-open" . 1) ("sync" . 1) ("let" . 1) ("dotimes" . 1) ("with-in-str" . 1) ("loop" . 1) ("with-out-str" . 0) ("when-not" . 1) ("with-loading-context" . 0) ("future" . 0) ("with-redefs" . 1) ("when-first" . 1) ("comment" . 0) ("condp" . 2) ("with-local-vars" . 1) ("with-bindings" . 1) ("when-let" . 1) ("while" . 1) ("case" . 1) ("locking" . 1) ("delay" . 0) ("io!" . 0) ("lazy-seq" . 0) ("when" . 1) ("binding" . 1) ("defslimefn" . defun) ("returning" . 1) ("continuously" . 0) ("failing-gracefully" . 0)))
+[-Received-] 99.4
+(:return (:ok (:pid "31781" :style :spawn :lisp-implementation (:type "Clojure" :name "clojure" :version "1.3.0") :package (:name "user" :prompt "user") :version "20100404")) 251)
+[Actionlist] 99.4
+251: finished :connection-info 
+params: [':pid', '"31781"', ':style', ':spawn', ':lisp-implementation', [':type', '"Clojure"', ':name', '"clojure"', ':version', '"1.3.0"'], ':package', [':name', '"user"', ':prompt', '"user"'], ':version', '"20100404"']
+ Package:user Prompt:user
+[---Sent---] 99.45
+(:emacs-rex (swank:create-repl nil) "image-processing.core" t 252)
+
+[-Received-] 99.46
+(:return (:ok ("user" "user")) 252)
+[Actionlist] 99.46
+252: finished :create-repl 
+params: ['"user"', '"user"']
+[---Sent---] 99.46
+(:emacs-rex (swank:swank-require 'swank-fuzzy) nil t 253)
+
+[---Sent---] 99.5
+(:emacs-rex (swank:listener-eval "(use '[clojure.repl :only (source apropos dir pst doc find-doc)])
+(use '[clojure.java.javadoc :only (javadoc)])
+(use '[clojure.pprint :only (pp pprint)])
+") "image-processing.core" :repl-thread 254)
+
+[-Received-] 99.51
+(:write-string "nil
+" :repl-result)
+[-Received-] 99.61
+(:indentation-update (("with-timeout" . 1) ("with-bindings" . 0)))
+[-Received-] 99.61
+(:return (:ok nil) 254)
+[Actionlist] 99.61
+253: pending  :swank-require 
+254: finished :listener-eval 
+params: nil
+[-Received-] 99.62
+(:indentation-update (("with-timeout" . 1) ("with-bindings" . 0)))
+[-Received-] 99.62
+(:return (:ok nil) 253)
+[Actionlist] 99.62
+253: finished :swank-require 
+254: finished :listener-eval 
+params: nil
+[-Received-] 100.1
+(:debug-return 1 1 nil)
+[-Received-] 100.1
+(:return (:abort) 255)
+[Actionlist] 100.1
+255: finished :listener-eval 
+[-Received-] 100.61
+(:debug-return 1 1 nil)
+[-Received-] 100.61
+(:return (:abort) 258)
+[Actionlist] 100.61
+258: finished :listener-eval 
+[---Sent---] 104.67
+(:emacs-rex (swank:operator-arglist ":use" "image-processing.test.image") "image-processing.test.image" t 270)
+
+[-Received-] 104.68
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 104.68
+(:return (:ok "([map])") 270)
+[Actionlist] 104.68
+270: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 107.11
+(:emacs-rex (swank:operator-arglist "javax" "image-processing.test.image") "image-processing.test.image" t 279)
+
+[-Received-] 107.11
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 107.11
+(:return (:ok nil) 279)
+[Actionlist] 107.11
+279: finished :operator-arglist 
+params: nil
+[---Sent---] 107.32
+(:emacs-rex (swank:operator-arglist "Image" "image-processing.test.image") "image-processing.test.image" t 280)
+
+[-Received-] 107.32
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 107.32
+(:return (:ok nil) 280)
+[Actionlist] 107.32
+280: finished :operator-arglist 
+params: nil
+[---Sent---] 107.33
+(:emacs-rex (swank:operator-arglist "Image" "image-processing.test.image") "image-processing.test.image" t 281)
+
+[-Received-] 107.33
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 107.33
+(:return (:ok nil) 281)
+[Actionlist] 107.33
+281: finished :operator-arglist 
+params: nil
+[---Sent---] 108.34
+(:emacs-rex (swank:operator-arglist "s" "image-processing.test.image") "image-processing.test.image" t 283)
+
+[-Received-] 108.35
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 108.35
+(:return (:ok nil) 283)
+[Actionlist] 108.35
+283: finished :operator-arglist 
+params: nil
+[---Sent---] 108.37
+(:emacs-rex (swank:operator-arglist "ns" "image-processing.test.image") "image-processing.test.image" t 284)
+
+[-Received-] 108.37
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 108.37
+(:return (:ok "([name docstring? attr-map? references*])") 284)
+[Actionlist] 108.37
+284: finished :operator-arglist 
+params: "([name docstring? attr-map? references*])"
+[---Sent---] 108.44
+(:emacs-rex (swank:fuzzy-completions "image-proc" "image-processing.test.image" :limit 200 :time-limit-in-msec 2000) nil t 285)
+
+[-Received-] 108.47
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 108.47
+(:return (:ok ((("image-processing.test/" "125.02" ((0 "image-proc")) "b------p") ("image-processing.image/" "124.95" ((0 "image-proc")) "b------p") ("image-processing.test.image/" "124.74" ((0 "image-proc")) "b------p")) nil)) 285)
+[Actionlist] 108.47
+285: finished :fuzzy-completions 
+params: [[['"image-processing.test/"', '"125.02"', [['0', '"image-proc"']], '"b------p"'], ['"image-processing.image/"', '"124.95"', [['0', '"image-proc"']], '"b------p"'], ['"image-processing.test.image/"', '"124.74"', [['0', '"image-proc"']], '"b------p"']], 'nil']
+[---Sent---] 108.64
+(:emacs-rex (swank:operator-arglist ":use" "image-processing.gui") "image-processing.gui" t 286)
+
+[-Received-] 108.64
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 108.64
+(:return (:ok "([map])") 286)
+[Actionlist] 108.64
+286: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 111.72
+(:emacs-rex (swank:operator-arglist ":content" "image-processing.gui") "image-processing.gui" t 295)
+
+[-Received-] 111.72
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 111.72
+(:return (:ok "([map])") 295)
+[Actionlist] 111.72
+295: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 111.72
+(:emacs-rex (swank:describe-function ":content") "image-processing.gui" t 296)
+
+[-Received-] 111.72
+(:return (:ok nil) 296)
+[Actionlist] 111.72
+296: finished :describe-function 
+params: nil
+[---Sent---] 111.81
+(:emacs-rex (swank:operator-arglist "defn" "image-processing.gui") "image-processing.gui" t 297)
+
+[-Received-] 111.81
+(:return (:ok "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])") 297)
+[Actionlist] 111.81
+297: finished :operator-arglist 
+params: "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])"
+[---Sent---] 111.87
+(:emacs-rex (swank:operator-arglist "defn" "image-processing.gui") "image-processing.gui" t 298)
+
+[-Received-] 111.88
+(:return (:ok "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])") 298)
+[Actionlist] 111.88
+298: finished :operator-arglist 
+params: "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])"
+[---Sent---] 111.9
+(:emacs-rex (swank:operator-arglist "defn" "image-processing.gui") "image-processing.gui" t 299)
+
+[-Received-] 111.9
+(:return (:ok "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])") 299)
+[Actionlist] 111.9
+299: finished :operator-arglist 
+params: "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])"
+[-Received-] 252.69
+(:return (:ok nil) 701)
+[Actionlist] 252.69
+700: pending  :swank-require 
+701: finished :listener-eval 
+params: nil
+[-Received-] 252.69
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 252.69
+(:return (:ok nil) 700)
+[Actionlist] 252.69
+700: finished :swank-require 
+701: finished :listener-eval 
+params: nil
+[---Sent---] 252.92
+(:emacs-rex (swank:operator-arglist "Image" "image-processing.test.image") "image-processing.test.image" t 704)
+
+[-Received-] 252.93
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 252.94
+(:return (:ok nil) 704)
+[Actionlist] 252.94
+704: finished :operator-arglist 
+params: nil
+[---Sent---] 253.18
+(:emacs-rex (swank:operator-arglist "n" "image-processing.test.image") "image-processing.test.image" t 705)
+
+[-Received-] 253.19
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 253.19
+(:return (:ok nil) 705)
+[Actionlist] 253.19
+705: finished :operator-arglist 
+params: nil
+[---Sent---] 253.2
+(:emacs-rex (swank:operator-arglist "ns" "user") "user" t 706)
+
+[-Received-] 253.2
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 253.2
+(:return (:ok "([name docstring? attr-map? references*])") 706)
+[Actionlist] 253.21
+706: finished :operator-arglist 
+params: "([name docstring? attr-map? references*])"
+[---Sent---] 253.35
+(:emacs-rex (swank:fuzzy-completions "image-processing.tes" "user" :limit 200 :time-limit-in-msec 2000) nil t 707)
+
+[-Received-] 253.36
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 253.36
+(:return (:ok ((nil) nil)) 707)
+[Actionlist] 253.36
+707: finished :fuzzy-completions 
+params: [['nil'], 'nil']
+[---Sent---] 254.0
+(:emacs-rex (swank:operator-arglist ":import" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 708)
+
+[-Received-] 254.0
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 254.01
+(:return (:ok "([map])") 708)
+[Actionlist] 254.01
+708: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 254.23
+(:emacs-rex (swank:operator-arglist ":import" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 709)
+
+[-Received-] 254.23
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 254.23
+(:return (:ok "([map])") 709)
+[Actionlist] 254.23
+709: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 254.47
+(:emacs-rex (swank:operator-arglist "deftest" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 710)
+
+[-Received-] 254.47
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 254.47
+(:return (:ok nil) 710)
+[Actionlist] 254.47
+710: finished :operator-arglist 
+params: nil
+[---Sent---] 255.6
+(:emacs-rex (swank:operator-arglist "create-frame" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 712)
+
+[-Received-] 255.61
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 255.61
+(:return (:ok nil) 712)
+[Actionlist] 255.61
+712: finished :operator-arglist 
+params: nil
+[---Sent---] 257.54
+(:emacs-rex (swank:operator-arglist "->" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 713)
+
+[-Received-] 257.54
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 257.54
+(:return (:ok "([x] [x form] [x form & more])") 713)
+[Actionlist] 257.54
+713: finished :operator-arglist 
+params: "([x] [x form] [x form & more])"
+[---Sent---] 257.54
+(:emacs-rex (swank:describe-function "->") "image-processing.test.hist-view-gui" t 714)
+
+[-Received-] 257.55
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 257.55
+(:return (:ok "-------------------------
+clojure.core/->
+([x] [x form] [x form & more])
+Macro
+  Threads the expr through the forms. Inserts x as the
+  second item in the first form, making a list of it if it is not a
+  list already. If there are more forms, inserts the first form as the
+  second item in second form, etc.
+") 714)
+[Actionlist] 257.55
+714: finished :describe-function 
+params: "-------------------------
+clojure.core/->
+([x] [x form] [x form & more])
+Macro
+  Threads the expr through the forms. Inserts x as the
+  second item in the first form, making a list of it if it is not a
+  list already. If there are more forms, inserts the first form as the
+  second item in second form, etc.
+"
+[-Received-] 274.68
+(:write-string "nil
+" :repl-result)
+[-Received-] 274.68
+(:new-package "image-processing.hist-view-gui" "image-processing.hist-view-gui")
+[---Sent---] 280.11
+(:emacs-rex (swank:operator-arglist "imgs-url" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 753)
+
+[-Received-] 280.11
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 280.11
+(:return (:ok nil) 753)
+[Actionlist] 280.11
+753: finished :operator-arglist 
+params: nil
+[---Sent---] 333.5
+(:emacs-rex (swank:operator-arglist "img-paths" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 921)
+
+[-Received-] 333.5
+(:return (:ok nil) 921)
+[Actionlist] 333.51
+921: finished :operator-arglist 
+params: nil
+[---Sent---] 445.12
+(:emacs-rex (swank:operator-arglist "test/image_processing/test/1azc" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1321)
+
+[-Received-] 445.12
+(:return (:ok nil) 1321)
+[Actionlist] 445.13
+1321: finished :operator-arglist 
+params: nil
+[---Sent---] 507.87
+(:emacs-rex (swank:operator-arglist "deftest" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1417)
+
+[-Received-] 507.87
+(:return (:ok nil) 1417)
+[Actionlist] 507.87
+1417: finished :operator-arglist 
+params: nil
+[---Sent---] 507.89
+(:emacs-rex (swank:operator-arglist "deftest" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1418)
+
+[-Received-] 507.89
+(:return (:ok nil) 1418)
+[Actionlist] 507.89
+1418: finished :operator-arglist 
+params: nil
+[---Sent---] 507.94
+(:emacs-rex (swank:operator-arglist "deftest" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1419)
+
+[-Received-] 507.94
+(:return (:ok nil) 1419)
+[Actionlist] 507.94
+1419: finished :operator-arglist 
+params: nil
+[---Sent---] 508.13
+(:emacs-rex (swank:operator-arglist "x" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1420)
+
+[-Received-] 508.13
+(:return (:ok nil) 1420)
+[Actionlist] 508.13
+1420: finished :operator-arglist 
+params: nil
+[---Sent---] 508.28
+(:emacs-rex (swank:operator-arglist "def" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1421)
+
+[-Received-] 508.28
+(:return (:ok nil) 1421)
+[Actionlist] 508.28
+1421: finished :operator-arglist 
+params: nil
+[---Sent---] 508.4
+(:emacs-rex (swank:operator-arglist "def" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1422)
+
+[-Received-] 508.41
+(:return (:ok nil) 1422)
+[Actionlist] 508.41
+1422: finished :operator-arglist 
+params: nil
+[-Received-] 509.36
+(:debug-activate 1 1 nil)
+[---Sent---] 509.52
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1427)
+
+[-Received-] 509.52
+(:return (:abort) 1427)
+[Actionlist] 509.52
+1426: pending  :listener-eval 
+1427: finished :throw-to-toplevel 
+[-Received-] 509.52
+(:debug-return 1 1 nil)
+[-Received-] 509.52
+(:return (:abort) 1426)
+[Actionlist] 509.52
+1426: finished :listener-eval 
+1427: finished :throw-to-toplevel 
+[---Sent---] 509.88
+(:emacs-rex (swank:operator-arglist "add-imgs" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1428)
+
+[-Received-] 509.88
+(:return (:ok nil) 1428)
+[Actionlist] 509.88
+1428: finished :operator-arglist 
+params: nil
+[---Sent---] 510.05
+(:emacs-rex (swank:operator-arglist "let" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1429)
+
+[-Received-] 510.05
+(:return (:ok "([bindings & body])") 1429)
+[Actionlist] 510.05
+1429: finished :operator-arglist 
+params: "([bindings & body])"
+[---Sent---] 510.13
+(:emacs-rex (swank:operator-arglist "let" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1430)
+
+[-Received-] 510.13
+(:return (:ok "([bindings & body])") 1430)
+[Actionlist] 510.13
+1430: finished :operator-arglist 
+params: "([bindings & body])"
+[---Sent---] 510.3
+(:emacs-rex (swank:operator-arglist "let" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1431)
+
+[-Received-] 510.31
+(:return (:ok "([bindings & body])") 1431)
+[Actionlist] 510.31
+1431: finished :operator-arglist 
+params: "([bindings & body])"
+[---Sent---] 510.73
+(:emacs-rex (swank:operator-arglist "hist-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1432)
+
+[-Received-] 510.73
+(:return (:ok nil) 1432)
+[Actionlist] 510.74
+1432: finished :operator-arglist 
+params: nil
+[---Sent---] 510.82
+(:emacs-rex (swank:operator-arglist "first" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1433)
+
+[-Received-] 510.82
+(:return (:ok "([coll])") 1433)
+[Actionlist] 510.82
+1433: finished :operator-arglist 
+params: "([coll])"
+[---Sent---] 511.08
+(:emacs-rex (swank:operator-arglist "img-group" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1434)
+
+[-Received-] 511.08
+(:return (:ok nil) 1434)
+[Actionlist] 511.08
+1434: finished :operator-arglist 
+params: nil
+[---Sent---] 511.15
+(:emacs-rex (swank:operator-arglist "second" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1435)
+
+[-Received-] 511.15
+(:return (:ok "([x])") 1435)
+[Actionlist] 511.15
+1435: finished :operator-arglist 
+params: "([x])"
+[---Sent---] 511.45
+(:emacs-rex (swank:operator-arglist "add-imgs" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1436)
+
+[-Received-] 511.45
+(:return (:ok nil) 1436)
+[Actionlist] 511.45
+1436: finished :operator-arglist 
+params: nil
+[---Sent---] 511.53
+(:emacs-rex (swank:operator-arglist "add-imgs" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1437)
+
+[-Received-] 511.53
+(:return (:ok nil) 1437)
+[Actionlist] 511.54
+1437: finished :operator-arglist 
+params: nil
+[---Sent---] 511.62
+(:emacs-rex (swank:operator-arglist "add-imgs" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1438)
+
+[-Received-] 511.62
+(:return (:ok nil) 1438)
+[Actionlist] 511.62
+1438: finished :operator-arglist 
+params: nil
+[---Sent---] 511.81
+(:emacs-rex (swank:operator-arglist "first" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1439)
+
+[-Received-] 511.81
+(:return (:ok "([coll])") 1439)
+[Actionlist] 511.81
+1439: finished :operator-arglist 
+params: "([coll])"
+[---Sent---] 511.95
+(:emacs-rex (swank:operator-arglist "second" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1440)
+
+[-Received-] 511.96
+(:return (:ok "([x])") 1440)
+[Actionlist] 511.96
+1440: finished :operator-arglist 
+params: "([x])"
+[---Sent---] 512.51
+(:emacs-rex (swank:operator-arglist "scrollable" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1441)
+
+[-Received-] 512.51
+(:return (:ok nil) 1441)
+[Actionlist] 512.52
+1441: finished :operator-arglist 
+params: nil
+[---Sent---] 513.72
+(:emacs-rex (swank:operator-arglist "javax.imageio" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1444)
+
+[-Received-] 513.72
+(:return (:ok nil) 1444)
+[Actionlist] 513.72
+1444: finished :operator-arglist 
+params: nil
+[---Sent---] 514.39
+(:emacs-rex (swank:operator-arglist "seesaw.core.proxy$javax.swing.JPanel$Tag$a79ba523" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1447)
+
+[-Received-] 514.39
+(:return (:ok nil) 1447)
+[Actionlist] 514.39
+1447: finished :operator-arglist 
+params: nil
+[-Received-] 519.8
+(:debug-activate 1 1 nil)
+[---Sent---] 520.1
+(:emacs-rex (swank:operator-arglist "defn" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1459)
+
+[-Received-] 520.11
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 520.11
+(:return (:ok "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])") 1459)
+[Actionlist] 520.11
+1459: finished :operator-arglist 
+params: "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])"
+[---Sent---] 520.15
+(:emacs-rex (swank:operator-arglist "defn" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1460)
+
+[-Received-] 520.16
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 520.16
+(:return (:ok "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])") 1460)
+[Actionlist] 520.17
+1460: finished :operator-arglist 
+params: "([name doc-string? attr-map? [params*] body] [name doc-string? attr-map? ([params*] body) + attr-map?])"
+[-Received-] 521.59
+(:debug-activate 1 1 nil)
+[---Sent---] 523.08
+(:emacs-rex (swank:operator-arglist "map" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1470)
+
+[-Received-] 523.09
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 523.09
+(:return (:ok "([f coll] [f c1 c2] [f c1 c2 c3] [f c1 c2 c3 & colls])") 1470)
+[Actionlist] 523.09
+1470: finished :operator-arglist 
+params: "([f coll] [f c1 c2] [f c1 c2 c3] [f c1 c2 c3 & colls])"
+[---Sent---] 523.09
+(:emacs-rex (swank:describe-function "map") "image-processing.test.hist-view-gui" t 1471)
+
+[-Received-] 523.09
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 523.09
+(:return (:ok "-------------------------
+clojure.core/map
+([f coll] [f c1 c2] [f c1 c2 c3] [f c1 c2 c3 & colls])
+  Returns a lazy sequence consisting of the result of applying f to the
+  set of first items of each coll, followed by applying f to the set
+  of second items in each coll, until any one of the colls is
+  exhausted.  Any remaining items in other colls are ignored. Function
+  f should accept number-of-colls arguments.
+") 1471)
+[Actionlist] 523.09
+1471: finished :describe-function 
+params: "-------------------------
+clojure.core/map
+([f coll] [f c1 c2] [f c1 c2 c3] [f c1 c2 c3 & colls])
+  Returns a lazy sequence consisting of the result of applying f to the
+  set of first items of each coll, followed by applying f to the set
+  of second items in each coll, until any one of the colls is
+  exhausted.  Any remaining items in other colls are ignored. Function
+  f should accept number-of-colls arguments.
+"
+[---Sent---] 523.18
+(:emacs-rex (swank:operator-arglist "test/image_processing/test/1a7r" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1472)
+
+[-Received-] 523.18
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 523.19
+(:return (:ok nil) 1472)
+[Actionlist] 523.19
+1472: finished :operator-arglist 
+params: nil
+[---Sent---] 523.56
+(:emacs-rex (swank:connection-info) nil t 1475)
+
+[-Received-] 523.56
+(:indentation-update (("deftest-" . 1) ("deftest" . 1) ("testing" . 1) ("with-test-out" . 0) ("set-test" . 1) ("with-test" . 1) ("dothread-keeping-clj" . 1) ("dothread-keeping" . 1) ("dothread" . 0) ("binding-map" . 1) ("print-length-loop" . 1) ("with-pretty-writer" . 1) ("with-pprint-dispatch" . 1) ("with-connection" . 1) ("with-timeout" . 1) ("with-bindings" . 0) ("with-emacs-package" . 0) ("dothread-swank" . 0) ("with-read-line-support" . 0) ("with-package-tracking" . 0) ("doseq" . 1) ("letfn" . 1) ("cond" . 0) ("with-open" . 1) ("sync" . 1) ("let" . 1) ("dotimes" . 1) ("with-in-str" . 1) ("loop" . 1) ("with-out-str" . 0) ("when-not" . 1) ("with-loading-context" . 0) ("future" . 0) ("with-redefs" . 1) ("when-first" . 1) ("comment" . 0) ("condp" . 2) ("with-local-vars" . 1) ("with-bindings" . 1) ("when-let" . 1) ("while" . 1) ("case" . 1) ("locking" . 1) ("delay" . 0) ("io!" . 0) ("lazy-seq" . 0) ("when" . 1) ("binding" . 1) ("defslimefn" . defun) ("with-widgets" . 1) ("invoke-now" . 0) ("invoke-soon" . 0) ("signaller" . 1) ("invoke-later" . 0) ("returning" . 1) ("continuously" . 0) ("failing-gracefully" . 0)))
+[-Received-] 523.57
+(:return (:ok (:pid "9609" :style :spawn :lisp-implementation (:type "Clojure" :name "clojure" :version "1.3.0") :package (:name "user" :prompt "user") :version "20100404")) 1475)
+[Actionlist] 523.57
+1475: finished :connection-info 
+params: [':pid', '"9609"', ':style', ':spawn', ':lisp-implementation', [':type', '"Clojure"', ':name', '"clojure"', ':version', '"1.3.0"'], ':package', [':name', '"user"', ':prompt', '"user"'], ':version', '"20100404"']
+ Package:user Prompt:user
+[---Sent---] 523.6
+(:emacs-rex (swank:create-repl nil) "user" t 1476)
+
+[-Received-] 523.61
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 523.61
+(:return (:ok ("user" "user")) 1476)
+[Actionlist] 523.61
+1476: finished :create-repl 
+params: ['"user"', '"user"']
+[---Sent---] 523.61
+(:emacs-rex (swank:swank-require 'swank-fuzzy) nil t 1477)
+
+[---Sent---] 523.67
+(:emacs-rex (swank:listener-eval "(use '[clojure.repl :only (source apropos dir pst doc find-doc)])
+(use '[clojure.java.javadoc :only (javadoc)])
+(use '[clojure.pprint :only (pp pprint)])
+") "user" :repl-thread 1478)
+
+[-Received-] 523.67
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 523.67
+(:return (:ok nil) 1477)
+[Actionlist] 523.67
+1477: finished :swank-require 
+1478: pending  :listener-eval 
+params: nil
+[-Received-] 523.76
+(:write-string "nil
+" :repl-result)
+[-Received-] 523.76
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 523.76
+(:return (:ok nil) 1478)
+[Actionlist] 523.76
+1478: finished :listener-eval 
+params: nil
+[---Sent---] 525.28
+(:emacs-rex (swank:operator-arglist "File" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1485)
+
+[-Received-] 525.28
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 525.28
+(:return (:ok nil) 1485)
+[Actionlist] 525.28
+1485: finished :operator-arglist 
+params: nil
+[---Sent---] 525.48
+(:emacs-rex (swank:operator-arglist "user" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1486)
+
+[-Received-] 525.48
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 525.48
+(:return (:ok nil) 1486)
+[Actionlist] 525.48
+1486: finished :operator-arglist 
+params: nil
+[---Sent---] 525.6
+(:emacs-rex (swank:connection-info) nil t 1487)
+
+[-Received-] 525.61
+(:indentation-update (("deftest-" . 1) ("deftest" . 1) ("testing" . 1) ("with-test-out" . 0) ("set-test" . 1) ("with-test" . 1) ("dothread-keeping-clj" . 1) ("dothread-keeping" . 1) ("dothread" . 0) ("binding-map" . 1) ("print-length-loop" . 1) ("with-pretty-writer" . 1) ("with-pprint-dispatch" . 1) ("with-connection" . 1) ("with-timeout" . 1) ("with-bindings" . 0) ("with-emacs-package" . 0) ("dothread-swank" . 0) ("with-read-line-support" . 0) ("with-package-tracking" . 0) ("doseq" . 1) ("letfn" . 1) ("cond" . 0) ("with-open" . 1) ("sync" . 1) ("let" . 1) ("dotimes" . 1) ("with-in-str" . 1) ("loop" . 1) ("with-out-str" . 0) ("when-not" . 1) ("with-loading-context" . 0) ("future" . 0) ("with-redefs" . 1) ("when-first" . 1) ("comment" . 0) ("condp" . 2) ("with-local-vars" . 1) ("with-bindings" . 1) ("when-let" . 1) ("while" . 1) ("case" . 1) ("locking" . 1) ("delay" . 0) ("io!" . 0) ("lazy-seq" . 0) ("when" . 1) ("binding" . 1) ("defslimefn" . defun) ("with-widgets" . 1) ("invoke-now" . 0) ("invoke-soon" . 0) ("signaller" . 1) ("invoke-later" . 0) ("returning" . 1) ("continuously" . 0) ("failing-gracefully" . 0)))
+[-Received-] 525.61
+(:return (:ok (:pid "9609" :style :spawn :lisp-implementation (:type "Clojure" :name "clojure" :version "1.3.0") :package (:name "user" :prompt "user") :version "20100404")) 1487)
+[Actionlist] 525.62
+1487: finished :connection-info 
+params: [':pid', '"9609"', ':style', ':spawn', ':lisp-implementation', [':type', '"Clojure"', ':name', '"clojure"', ':version', '"1.3.0"'], ':package', [':name', '"user"', ':prompt', '"user"'], ':version', '"20100404"']
+ Package:user Prompt:user
+[---Sent---] 525.65
+(:emacs-rex (swank:create-repl nil) "image-processing.test.hist-view-gui" t 1488)
+
+[-Received-] 525.66
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 525.66
+(:return (:ok ("user" "user")) 1488)
+[Actionlist] 525.66
+1488: finished :create-repl 
+params: ['"user"', '"user"']
+[---Sent---] 525.66
+(:emacs-rex (swank:swank-require 'swank-fuzzy) nil t 1489)
+
+[---Sent---] 525.71
+(:emacs-rex (swank:listener-eval "(use '[clojure.repl :only (source apropos dir pst doc find-doc)])
+(use '[clojure.java.javadoc :only (javadoc)])
+(use '[clojure.pprint :only (pp pprint)])
+") "image-processing.test.hist-view-gui" :repl-thread 1490)
+
+[-Received-] 525.71
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 525.71
+(:return (:ok nil) 1489)
+[Actionlist] 525.71
+1489: finished :swank-require 
+1490: pending  :listener-eval 
+params: nil
+[-Received-] 525.82
+(:write-string "nil
+" :repl-result)
+[-Received-] 525.82
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 525.82
+(:return (:ok nil) 1490)
+[Actionlist] 525.82
+1490: finished :listener-eval 
+params: nil
+[-Received-] 526.07
+(:debug-activate 3 1 nil)
+[---Sent---] 526.19
+(:emacs-rex (swank:throw-to-toplevel) nil 3 1492)
+
+[-Received-] 526.19
+(:return (:abort) 1492)
+[Actionlist] 526.19
+1491: pending  :listener-eval 
+1492: finished :throw-to-toplevel 
+[-Received-] 526.19
+(:debug-return 3 1 nil)
+[-Received-] 526.19
+(:return (:abort) 1491)
+[Actionlist] 526.19
+1491: finished :listener-eval 
+1492: finished :throw-to-toplevel 
+[-Received-] 526.75
+(:debug-activate 3 1 nil)
+[---Sent---] 526.86
+(:emacs-rex (swank:throw-to-toplevel) nil 3 1495)
+
+[-Received-] 526.86
+(:return (:abort) 1495)
+[Actionlist] 526.86
+1494: pending  :listener-eval 
+1495: finished :throw-to-toplevel 
+[-Received-] 526.86
+(:debug-return 3 1 nil)
+[-Received-] 526.86
+(:return (:abort) 1494)
+[Actionlist] 526.87
+1494: finished :listener-eval 
+1495: finished :throw-to-toplevel 
+[-Received-] 531.91
+(:debug-activate 3 1 nil)
+[---Sent---] 532.09
+(:emacs-rex (swank:throw-to-toplevel) nil 3 1515)
+
+[-Received-] 532.09
+(:return (:abort) 1515)
+[Actionlist] 532.09
+1514: pending  :listener-eval 
+1515: finished :throw-to-toplevel 
+[-Received-] 532.09
+(:debug-return 3 1 nil)
+[-Received-] 532.09
+(:return (:abort) 1514)
+[Actionlist] 532.09
+1514: finished :listener-eval 
+1515: finished :throw-to-toplevel 
+[---Sent---] 534.71
+(:emacs-rex (swank:connection-info) nil t 1517)
+
+[-Received-] 534.88
+(:indentation-update (("dothread-keeping-clj" . 1) ("dothread-keeping" . 1) ("dothread" . 0) ("binding-map" . 1) ("print-length-loop" . 1) ("with-pretty-writer" . 1) ("with-pprint-dispatch" . 1) ("with-connection" . 1) ("with-bindings" . 0) ("with-emacs-package" . 0) ("dothread-swank" . 0) ("with-read-line-support" . 0) ("with-package-tracking" . 0) ("doseq" . 1) ("letfn" . 1) ("cond" . 0) ("with-open" . 1) ("sync" . 1) ("let" . 1) ("dotimes" . 1) ("with-in-str" . 1) ("loop" . 1) ("with-out-str" . 0) ("when-not" . 1) ("with-loading-context" . 0) ("future" . 0) ("with-redefs" . 1) ("when-first" . 1) ("comment" . 0) ("condp" . 2) ("with-local-vars" . 1) ("with-bindings" . 1) ("when-let" . 1) ("while" . 1) ("case" . 1) ("locking" . 1) ("delay" . 0) ("io!" . 0) ("lazy-seq" . 0) ("when" . 1) ("binding" . 1) ("defslimefn" . defun) ("returning" . 1) ("continuously" . 0) ("failing-gracefully" . 0)))
+[-Received-] 534.89
+(:return (:ok (:pid "13209" :style :spawn :lisp-implementation (:type "Clojure" :name "clojure" :version "1.3.0") :package (:name "user" :prompt "user") :version "20100404")) 1517)
+[Actionlist] 534.89
+1517: finished :connection-info 
+params: [':pid', '"13209"', ':style', ':spawn', ':lisp-implementation', [':type', '"Clojure"', ':name', '"clojure"', ':version', '"1.3.0"'], ':package', [':name', '"user"', ':prompt', '"user"'], ':version', '"20100404"']
+ Package:user Prompt:user
+[---Sent---] 534.94
+(:emacs-rex (swank:create-repl nil) "image-processing.hist-view-gui" t 1518)
+
+[-Received-] 534.95
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 534.96
+(:return (:ok ("user" "user")) 1518)
+[Actionlist] 534.96
+1518: finished :create-repl 
+params: ['"user"', '"user"']
+[---Sent---] 534.96
+(:emacs-rex (swank:swank-require 'swank-fuzzy) nil t 1519)
+
+[---Sent---] 535.03
+(:emacs-rex (swank:listener-eval "(use '[clojure.repl :only (source apropos dir pst doc find-doc)])
+(use '[clojure.java.javadoc :only (javadoc)])
+(use '[clojure.pprint :only (pp pprint)])
+") "image-processing.hist-view-gui" :repl-thread 1520)
+
+[-Received-] 535.03
+(:write-string "nil
+" :repl-result)
+[-Received-] 535.16
+(:indentation-update (("with-timeout" . 1) ("with-bindings" . 1)))
+[-Received-] 535.17
+(:return (:ok nil) 1520)
+[Actionlist] 535.17
+1519: pending  :swank-require 
+1520: finished :listener-eval 
+params: nil
+[-Received-] 535.17
+(:return (:ok nil) 1519)
+[Actionlist] 535.17
+1519: finished :swank-require 
+1520: finished :listener-eval 
+params: nil
+[---Sent---] 538.5
+(:emacs-rex (swank:operator-arglist "hist-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1525)
+
+[-Received-] 538.5
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 538.5
+(:return (:ok nil) 1525)
+[Actionlist] 538.5
+1525: finished :operator-arglist 
+params: nil
+[---Sent---] 538.63
+(:emacs-rex (swank:fuzzy-completions "img-grou" "image-processing.test.hist-view-gui" :limit 200 :time-limit-in-msec 2000) nil t 1526)
+
+[-Received-] 538.63
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 538.63
+(:return (:ok ((nil) nil)) 1526)
+[Actionlist] 538.63
+1526: finished :fuzzy-completions 
+params: [['nil'], 'nil']
+[-Received-] 539.12
+(:return (:abort) 1527)
+[Actionlist] 539.12
+1527: finished :listener-eval 
+[-Received-] 539.35
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 539.35
+(:return (:ok nil) 1529)
+[Actionlist] 539.35
+1529: finished :listener-eval 
+params: nil
+[-Received-] 540.44
+(:return (:abort) 1530)
+[Actionlist] 540.44
+1530: finished :listener-eval 
+[-Received-] 542.0
+(:debug-activate 1 1 nil)
+[---Sent---] 542.11
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1539)
+
+[-Received-] 542.11
+(:return (:abort) 1539)
+[Actionlist] 542.11
+1538: pending  :listener-eval 
+1539: finished :throw-to-toplevel 
+[-Received-] 542.11
+(:debug-return 1 1 nil)
+[-Received-] 542.11
+(:return (:abort) 1538)
+[Actionlist] 542.12
+1538: finished :listener-eval 
+1539: finished :throw-to-toplevel 
+[-Received-] 542.61
+(:debug-activate 1 1 nil)
+[---Sent---] 542.81
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1542)
+
+[-Received-] 542.81
+(:return (:abort) 1542)
+[Actionlist] 542.81
+1541: pending  :listener-eval 
+1542: finished :throw-to-toplevel 
+[-Received-] 542.81
+(:debug-return 1 1 nil)
+[-Received-] 542.81
+(:return (:abort) 1541)
+[Actionlist] 542.81
+1541: finished :listener-eval 
+1542: finished :throw-to-toplevel 
+[-Received-] 543.27
+(:debug-activate 1 1 nil)
+[---Sent---] 543.41
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1544)
+
+[-Received-] 543.41
+(:return (:abort) 1544)
+[Actionlist] 543.41
+1543: pending  :listener-eval 
+1544: finished :throw-to-toplevel 
+[-Received-] 543.41
+(:debug-return 1 1 nil)
+[-Received-] 543.42
+(:return (:abort) 1543)
+[Actionlist] 543.42
+1543: finished :listener-eval 
+1544: finished :throw-to-toplevel 
+[---Sent---] 543.98
+(:emacs-rex (swank:operator-arglist "get-selected-img" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1546)
+
+[-Received-] 543.98
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 543.99
+(:return (:ok nil) 1546)
+[Actionlist] 543.99
+1546: finished :operator-arglist 
+params: nil
+[---Sent---] 544.21
+(:emacs-rex (swank:operator-arglist "def" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1547)
+
+[-Received-] 544.22
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 544.22
+(:return (:ok nil) 1547)
+[Actionlist] 544.22
+1547: finished :operator-arglist 
+params: nil
+[---Sent---] 544.24
+(:emacs-rex (swank:operator-arglist "def" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1548)
+
+[-Received-] 544.24
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 544.25
+(:return (:ok nil) 1548)
+[Actionlist] 544.25
+1548: finished :operator-arglist 
+params: nil
+[---Sent---] 544.49
+(:emacs-rex (swank:operator-arglist "second" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1549)
+
+[-Received-] 544.49
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 544.49
+(:return (:ok "([x])") 1549)
+[Actionlist] 544.49
+1549: finished :operator-arglist 
+params: "([x])"
+[-Received-] 545.23
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 545.23
+(:return (:ok nil) 1551)
+[Actionlist] 545.23
+1551: finished :listener-eval 
+params: nil
+[---Sent---] 545.41
+(:emacs-rex (swank:operator-arglist "selection" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1552)
+
+[-Received-] 545.42
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 545.42
+(:return (:ok "([target] [target options])") 1552)
+[Actionlist] 545.42
+1552: finished :operator-arglist 
+params: "([target] [target options])"
+[---Sent---] 545.42
+(:emacs-rex (swank:describe-function "selection") "image-processing.test.hist-view-gui" t 1553)
+
+[-Received-] 545.42
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 545.42
+(:return (:ok "-------------------------
+seesaw.core/selection
+([target] [target options])
+  Gets the selection of a widget. target is passed through (to-widget)
+  so event objects can also be used. The default behavior is to return
+  a *single* selection value, even if the widget supports multiple selection.
+  If there is no selection, returns nil.
+
+  options is an option map which supports the following flags:
+
+    multi? - If true the return value is a seq of selected values rather than
+      a single value.
+
+  Examples:
+
+  (def t (table))
+  (listen t :selection
+    (fn [e]
+      (let [selected-rows (selection t {:multi? true})]
+        (println \"Currently selected rows: \" selected-rows))))
+
+  See:
+    (seesaw.core/selection!)
+    (seesaw.selection/selection)
+  
+") 1553)
+[Actionlist] 545.42
+1553: finished :describe-function 
+params: "-------------------------
+seesaw.core/selection
+([target] [target options])
+  Gets the selection of a widget. target is passed through (to-widget)
+  so event objects can also be used. The default behavior is to return
+  a *single* selection value, even if the widget supports multiple selection.
+  If there is no selection, returns nil.
+
+  options is an option map which supports the following flags:
+
+    multi? - If true the return value is a seq of selected values rather than
+      a single value.
+
+  Examples:
+
+  (def t (table))
+  (listen t :selection
+    (fn [e]
+      (let [selected-rows (selection t {:multi? true})]
+        (println \"Currently selected rows: \" selected-rows))))
+
+  See:
+    (seesaw.core/selection!)
+    (seesaw.selection/selection)
+  
+"
+[---Sent---] 546.62
+(:emacs-rex (swank:operator-arglist "create-frame" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1555)
+
+[-Received-] 546.62
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 546.63
+(:return (:ok "([])") 1555)
+[Actionlist] 546.63
+1555: finished :operator-arglist 
+params: "([])"
+[---Sent---] 546.63
+(:emacs-rex (swank:describe-function "create-frame") "image-processing.test.hist-view-gui" t 1556)
+
+[-Received-] 546.63
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 546.63
+(:return (:ok "-------------------------
+image-processing.test.hist-view-gui/create-frame
+([])
+  nil
+") 1556)
+[Actionlist] 546.63
+1556: finished :describe-function 
+params: "-------------------------
+image-processing.test.hist-view-gui/create-frame
+([])
+  nil
+"
+[-Received-] 546.81
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 546.81
+(:return (:ok nil) 1557)
+[Actionlist] 546.81
+1557: finished :listener-eval 
+params: nil
+[---Sent---] 549.28
+(:emacs-rex (swank:operator-arglist "hist-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1569)
+
+[-Received-] 549.28
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 549.28
+(:return (:ok nil) 1569)
+[Actionlist] 549.28
+1569: finished :operator-arglist 
+params: nil
+[-Received-] 550.09
+(:debug-activate 1 1 nil)
+[---Sent---] 550.36
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1573)
+
+[-Received-] 550.36
+(:return (:abort) 1573)
+[Actionlist] 550.37
+1572: pending  :listener-eval 
+1573: finished :throw-to-toplevel 
+[-Received-] 550.37
+(:debug-return 1 1 nil)
+[-Received-] 550.37
+(:return (:abort) 1572)
+[Actionlist] 550.37
+1572: finished :listener-eval 
+1573: finished :throw-to-toplevel 
+[-Received-] 559.81
+(:debug-activate 1 1 nil)
+[---Sent---] 559.94
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1598)
+
+[-Received-] 559.94
+(:return (:abort) 1598)
+[Actionlist] 559.94
+1597: pending  :listener-eval 
+1598: finished :throw-to-toplevel 
+[-Received-] 559.94
+(:debug-return 1 1 nil)
+[-Received-] 559.94
+(:return (:abort) 1597)
+[Actionlist] 559.94
+1597: finished :listener-eval 
+1598: finished :throw-to-toplevel 
+[---Sent---] 565.73
+(:emacs-rex (swank:operator-arglist "grid-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1619)
+
+[-Received-] 565.73
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 565.73
+(:return (:ok "([& {:keys [rows columns], :as opts}])") 1619)
+[Actionlist] 565.73
+1619: finished :operator-arglist 
+params: "([& {:keys [rows columns], :as opts}])"
+[---Sent---] 565.73
+(:emacs-rex (swank:describe-function "grid-panel") "image-processing.test.hist-view-gui" t 1620)
+
+[-Received-] 565.74
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 565.75
+(:return (:ok "-------------------------
+seesaw.core/grid-panel
+([& {:keys [rows columns], :as opts}])
+  Create a panel where widgets are arranged horizontally. Options:
+
+    :rows    Number of rows, defaults to 0, i.e. unspecified.
+    :columns Number of columns.
+    :items   List of widgets (passed through make-widget)
+    :hgap    horizontal gap between widgets
+    :vgap    vertical gap between widgets
+
+  Note that it's usually sufficient to just give :columns and ignore :rows.
+
+  See http://download.oracle.com/javase/6/docs/api/java/awt/GridLayout.html
+  
+") 1620)
+[Actionlist] 565.75
+1620: finished :describe-function 
+params: "-------------------------
+seesaw.core/grid-panel
+([& {:keys [rows columns], :as opts}])
+  Create a panel where widgets are arranged horizontally. Options:
+
+    :rows    Number of rows, defaults to 0, i.e. unspecified.
+    :columns Number of columns.
+    :items   List of widgets (passed through make-widget)
+    :hgap    horizontal gap between widgets
+    :vgap    vertical gap between widgets
+
+  Note that it's usually sufficient to just give :columns and ignore :rows.
+
+  See http://download.oracle.com/javase/6/docs/api/java/awt/GridLayout.html
+  
+"
+[---Sent---] 569.2
+(:emacs-rex (swank:operator-arglist "config" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1621)
+
+[-Received-] 569.21
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 569.21
+(:return (:ok nil) 1621)
+[Actionlist] 569.21
+1621: finished :operator-arglist 
+params: nil
+[---Sent---] 569.38
+(:emacs-rex (swank:operator-arglist "config" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1622)
+
+[-Received-] 569.38
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 569.38
+(:return (:ok nil) 1622)
+[Actionlist] 569.38
+1622: finished :operator-arglist 
+params: nil
+[---Sent---] 569.82
+(:emacs-rex (swank:operator-arglist "hist-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1623)
+
+[-Received-] 569.84
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 569.84
+(:return (:ok nil) 1623)
+[Actionlist] 569.84
+1623: finished :operator-arglist 
+params: nil
+[---Sent---] 570.32
+(:emacs-rex (swank:operator-arglist "image_processing.image" "image-processing.test.image") "image-processing.test.image" t 1624)
+
+[---Sent---] 573.39
+(:emacs-rex (swank:operator-arglist "image_processing.image" "image-processing.test.image") "image-processing.test.image" t 1625)
+
+[---Sent---] 587.63
+(:emacs-rex (swank:operator-arglist "scrollable" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1643)
+
+[-Received-] 587.65
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 587.65
+(:return (:ok nil) 1643)
+[Actionlist] 587.65
+1643: finished :operator-arglist 
+params: nil
+[-Received-] 588.27
+(:indentation-update (("with-bindings" . 0) ("with-widgets" . 1)))
+[-Received-] 588.27
+(:return (:ok nil) 1644)
+[Actionlist] 588.27
+1644: finished :listener-eval 
+params: nil
+[---Sent---] 588.5
+(:emacs-rex (swank:operator-arglist "hist-panel" "image-processing.test.hist-view-gui") "image-processing.test.hist-view-gui" t 1646)
+
+[-Received-] 588.51
+(:indentation-update (("with-bindings" . 1)))
+[-Received-] 588.51
+(:return (:ok nil) 1646)
+[Actionlist] 588.51
+1646: finished :operator-arglist 
+params: nil
+[-Received-] 588.76
+(:indentation-update (("with-bindings" . 0)))
+[-Received-] 588.76
+(:return (:ok nil) 1647)
+[Actionlist] 588.76
+1647: finished :listener-eval 
+params: nil
+[-Received-] 694.77
+(:debug-activate 1 1 nil)
+[---Sent---] 694.95
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1929)
+
+[-Received-] 694.95
+(:return (:abort) 1929)
+[Actionlist] 694.95
+1928: pending  :listener-eval 
+1929: finished :throw-to-toplevel 
+[-Received-] 694.95
+(:debug-return 1 1 nil)
+[-Received-] 694.95
+(:return (:abort) 1928)
+[Actionlist] 694.95
+1928: finished :listener-eval 
+1929: finished :throw-to-toplevel 
+[-Received-] 698.72
+(:debug-activate 1 1 nil)
+[---Sent---] 698.92
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1939)
+
+[-Received-] 698.92
+(:return (:abort) 1939)
+[Actionlist] 698.92
+1938: pending  :listener-eval 
+1939: finished :throw-to-toplevel 
+[-Received-] 698.93
+(:debug-return 1 1 nil)
+[-Received-] 698.93
+(:return (:abort) 1938)
+[Actionlist] 698.93
+1938: finished :listener-eval 
+1939: finished :throw-to-toplevel 
+[-Received-] 744.03
+(:debug-activate 1 1 nil)
+[---Sent---] 747.41
+(:emacs-rex (swank:throw-to-toplevel) nil 1 1960)
+
+[-Received-] 747.41
+(:return (:abort) 1960)
+[Actionlist] 747.41
+1959: pending  :listener-eval 
+1960: finished :throw-to-toplevel 
+[-Received-] 747.41
+(:debug-return 1 1 nil)
+[-Received-] 747.41
+(:return (:abort) 1959)
+[Actionlist] 747.41
+1959: finished :listener-eval 
+1960: finished :throw-to-toplevel 
+[---Sent---] 925.08
+(:emacs-rex (swank:operator-arglist "mimg" "image-processing.test.image") "image-processing.test.image" t 2145)
+
+[-Received-] 925.08
+(:return (:ok nil) 2145)
+[Actionlist] 925.08
+2145: finished :operator-arglist 
+params: nil
+[---Sent---] 925.08
+(:emacs-rex (swank:compile-file-for-emacs "/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj" t) "image-processing.test.image" t 2146)
+
+[-Received-] 925.09
+(:indentation-update (("deftest-" . 1) ("deftest" . 1) ("testing" . 1) ("with-test-out" . 0) ("set-test" . 1) ("with-test" . 1) ("with-bindings" . 1)))
+[-Received-] 925.1
+(:return (:ok (:compilation-result ((:message "java.lang.IllegalArgumentException: Unable to resolve classname: Image, compiling:(/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj:7)" :severity :error :location (:location (:file "/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj") (:line 7) nil) :references nil :short-message "java.lang.IllegalArgumentException: Unable to resolve classname: Image, compiling:(/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj:7)") (:message "java.lang.IllegalArgumentException: Unable to resolve classname: Image" :severity :error :location (:error "No error location available") :references nil :short-message "java.lang.IllegalArgumentException: Unable to resolve classname: Image")) nil 0.427672307)) 2146)
+[Actionlist] 925.1
+2146: finished :compile-file-for-emacs 
+params: [':compilation-result', [[':message', '"java.lang.IllegalArgumentException: Unable to resolve classname: Image, compiling:(/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj:7)"', ':severity', ':error', ':location', [':location', [':file', '"/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj"'], [':line', '7'], 'nil'], ':references', 'nil', ':short-message', '"java.lang.IllegalArgumentException: Unable to resolve classname: Image, compiling:(/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj:7)"'], [':message', '"java.lang.IllegalArgumentException: Unable to resolve classname: Image"', ':severity', ':error', ':location', [':error', '"No error location available"'], ':references', 'nil', ':short-message', '"java.lang.IllegalArgumentException: Unable to resolve classname: Image"']], 'nil', '0.427672307']
+{'filename':'/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj','lnum':'7','col':'1','text':'java.lang.IllegalArgumentException: Unable to resolve classname: Image, compiling:(/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj:7)'}
+[---Sent---] 926.06
+(:emacs-rex (swank:operator-arglist ":import" "image-processing.test.image") "image-processing.test.image" t 2149)
+
+[-Received-] 926.07
+(:return (:ok "([map])") 2149)
+[Actionlist] 926.07
+2149: finished :operator-arglist 
+params: "([map])"
+[---Sent---] 926.12
+(:emacs-rex (swank:compile-file-for-emacs "/home/boechat/Dropbox2/Documents/Coding/Image_processing/test/image_processing/test/image.clj" t) "image-processing.test.image" t 2150)
+
+[-Received-] 926.13
+(:return (:ok (:compilation-result nil "#'image-processing.test.image/select-point" 0.065426013)) 2150)
+[Actionlist] 926.13
+2150: finished :compile-file-for-emacs 
+params: [':compilation-result', 'nil', '"#\'image-processing.test.image/select-point"', '0.065426013']
