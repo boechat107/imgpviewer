@@ -1,12 +1,11 @@
 (ns image-processing.segmentation
     (:use
       [image-processing.core :only (vertical-histogram horizontal-histogram)]
-      [image-processing.image :only (get-img-height get-subimage)]))
+      [image-processing.image :only (get-height get-subimage)]))
 
 
 (defn- get-limits-histogram-autocrop
   "Doc"
-  #^{:arglists [[img] [img options]]}
   [img histogram-func options]
   (let [threshold (or (:threshold options) 1)
         hist (histogram-func img)
@@ -23,12 +22,11 @@
    If all image is croped, nil is returned.
    Options:
       :threshold (default 1)"
-  #^{:arglists [[img] [img options]]}
   ([img] (vertical-histogram-autocrop img {}))
   ([img options]
    (let [[x1 x2] (get-limits-histogram-autocrop img vertical-histogram options)]
      (if (or x1 x2)
-       (get-subimage img x1 0 (- x2 x1) (get-img-height img))))))
+       (get-subimage img x1 0 (- x2 x1) (get-height img))))))
 
 
 (defn horizontal-histogram-autocrop
@@ -36,7 +34,6 @@
    If all image is croped, nil is returned.
    Options:
       :threshold (default 1)"
-  #^{:arglists [[img] [img options]]}
   ([img] (horizontal-histogram-autocrop img {}))
   ([img options]
    (let [[y1 y2] (get-limits-histogram-autocrop img horizontal-histogram options)]

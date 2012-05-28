@@ -1,47 +1,57 @@
 (ns image-processing.image)
 
-(defprotocol Points
-  "This abstracts the ways to access points."
-  (get-subset [this x y w h] "Returns the subset defined by a rectangular region.")
-  (get-point [this x y] "Returns the content of a specific point."))
+;;; image structure
+;[ [{:x :y | :a 0-255 :r 0-255 :g 0-255 :b 0-255 | :gray 0-255 | :bw 0-1}, ...], WIDTH]
 
-(defrecord Image [points width]
-  Points
-  (get-subset [img x y w h]
-              (reduce #(apply conj %1 (subvec points %2 (+ %2 w)))
-                      []
-                      (range
-                        (+ x (* y width))
-                        (+ x (* (+ y h) width))
-                        width)))
-  (get-point [img x y]
-             (when (< x width)
-               (get points (+ x (* y width))))))
+(defrecord Image [pixels width])
 
-(defn get-img-height
+(defn get-image-type
+  "Returns the type of a image structure:
+      :argb, :bw or :gray
+      OR nil if it is not a image."
+  #^{:arglists [img]}
+  [img]
+  (let [pix (first (:pixels img))]
+    (cond
+      (:bw pix) :bw
+      (:gray pix) :gray
+      (and (:r pix) (:g pix) (:b pix)) :argb
+      :else nil)))
+
+
+(defn get-pixel
+  "Gets the pixel [x y] of a image structure."
+  #^{:arglists [img x y]}
+  [img x y]
+  (get (:pixels img) (+ x (* y (:width img)))))
+
+
+(defn get-height
   "Doc"
   #^{:arglists [img]}
   [img]
-  (/ (count (:points img)) (:width img)))
+  (/ (count (:pixels img)) (:width img)))
 
 
+;todo: Iterate over the lazy sequence and returns a lazy sequence.
+; multimethod to handle with a LazySeq and with a Vector (for performance purpose).
 (defn get-subimage
   "Doc"
-  #^{:arglists [img x y w h]}
-   [img x y w h]
-   (Image.
-     (reduce #(apply conj %1 (subvec (:points img) %2 (+ %2 w)))
-             []
-             (range
-               (+ x (* y (:width img)))
-               (+ x (* (+ y h) (:width img)))
-               (:width img)))
-     w))
+  [img x y w h]
+  (Image.
+    ;; A vector structure is needed to use subvec.
+    (let [pixels (if (vector? (:pixels img)) (:pixels img) (vec (:pixels img)))
+          new-pixels (reduce #(apply conj %1 (subvec pixels %2 (+ %2 w)))
+                             []
+                             (range
+                               (+ x (* y (:width img)))
+                               (+ x (* (+ y h) (:width img)))
+                               (:width img)))]
+      (map #(assoc %1 :x (first %2) :y (second %2))
+           new-pixels
+           (for [y (range h), x (range w)] [x y]))) 
+    w))
 
 
-(defn image?
-  "Returns true if ARG is a Image, false otherwise."
-  #^{:arglists [arg]}
-  [arg]
-  (instance? image_processing.image.Image arg))
+
 

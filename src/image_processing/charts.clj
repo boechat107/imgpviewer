@@ -12,7 +12,6 @@
       [org.jfree.data.xy XYSeries XYSeriesCollection])
     (:use
       [image-processing.core :only (convert-image-to-buffImg)]
-      [image-processing.image]
       [seesaw core make-widget]))
 
 
@@ -54,8 +53,8 @@
                    legend?		; no legend
                    true			; tooltips
                    false)] 
-       (.setBackgroundImage chart background-img) ; does not work
-       (.setBackgroundPaint chart (Color. 0 0 0 0)) ; does not work
+       ;(.setBackgroundImage chart background-img) ; does not work
+       ;(.setBackgroundPaint chart (Color. 0 0 0 0)) ; does not work
        chart))))
 
 
@@ -72,6 +71,7 @@
           (.setVisible true))
     frame))
 
+;TODO: View multiple images at the same time
 (defmethod view java.awt.image.BufferedImage
   [buff-img]
   (-> (frame :title "Image Viewer" 
