@@ -17,6 +17,11 @@
   [coll]
   (/ (reduce + coll) (count coll)))
 
+(defn stdev [coll]
+  "Returns the standard deviation value of a sequence."
+  #^{:arglists [coll]}
+  (let [mean (mean coll)]
+    (Math/sqrt (/ (reduce + (map #(Math/pow (- %1 mean) 2) coll)) (count coll)))))
 
 (defn euclidian-distance
   "Euclidian distance between two vectors."
