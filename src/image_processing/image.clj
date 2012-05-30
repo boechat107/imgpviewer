@@ -9,7 +9,6 @@
   "Returns the type of a image structure:
       :argb, :bw or :gray
       OR nil if it is not a image."
-  #^{:arglists [img]}
   [img]
   (let [pix (first (:pixels img))]
     (cond
@@ -21,37 +20,58 @@
 
 (defn get-pixel
   "Gets the pixel [x y] of a image structure."
-  #^{:arglists [img x y]}
   [img x y]
-  (get (:pixels img) (+ x (* y (:width img)))))
+  (nth (:pixels img) (+ x (* y (:width img)))))
 
 
 (defn get-height
   "Doc"
-  #^{:arglists [img]}
   [img]
   (/ (count (:pixels img)) (:width img)))
+
+
+(defn get-pixels-of-line
+  "Gets a lazy sequence with the pixels of a line."
+  [img line]
+  (nth (partition (:width img) (:pixels img)) 
+       line))
+
+
+(defn get-pixels-of-column
+  "Gets a lazy sequence with the pixels of a column."
+  [img column]
+  (nth (partition (get-height img)
+                  (apply interleave (partition (:width img)
+                                               (:pixels img))))
+       column))
+
+
+(defn get-image-abs-coords
+  "Gets a Image with the absolute coordinates setted according to the order of 
+   the pixels."
+  [pixels width]
+  (Image. 
+    (map #(assoc %1 :x (first %2) :y (second %2))
+         pixels
+         (for [y (range (/ (count pixels) width)), x (range width)] [x y]))
+    width))
+
 
 
 ;todo: Iterate over the lazy sequence and returns a lazy sequence.
 ; multimethod to handle with a LazySeq and with a Vector (for performance purpose).
 (defn get-subimage
-  "Doc"
+  "Gets a subimage determined by a square with W width, H height and starting points X and
+   Y."
   [img x y w h]
-  (Image.
-    ;; A vector structure is needed to use subvec.
-    (let [pixels (if (vector? (:pixels img)) (:pixels img) (vec (:pixels img)))
-          new-pixels (reduce #(apply conj %1 (subvec pixels %2 (+ %2 w)))
-                             []
-                             (range
-                               (+ x (* y (:width img)))
-                               (+ x (* (+ y h) (:width img)))
-                               (:width img)))]
-      (map #(assoc %1 :x (first %2) :y (second %2))
-           new-pixels
-           (for [y (range h), x (range w)] [x y]))) 
-    w))
-
-
+  ;; A vector structure is needed to use subvec.
+  (let [pixels (if (vector? (:pixels img)) (:pixels img) (vec (:pixels img)))
+        new-pixels (reduce #(apply conj %1 (subvec pixels %2 (+ %2 w)))
+                           []
+                           (range
+                             (+ x (* y (:width img)))
+                             (+ x (* (+ y h) (:width img)))
+                             (:width img)))]
+    (get-image-abs-coords new-pixels w)))
 
 
