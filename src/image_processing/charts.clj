@@ -42,7 +42,7 @@
          background-img (or (:bg-img opts) nil)
          data-series (XYSeries. series-lab)
          dataset (XYSeriesCollection.)]
-     (dorun (map #(.add data-series %1 %2) (range 1 (inc (count x))) x)) 
+     (dorun (map #(.add data-series %1 %2) (range (count x)) x)) 
      (.addSeries dataset data-series)
      (let [chart (org.jfree.chart.ChartFactory/createHistogram
                    title

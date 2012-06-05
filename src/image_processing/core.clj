@@ -10,6 +10,8 @@
       [image-processing.basic-math :only (square mean)])
     (:import
       [image_processing.image Image]
+      [javax.imageio ImageIO]
+      [java.io File]
       [java.awt.image BufferedImage]))
 
 
@@ -96,6 +98,18 @@
     buff-img))
 
 
+(defn save-buffImg
+  "Saves the BufferedImage as a PNG file."
+  [buff-img path-name]
+  (ImageIO/write buff-img "png" (File. path-name)))
+
+
+(defn load-file-buffImg
+  "Load a image file as a BufferedImage."
+  [path-name]
+  (ImageIO/read (File. path-name)))
+
+
 (defn to-grayscale
   "Returns the grayscale image (with a lazy sequence of pixels) of a argb image."
   [img]
@@ -112,38 +126,32 @@
    pixel=BLACK (0) else pixel=WHITE (1)."
   ([img] (to-binary img 127))
   ([img threshold]
-   {:pre [(= :gray (get-image-type img))]}
-   (Image. (map #(assoc {:x (:x %) :y (:y %)}
-                        :bw (if (< (:gray %) threshold) 0 1))
-                (:pixels img)) 
-           (:width img))))
-
-
-(defn- histogram
-  "Basic operations to calculate the values of bins for histograms.
-  If ARG1 is the image's height and ARG2 is the image's width, the vertical histogram
-  is returned.
-  If ARG1 is the image's width and ARG2 is the image's height, the horizontal histogram
-  is returned."
-  [pixels arg1 arg2]
-  (map (fn [col-or-lin & args]
-                (count (filter #(zero? (:bw %)) col-or-lin)))
-            (partition arg1
-                       (apply interleave (partition arg2 pixels)))))
+   (case (get-image-type img)
+     :argb (to-binary (to-grayscale img) threshold)
+     :bw img
+     :gray (Image. (map #(assoc {:x (:x %) :y (:y %)}
+                                :bw (if (< (:gray %) threshold) 0 1))
+                        (:pixels img)) 
+                   (:width img)))))
 
 
 (defn vertical-histogram
   "Returns a vector where each element represents the number of black pixels on
   each column of a BW image."
   [img]
-  (histogram (:pixels img) (get-height img) (:width img)))
+  (map 
+    (fn [col & args] (count (filter #(zero? (:bw %)) col)))
+    (partition (get-height img)
+               (apply interleave (partition (:width img) (:pixels img))))))
 
 
 (defn horizontal-histogram
   "Returns a vector where each element represents the number of black pixels on
   each line of a BW image."
   [img]
-  (histogram (:pixels img) (:width img) (get-height img)))
+  (map 
+    (fn [lin & args] (count (filter #(zero? (:bw %)) lin)))
+    (partition (:width img) (:pixels img))))
 
 
 (defn- convolution

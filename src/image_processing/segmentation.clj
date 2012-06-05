@@ -6,9 +6,8 @@
 
 (defn- get-limits-histogram-autocrop
   "Doc"
-  [img histogram-func options]
+  [hist options]
   (let [threshold (or (:threshold options) 1)
-        hist (histogram-func img)
         vec (partition 2 (interleave (range (count hist)) hist)) 
         l1 (first (first (filter #(> (second %) threshold) vec)))
         l2 (first (first (filter #(> (second %) threshold) (reverse vec))))]
@@ -24,7 +23,8 @@
       :threshold (default 1)"
   ([img] (vertical-histogram-autocrop img {}))
   ([img options]
-   (let [[x1 x2] (get-limits-histogram-autocrop img vertical-histogram options)]
+   (let [[x1 x2] (get-limits-histogram-autocrop (vertical-histogram img)
+                                                options)]
      (if (or x1 x2)
        (get-subimage img x1 0 (- x2 x1) (get-height img))))))
 
@@ -36,6 +36,7 @@
       :threshold (default 1)"
   ([img] (horizontal-histogram-autocrop img {}))
   ([img options]
-   (let [[y1 y2] (get-limits-histogram-autocrop img horizontal-histogram options)]
+   (let [[y1 y2] (get-limits-histogram-autocrop (horizontal-histogram img)
+                                                options)]
      (if (or y1 y2)
        (get-subimage img 0 y1 (:width img) (- y2 y1))))))
