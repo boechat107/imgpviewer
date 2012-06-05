@@ -58,9 +58,9 @@
 
 
 
+(defn get-subimage
 ;todo: Iterate over the lazy sequence and returns a lazy sequence.
 ; multimethod to handle with a LazySeq and with a Vector (for performance purpose).
-(defn get-subimage
   "Gets a subimage determined by a square with W width, H height and starting points X and
    Y."
   [img x y w h]
