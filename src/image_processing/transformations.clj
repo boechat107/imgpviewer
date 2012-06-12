@@ -11,37 +11,42 @@
       [java.awt.image AffineTransformOp BufferedImage]
       [image_processing.image Image]))
 
-
-(defn scale-one-dim
-  "Scales a BufferedImage to size WIDTHxHEIGHT and returns a BufferedImage."
-  [buff-img width height]
-  (let [w (.getWidth buff-img)
-        h (.getHeight buff-img)
-        temp-scale-x (/ width w)
-        temp-scale-y (/ height h)
-        [scale-x scale-y] (if (< (* w temp-scale-x) (+ height 0.5))
-                            [temp-scale-x temp-scale-x]
-                            [temp-scale-y temp-scale-y])
-        afop (AffineTransformOp. (AffineTransform/getScaleInstance scale-x scale-y)
-                                 (AffineTransformOp/TYPE_BILINEAR))
-        rect (.getBounds2D afop buff-img)
-        r-width (max (int (- (.getMaxX rect) (.getMinX rect)))
-                    1)
-        r-height (max (int (- (.getMaxY rect) (.getMinY rect)))
+(defn scale-image
+  "Scales a BufferedImage to size WIDTHxHEIGHT and returns a BufferedImage.
+   Option:
+        :one    scales only one dimension"
+  ([buff-img width height] (scale-image buff-img width height nil))
+  ([buff-img width height option]
+   (let [w (.getWidth buff-img)
+         h (.getHeight buff-img)
+         temp-scale-x (/ width w)
+         temp-scale-y (/ height h)
+         [scale-x scale-y] (if (nil? option)
+                             [temp-scale-x temp-scale-y]
+                             (if (< (* h temp-scale-x) (+ height 0.5))
+                               [temp-scale-x temp-scale-x]
+                               [temp-scale-y temp-scale-y])) 
+         afop (AffineTransformOp. (AffineTransform/getScaleInstance scale-x scale-y)
+                                  (AffineTransformOp/TYPE_BILINEAR))
+         rect (.getBounds2D afop buff-img)
+         r-width (max (int (- (.getMaxX rect) (.getMinX rect)))
                       1)
-        temp-buff (.filter afop buff-img nil)
-        output (create-empty-buffImg width height)]
-    (doseq [y (range (.getHeight buff-img))
-            x (range (.getWidth buff-img))]
-           (set-buffImg-argb output [x y] [255 255 255 255]))
-    (let [g (.getGraphics output)] 
-      (.drawImage g
-                  temp-buff
-                  (/ (- width r-width) 2)
-                  (/ (- height r-height) 2)
-                  nil)
-      (.dispose g))
-    output))
+         r-height (max (int (- (.getMaxY rect) (.getMinY rect)))
+                       1)
+         temp-buff (.filter afop buff-img nil)
+         output (create-empty-buffImg width height)]
+     (doseq [y (range height), x (range width)]
+            (set-buffImg-argb output [x y] [255 255 255 255]))
+     (if (nil? option)
+       temp-buff
+       (let [g (.getGraphics output)] 
+         (.drawImage g
+                     temp-buff
+                     (int (/ (- width r-width) 2)) 
+                     (int (/ (- height r-height) 2)) 
+                     nil)
+         (.dispose g) 
+         output)))))
 
 
 (defn erode
