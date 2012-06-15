@@ -58,10 +58,12 @@
        chart))))
 
 
-(defmulti view (fn [arg] (type arg)))
+   (defmulti view
+             (fn [arg & more]
+                 (type arg)))
 
 (defmethod view org.jfree.chart.JFreeChart
-  [chart]
+  [chart & more]
   (let [window-title "JFree Chart"
         width 500
         height 400
@@ -71,16 +73,20 @@
           (.setVisible true))
     frame))
 
-;TODO: View multiple images at the same time
 (defmethod view java.awt.image.BufferedImage
-  [buff-img]
-  (-> (frame :title "Image Viewer" 
-             :content (label :border 10 :icon buff-img))
-      pack!
-      show!))
+  [buff-img & more]
+  (let [grid (grid-panel
+               :border 5
+               :hgap 10 :vgap 10
+               :columns (max 1 (count more) 6)
+               :items (map #(label :icon %) (conj more buff-img)))]
+    (-> (frame :title "Image Viewer" 
+               :content grid)
+        pack!
+        show!)))
 
 (defmethod view image_processing.image.Image
-  [img]
+  [img & more]
   (-> (frame :title "Image Viewer" 
              :content (label :border 10 :icon (convert-image-to-buffImg img)))
       pack!

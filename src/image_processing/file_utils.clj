@@ -20,6 +20,8 @@
 (defn file-ext
   "Given a File, returns its extension (by default 4 chars from
   right to left."
+  ;; TODO: use split function to split the string into two parts: the file name and the
+  ;; extension.
   #^{:arglist [[file] [file n]]}
   ([file]
       {:pre [(File? file)]}

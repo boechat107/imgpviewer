@@ -26,7 +26,7 @@
    (let [[x1 x2] (get-limits-histogram-autocrop (vertical-histogram img)
                                                 options)]
      (if (or x1 x2)
-       (get-subimage img x1 0 (- x2 x1) (get-height img))))))
+       (get-subimage img x1 0 (inc (- x2 x1)) (get-height img))))))
 
 
 (defn horizontal-histogram-autocrop
