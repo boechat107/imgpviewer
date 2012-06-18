@@ -78,7 +78,7 @@
   (let [grid (grid-panel
                :border 5
                :hgap 10 :vgap 10
-               :columns (max 1 (count more) 6)
+               :columns (min 6 (max 1 (count more))) 
                :items (map #(label :icon %) (conj more buff-img)))]
     (-> (frame :title "Image Viewer" 
                :content grid)
