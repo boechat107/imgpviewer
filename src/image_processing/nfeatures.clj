@@ -35,6 +35,20 @@
 (defn image-as-nfeat [Img]
   (vector (feat/image-as-feature Img)))
 
+(defn width [nfeature]
+  "get the nfeature max :x +1!"
+  {:pre [(= (feat-type? nfeature) :nfeat)]}
+  (inc
+   (apply max (map #(apply max (map :x %)) nfeature))))
+
+;
+(defn height [nfeature]
+  "get the nfeature max :y +1!"
+  {:pre [(= (feat-type? nfeature) :nfeat)]}
+  (inc
+   (apply max (map #(apply max (map :y %)) nfeature))))
+
+
 (defn apply-nfeat-to-image [Img nfeature]
   "Given an 'Img', writes the 'nfeature' pixels into it"
   {:pre [(= (feat-type? nfeature) :nfeat)
@@ -66,18 +80,6 @@
   (vec (map #(vec (map function %)) nfeature)))
 
 ;
-(defn width [nfeature]
-  "get the nfeature max :x +1!"
-  {:pre [(= (feat-type? nfeature) :nfeat)]}
-  (inc
-   (apply max (map #(apply max (map :x %)) nfeature))))
-
-;
-(defn height [nfeature]
-  "get the nfeature max :y +1!"
-  {:pre [(= (feat-type? nfeature) :nfeat)]}
-  (inc
-   (apply max (map #(apply max (map :y %)) nfeature))))
 
 
 (defn crop [nfeature]

@@ -1,4 +1,4 @@
-(ns image-processing.test.image
+(ns image-processing.test.image-test
   (:use [clojure.test])
   (:use [image-processing.image])
   (:import [image_processing.image Image]))

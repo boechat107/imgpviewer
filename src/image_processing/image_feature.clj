@@ -1,4 +1,5 @@
 (ns image-processing.image-feature
+  (:require [image-processing.image])
   (:import [image_processing.image Image]))
 ;an image feature is just a vector of pixels
 ;[pix-1 pix-2 ... pix-n]
