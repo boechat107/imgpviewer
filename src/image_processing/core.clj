@@ -87,14 +87,14 @@
                           [255 gray gray gray])))
     buff-img))
 
+;sorry brow, i needed this function only without the x, y thing so i just
+;updated it =/
 (defmethod convert-image-to-buffImg :bw
   [img]
   (let [buff-img (create-empty-buffImg (:width img) (get-height img))]
-    (doseq [pixel (:pixels img)] 
-      (let [bw (* 255 (:bw pixel))] 
-        (set-buffImg-argb buff-img
-                          [(:x pixel) (:y pixel)]
-                          [255 bw bw bw])))
+    (doseq [[x y] (get-img-coords buff-img)]
+      (let [bw (-> (get-pixel img x y) :bw (* 255))]
+        (set-buffImg-argb buff-img [x y] [255 bw bw bw])))
     buff-img))
 
 

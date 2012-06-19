@@ -1,4 +1,5 @@
-(ns image-processing.image)
+(ns image-processing.image
+  (:require [image-processing.pixel :as pix]))
 
 ;;; image structure
 ;[ [{:x :y | :a 0-255 :r 0-255 :g 0-255 :b 0-255 | :gray 0-255 | :bw 0-1}, ...], WIDTH]
@@ -16,6 +17,15 @@
       (:gray pix) :gray
       (and (:r pix) (:g pix) (:b pix)) :argb
       :else nil)))
+
+(defn white-image [type width height]
+  (let [white-pix (case type
+                    :argb {:r 255 :g 255 :b 255}
+                    :gray {:gray 255}
+                    :bw {:bw 1}
+                    (throw (IllegalArgumentException. "Unknown image type")))]
+    (Image. (vec (repeat (* width height) white-pix)) width)))
+
 
 
 (defn get-pixel

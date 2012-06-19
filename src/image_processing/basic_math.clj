@@ -13,7 +13,6 @@
 
 (defn mean
   "Returns the mean value of a sequence."
-  #^{:arglists [coll]}
   [coll]
   (/ (reduce + coll) (count coll)))
 

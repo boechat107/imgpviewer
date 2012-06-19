@@ -1,7 +1,7 @@
 (ns image-processing.test.image-feature
   (:use [clojure.test]
         [image-processing.image-feature]
-        [image-processing.pixel :only [neighbour-hv? neighbour-hvd?]])
+        [image-processing.point :only [neighbour-hv? neighbour-hvd?]])
  )
 
 (deftest connex-split-hv

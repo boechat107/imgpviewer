@@ -1,4 +1,5 @@
-(ns image-processing.image-feature)
+(ns image-processing.image-feature
+  (:import [image_processing.image Image]))
 ;an image feature is just a vector of pixels
 ;[pix-1 pix-2 ... pix-n]
 
@@ -7,10 +8,21 @@
 
 ;upper abstraction, n-feat is closed =)
 
-(defn get-Image-as-feature [img]
+(defn image-as-feature [Img]
   "Transform an Image to an image-feature"
-  #^{:arglist [img]}
-  (set (first img)))
+  (let [pixels (:pixels Img)
+        width (:width Img)]
+    (vec
+     (map #(assoc %1 :x (first %2) :y (second %2))
+          pixels
+          (for [y (range (/ (count pixels) width)), x (range width)] [x y])))))
+
+(defn apply-feature-to-image [Img feature]
+  (Image.
+   (reduce #(assoc %1 (+ (:x %2) (* (:width Img) (:y %2))) (dissoc %2 :x :y)) (:pixels Img) feature)
+   (:width Img)))
+
+
 
 (defn feature-width [feature]
   "Get the feature width, max x value"
