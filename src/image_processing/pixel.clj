@@ -13,6 +13,7 @@
     (case ptype
       :argb (apply min ((juxt :r :g :b) pixel))
       :gray (:gray pixel)
+      :bw (* 255 (:bw pixel))
       (throw (IllegalArgumentException. "Pixel is not ':argb', nor ':gray', wtf should i do? hehe"))))
   )
 

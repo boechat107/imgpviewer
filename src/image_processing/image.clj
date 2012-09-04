@@ -20,12 +20,11 @@
 
 (defn white-image [type width height]
   (let [white-pix (case type
-                    :argb {:r 255 :g 255 :b 255}
+                    :argb {:a 255 :r 255 :g 255 :b 255}
                     :gray {:gray 255}
                     :bw {:bw 1}
                     (throw (IllegalArgumentException. "Unknown image type")))]
-    (Image. (vec (repeat (* width height) white-pix)) width)))
-
+    (Image. (repeat (* width height) white-pix) width)))
 
 
 (defn get-pixel

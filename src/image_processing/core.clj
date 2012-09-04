@@ -31,10 +31,10 @@
 
 
 (defn get-buffImg-pixel
-  "Get the pixel {:x :y :a :r :g :b} color of a pixel [x y] of IMG."
+  "Get the pixel {:a :r :g :b} color of a pixel [x y] of IMG."
   [img coord]
   (let [[x y] coord]
-    (assoc (intcolor-to-argb (.getRGB img x y)) :x x :y y)))
+    (intcolor-to-argb (.getRGB img x y))))
 
 
 (defn set-buffImg-argb
@@ -71,24 +71,22 @@
 (defmethod convert-image-to-buffImg :argb
   [img]
   (let [buff-img (create-empty-buffImg (:width img) (get-height img))]
-    (doseq [pixel (:pixels img)]
-      (set-buffImg-argb buff-img
-                [(:x pixel) (:y pixel)]
-                [(:a pixel) (:r pixel) (:g pixel) (:b pixel)]))
+    (doseq [[x y] (get-img-coords buff-img)]
+      (let [pixel (get-pixel img x y)]
+        (set-buffImg-argb buff-img [x y] [(:a pixel) (:r pixel) (:g pixel) (:b pixel)])))
     buff-img))
+
+
+
 
 (defmethod convert-image-to-buffImg :gray
   [img]
   (let [buff-img (create-empty-buffImg (:width img) (get-height img))]
-    (doseq [pixel (:pixels img)]
-      (let [gray (:gray pixel)] 
-        (set-buffImg-argb buff-img
-                          [(:x pixel) (:y pixel)]
-                          [255 gray gray gray])))
+    (doseq [[x y] (get-img-coords buff-img)]
+      (let [gray (-> (get-pixel img x y) :gray)]
+        (set-buffImg-argb buff-img [x y] [255 gray gray gray])))
     buff-img))
 
-;sorry brow, i needed this function only without the x, y thing so i just
-;updated it =/
 (defmethod convert-image-to-buffImg :bw
   [img]
   (let [buff-img (create-empty-buffImg (:width img) (get-height img))]
