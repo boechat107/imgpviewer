@@ -4,8 +4,8 @@
             [image-processing.basic-math :as bmath])
 
   (:import [image_processing.image Image]))
-;an image feature is just a vector of pixels
-;[pix-1 pix-2 ... pix-n]
+;an image feature is just a list of pixels
+;(pix-1 pix-2 ... pix-n)
 
 ;this class is serves only to define functions for
 ;image-feature, they are not closed operations
@@ -16,14 +16,13 @@
   "Transform an Image to an image-feature"
   (let [pixels (:pixels Img)
         width (:width Img)]
-    (vec
-     (map #(assoc %1 :x (first %2) :y (second %2))
-          pixels
-          (for [y (range (/ (count pixels) width)), x (range width)] [x y])))))
+    (map #(assoc %1 :x (first %2) :y (second %2))
+         pixels
+         (for [y (range (/ (count pixels) width)), x (range width)] [x y]))))
 
 (defn apply-feature-to-image [Img feature]
   (Image.
-   (reduce #(assoc %1 (+ (:x %2) (* (:width Img) (:y %2))) (dissoc %2 :x :y)) (:pixels Img) feature)
+   (reverse (into () (reduce #(assoc %1 (+ (:x %2) (* (:width Img) (:y %2))) (dissoc %2 :x :y)) (vec (:pixels Img)) feature)))
    (:width Img)))
 
 
@@ -72,4 +71,4 @@
 
 (defn paint-feature [color feature]
   {:pre [(not= nil (pix/pix-type color))]}
-  (vec (map #(assoc color :x (:x %1) :y (:y %1)) feature)))
+  (map #(assoc color :x (:x %1) :y (:y %1)) feature))

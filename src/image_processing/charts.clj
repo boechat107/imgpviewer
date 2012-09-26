@@ -11,8 +11,9 @@
                                     DefaultBoxAndWhiskerCategoryDataset]
       [org.jfree.data.xy XYSeries XYSeriesCollection])
     (:use
-      [image-processing.core :only (convert-image-to-buffImg)]
-      [seesaw core make-widget]))
+     [image-processing.core :only (convert-image-to-buffImg)]
+     [image-processing.nfeatures :as nfeat]
+     [seesaw core make-widget]))
 
 
 ; TODO: option to rotate the histogram for horizontal histograms.
@@ -91,3 +92,11 @@
              :content (label :border 10 :icon (convert-image-to-buffImg img)))
       pack!
       show!)) 
+
+(defn view-nfeature [nfeat]
+;  (println nfeat)
+  (-> nfeat nfeat/paint-features-rnd-colors
+      nfeat/draw-nfeat-on-white-image
+      view)
+  nfeat
+  )

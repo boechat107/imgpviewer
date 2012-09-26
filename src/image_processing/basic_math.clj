@@ -38,13 +38,12 @@
    (fn related? [elem1 elem2])
       returns true if elem1 and elem2 are related, false otherwise"
   ([related? data]
-     {:pre [(vector? data)
-            (not-empty data)
+     {:pre [(not-empty data)
             (fn? related?)]
       :post [(not-empty %)]}
      (let [get-related-to-elem
            (fn [start-elems data]
-             (loop [related []
+             (loop [related nil
                     to-check-elems start-elems
                     remaining-elems data]
                (if-let [checking-elem (first to-check-elems)]
@@ -53,10 +52,11 @@
                                                                [(tmp true) (tmp false)])]
                    (recur (conj related checking-elem) (concat rest-to-check related-to-elem) non-related-to-elem))
                  [related remaining-elems])))]
-       (loop [result [] data data]
+       (loop [result nil data data]
          (if (not-empty data)
            (let [[related-elems remaining-elems]
-                 (get-related-to-elem [(first data)] (-> data rest vec))]
+                 (get-related-to-elem [(first data)] (rest data))]
              (recur (conj result related-elems)
                     remaining-elems))
            result)))))
+
