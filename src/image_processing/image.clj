@@ -41,29 +41,36 @@
 
 (defn get-pixels-of-line
   "Gets a lazy sequence with the pixels of a line."
-  [img line]
-  (nth (partition (:width img) (:pixels img)) 
-       line))
+  ([img]
+     (partition (:width img) (:pixels img)))
+  ([img line]
+     (nth (get-pixels-of-line img) line)))
 
 
 (defn get-pixels-of-column
   "Gets a lazy sequence with the pixels of a column."
-  [img column]
-  (nth (partition (get-height img)
-                  (apply interleave (partition (:width img)
-                                               (:pixels img))))
-       column))
+  ([img]
+     (partition (get-height img)
+                (apply interleave (partition (:width img)
+                                             (:pixels img)))))
+  ([img column]
+     (nth (get-pixels-of-column img) column)))
 
 
 (defn get-image-abs-coords
   "Gets a Image with the absolute coordinates setted according to the order of 
    the pixels."
-  [pixels width]
-  (Image. 
-    (map #(assoc %1 :x (first %2) :y (second %2))
-         pixels
-         (for [y (range (/ (count pixels) width)), x (range width)] [x y]))
-    width))
+  ([img]
+     (let [pixels (:pixels img)
+           width (:width img)]
+       (get-image-abs-coords pixels width)))
+  ([pixels width]
+     (Image. 
+      (map #(assoc %1 :x (first %2) :y (second %2))
+           pixels
+           (for [y (range (/ (count pixels) width)), x (range width)] [x y]))
+      width))
+)
 
 
 

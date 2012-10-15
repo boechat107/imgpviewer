@@ -117,7 +117,6 @@
                (:pixels img)) 
           (:width img)))
 
-
 (defn to-binary
   "Returns the binarized value of the Image's pixels (with a lazy sequence of pixels).
    If pixel < threshold, then
