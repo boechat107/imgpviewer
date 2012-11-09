@@ -12,7 +12,6 @@
   [x]
   (* x x))
 
-
 (defn mean
   "Returns the mean value of a sequence."
   [coll]

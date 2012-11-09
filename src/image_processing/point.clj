@@ -45,6 +45,9 @@
 (defn length [v]
   (Math/sqrt (+ (Math/pow (:x v) 2) (Math/pow (:y v) 2))))
 
+(defn distance [v1 v2]
+  (length (subtract v1 v2)))
+
 (defn dot-product [v1 v2]
   (+ (* (:x v1) (:x v2)) (* (:y v1) (:y v2))))
 

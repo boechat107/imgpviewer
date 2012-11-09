@@ -19,11 +19,7 @@
       :else nil)))
 
 (defn white-image [type width height]
-  (let [white-pix (case type
-                    :argb {:a 255 :r 255 :g 255 :b 255}
-                    :gray {:gray 255}
-                    :bw {:bw 1}
-                    (throw (IllegalArgumentException. "Unknown image type")))]
+  (let [white-pix (pix/WHITE type)]
     (Image. (repeat (* width height) white-pix) width)))
 
 
@@ -71,7 +67,6 @@
            (for [y (range (/ (count pixels) width)), x (range width)] [x y]))
       width))
 )
-
 
 
 (defn get-subimage

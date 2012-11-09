@@ -12,8 +12,9 @@
 
 ;upper abstraction, n-feat is closed =)
 
-(defn image-as-feature [Img]
+(defn image-as-feature
   "Transform an Image to an image-feature"
+  [Img]
   (let [pixels (:pixels Img)
         width (:width Img)]
     (map #(assoc %1 :x (first %2) :y (second %2))
@@ -36,12 +37,10 @@
   [key feature]
   (apply min (map key feature)))
 
-
 (defn get-feature-width
   "returns the width of the rectangle that fits the feature"
   [feature]
-  (inc (- (get-feature-max :x feature) (get-feature-min :x feature)))
-)
+  (inc (- (get-feature-max :x feature) (get-feature-min :x feature))))
 
 (defn get-feature-height
   "returns the height of the rectangle that fits the feature"
@@ -50,8 +49,9 @@
    (- (get-feature-max :y feature) (get-feature-min :y feature))))
 
 
-(defn crop-feature [feature]
+(defn crop-feature
   "If the feature is in the middle of the image, it will remove empty spaces from the borders "
+  [feature]
   (let [min-width (apply min (map :x feature))
         min-height (apply min (map :y feature))]
     (map #(assoc % :x (- (:x %) min-width)
@@ -64,10 +64,8 @@
    (defn connected?-fn [pixel1 pixel2]
        returns true if 'pixel1' and 'pixel2' are connex,
        false otherwise)"
-  #^{:arglist [feature connected?-fn]}
   ([connected?-fn feature]
      (bmath/split-by-symetrical-operator connected?-fn feature)))
-
 
 (defn paint-feature [color feature]
   {:pre [(not= nil (pix/pix-type color))]}
