@@ -59,9 +59,9 @@
        chart))))
 
 
-   (defmulti view
-             (fn [arg & more]
-                 (type arg)))
+(defmulti view
+  (fn [arg & more]
+    (type arg)))
 
 (defmethod view org.jfree.chart.JFreeChart
   [chart & more]
@@ -93,10 +93,24 @@
       pack!
       show!)) 
 
-(defn view-nfeature [nfeat]
-;  (println nfeat)
-  (-> nfeat nfeat/paint-features-rnd-colors
-      nfeat/draw-nfeat-on-white-image
-      view)
-  nfeat
-  )
+
+(defn- view-nfeature [nfeat & [{painttype :painttype}]]
+  (let [nfeat (if (= painttype :random)
+                (nfeat/paint-features-rnd-colors nfeat)
+                nfeat)]
+    (-> nfeat
+        nfeat/draw-nfeat-on-blank-image
+        view)))
+
+(defmethod view clojure.lang.PersistentList
+  [blob & [{painttype :painttype}]]
+  (if (nfeat/nfeat? blob)
+    (view-nfeature blob painttype)
+    (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
+
+(defmethod view clojure.lang.LazySeq
+  [blob & [{painttype :painttype}]]
+  (if (nfeat/nfeat? blob)
+    (view-nfeature blob painttype)
+    (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
+

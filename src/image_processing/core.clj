@@ -101,11 +101,19 @@
   [buff-img path-name]
   (ImageIO/write buff-img "png" (File. path-name)))
 
+(defn save-Img
+  [img path-name]
+  (save-buffImg (convert-image-to-buffImg img) path-name))
 
 (defn load-file-buffImg
   "Load a image file as a BufferedImage."
   [path-name]
   (ImageIO/read (File. path-name)))
+
+(defn load-file-Img
+  "Load a image file as a BufferedImage and converts to Image"
+  [path-name]
+  (convert-buffImg-to-image (load-file-buffImg path-name)))
 
 
 (defn to-grayscale

@@ -69,4 +69,4 @@
 
 (defn paint-feature [color feature]
   {:pre [(not= nil (pix/pix-type color))]}
-  (map #(assoc color :x (:x %1) :y (:y %1)) feature))
+  (map #(into % color) feature))

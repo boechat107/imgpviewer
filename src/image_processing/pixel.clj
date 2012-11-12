@@ -36,3 +36,15 @@
     :gray {:gray 255}
     :bw {:bw 1}
     (throw (IllegalArgumentException. "Unknown image type"))))
+
+(defn BLACK [type]
+  (case type
+    :argb {:a 255 :r 0 :g 0 :b 0}
+    :gray {:gray 0}
+    :bw {:bw 0}
+    (throw (IllegalArgumentException. "Unknown image type"))))
+
+(defn RED [type]
+  (case type
+    :argb {:a 255 :r 255 :g 0 :b 0}
+    (throw (IllegalArgumentException. "Unknown image type"))))

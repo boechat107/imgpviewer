@@ -5,13 +5,10 @@
         [image-processing.core]
         [image-processing.point :only [neighbour-hv? neighbour-hvd?]]))
 
-(deftest type-test
-  (is (= (feat-type? '({:x 3 :y 4} {:x 1 :y 2}))
-         :feat))
-  (is (= (feat-type? '(({:x 1 :y 2} {:x 3 :y 4}) ({:x 5 :y 5} {:x 4 :y 4})))
-         :nfeat))
-  (is (= (feat-type? {:a '({:x 1 :y 2} {:x 3 :y 4}) :b '({:x 5 :y 5} {:x 4 :y 4})})
-         :map-nfeat)))
+(deftest nfeat?-test
+  (is (not (nfeat? '({:x 3 :y 4} {:x 1 :y 2}))))
+  (is (nfeat? '(({:x 1 :y 2} {:x 3 :y 4}) ({:x 5 :y 5} {:x 4 :y 4}))))
+  (is (not (nfeat? {:a '({:x 1 :y 2} {:x 3 :y 4}) :b '({:x 5 :y 5} {:x 4 :y 4})}))))
 
 (deftest connex-split-hv
   (is (= (split-into-connex neighbour-hv? '(({:x 1 :y 1} {:x 1 :y 2} {:x 1 :y 3} {:x 2 :y 3} {:x 3 :y 4} {:x 4 :y 4} {:x 5 :y 5} {:x 6 :y 6} {:x 8 :y 8} {:x 10 :y 10} {:x 11 :y 11})))

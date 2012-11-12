@@ -1,5 +1,6 @@
 (ns image-processing.image
-  (:require [image-processing.pixel :as pix]))
+  (:require [image-processing.pixel :as pix])
+  (:import [java.lang Comparable]))
 
 ;;; image structure
 ;[ [{:x :y | :a 0-255 :r 0-255 :g 0-255 :b 0-255 | :gray 0-255 | :bw 0-1}, ...], WIDTH]
@@ -22,6 +23,8 @@
   (let [white-pix (pix/WHITE type)]
     (Image. (repeat (* width height) white-pix) width)))
 
+(defn blank-image [width height]
+  (Image. (repeat (* width height) {:a 0 :r 0 :g 0 :b 0}) width))
 
 (defn get-pixel
   "Gets the pixel [x y] of a image structure."

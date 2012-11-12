@@ -69,6 +69,15 @@
                                            (->> nfeature (get-nfeature-max :y) inc))
                           nfeature)))
 
+(defn draw-nfeat-on-blank-image
+  [nfeature]
+  {:pre [(nfeat? nfeature)]}
+  (let [image-type (-> nfeature first first pix/pix-type)]
+    (apply-nfeat-to-image (img/blank-image
+                                           (->> nfeature (get-nfeature-max :x) inc)
+                                           (->> nfeature (get-nfeature-max :y) inc))
+                          nfeature)))
+
 (defn split-into-connex
   "For a given nfeature, split each feature into its connex elements
    according to the (fn connect-fn [pix1 pix2])
