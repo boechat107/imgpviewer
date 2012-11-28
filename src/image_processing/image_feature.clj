@@ -23,7 +23,7 @@
 
 (defn apply-feature-to-image [Img feature]
   (Image.
-   (reverse (into () (reduce #(assoc %1 (+ (:x %2) (* (:width Img) (:y %2))) (dissoc %2 :x :y)) (vec (:pixels Img)) feature)))
+   (reduce #(assoc %1 (+ (:x %2) (* (:width Img) (:y %2))) (dissoc %2 :x :y)) (:pixels Img) feature)
    (:width Img)))
 
 

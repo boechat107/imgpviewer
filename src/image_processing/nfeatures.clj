@@ -110,10 +110,14 @@ reposition it the closes possible to the origin"
     (nmap #(assoc % :x (- (:x %) min-x)
                   :y (- (:y %) min-y)) nfeature)))
 
+(defn paint-features [nfeature color]
+  (map #(feat/paint-feature color %) nfeature))
+
 (defn paint-features-rnd-colors
   "Paint each feature from a nfeature with a random color.
    Usually used for debug =)"
-  [nfeature]
-  {:pre [(nfeat? nfeature)]}
-  (let [rand-color (fn [] (reduce #(assoc %1 %2 (+ 25 (rand-int 150))) {:a 255} [:r :g :b]))]
-    (map #(feat/paint-feature (rand-color) %1) nfeature)))
+  ([nfeature]
+     (paint-features-rnd-colors nfeature :argb))  
+  ([nfeature pix-type]
+     {:pre [(nfeat? nfeature)]}
+     (map #(feat/paint-feature (pix/RAND-COLOR pix-type) %1) nfeature)))

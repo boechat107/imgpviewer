@@ -1,6 +1,7 @@
 (ns image-processing.path
   (:require [image-processing
              [image-feature :as feat]
+             [nfeatures :as nfeat]
              [image :as img]
              [pixel :as pix]]))
 
@@ -59,11 +60,10 @@
      (feat/apply-feature-to-image img
                                   (feat/paint-feature color path))))
 
+(def paint-path-rnd-colors nfeat/paint-features-rnd-colors)
+
 (defn feature-between-vertical-paths
-  "Get image between two vertical paths, options available:
-   :precedence - if this option is set, it is assumed that
-pathA is at the left of pathB. If pathB crosses pathA, no pixel
-is taken from image "
+  "Get image between two vertical paths, even if the path cross eachother"
   [pathA pathB img]
   {:pre [(v-path-fits-image? pathA img)
          (v-path-fits-image? pathB img)]}
@@ -73,16 +73,11 @@ is taken from image "
                 (reverse pathA))]
 
     (for [[point1 point2] (map list pathA pathB)
-          x (range 0 (:width img)) :when (<= (:x point1) x (:x point2))]
+          x (range 0 (:width img))
+          :let [[from_x to_x] ((juxt min max) (:x point1) (:x point2))]
+          :when (<= from_x x to_x)]
       (do
         (let [y (do (assert (= (:y point1) (:y point2)))
                     (:y point1))]
           (into {:x x :y y} (img/get-pixel img x y)))))))
-
-
-
-
-
-
-
 

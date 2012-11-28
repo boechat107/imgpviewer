@@ -59,7 +59,7 @@
 (defn convert-buffImg-to-image
   "Returns a Image (with a lazy sequence of pixels) from a BufferedImage."
   [buffered-image]
-  (let [argb-values (map #(get-buffImg-pixel buffered-image %)
+  (let [argb-values (mapv #(get-buffImg-pixel buffered-image %)
                          (get-img-coords buffered-image))]
     (Image. argb-values (.getWidth buffered-image))))
 
@@ -134,7 +134,7 @@
    (case (get-image-type img)
      :argb (to-binary (to-grayscale img) threshold)
      :bw img
-     :gray (Image. (map #(assoc {:x (:x %) :y (:y %)}
+     :gray (Image. (mapv #(assoc {:x (:x %) :y (:y %)}
                                 :bw (if (< (:gray %) threshold) 0 1))
                         (:pixels img)) 
                    (:width img)))))

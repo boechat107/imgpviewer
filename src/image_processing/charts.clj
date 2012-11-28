@@ -94,7 +94,7 @@
       show!)) 
 
 
-(defn- view-nfeature [nfeat & [{painttype :painttype}]]
+(defn- view-nfeature [nfeat [{painttype :painttype}]]
   (let [nfeat (if (= painttype :random)
                 (nfeat/paint-features-rnd-colors nfeat)
                 nfeat)]
@@ -103,14 +103,14 @@
         view)))
 
 (defmethod view clojure.lang.PersistentList
-  [blob & [{painttype :painttype}]]
+  [blob & more]
   (if (nfeat/nfeat? blob)
-    (view-nfeature blob painttype)
+    (view-nfeature blob more)
     (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
 
 (defmethod view clojure.lang.LazySeq
-  [blob & [{painttype :painttype}]]
+  [blob & more]
   (if (nfeat/nfeat? blob)
-    (view-nfeature blob painttype)
+    (view-nfeature blob more)
     (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
 

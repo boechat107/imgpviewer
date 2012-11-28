@@ -21,16 +21,15 @@
 
 (defn white-image [type width height]
   (let [white-pix (pix/WHITE type)]
-    (Image. (repeat (* width height) white-pix) width)))
+    (Image. (vec  (repeat (* width height) white-pix)) width)))
 
 (defn blank-image [width height]
-  (Image. (repeat (* width height) {:a 0 :r 0 :g 0 :b 0}) width))
+  (Image. (vec (repeat (* width height) {:a 0 :r 0 :g 0 :b 0})) width))
 
 (defn get-pixel
   "Gets the pixel [x y] of a image structure."
   [img x y]
   (nth (:pixels img) (+ x (* y (:width img)))))
-
 
 (defn get-height
   "Doc"
@@ -65,11 +64,10 @@
        (get-image-abs-coords pixels width)))
   ([pixels width]
      (Image. 
-      (map #(assoc %1 :x (first %2) :y (second %2))
+      (mapv #(assoc %1 :x (first %2) :y (second %2))
            pixels
            (for [y (range (/ (count pixels) width)), x (range width)] [x y]))
-      width))
-)
+      width)))
 
 
 (defn get-subimage

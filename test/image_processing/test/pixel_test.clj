@@ -7,3 +7,4 @@
   (is (= (color-distance {:gray 200} {:gray 250}) 50))
   (is (= (color-distance {:bw 0} {:bw 1}) 1))
   )
+
