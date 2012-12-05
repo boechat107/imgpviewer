@@ -39,4 +39,4 @@
    (let [[y1 y2] (get-limits-histogram-autocrop (horizontal-histogram img)
                                                 options)]
      (if (or y1 y2)
-       (get-subimage img 0 y1 (:width img) (- y2 y1))))))
+       (get-subimage img 0 y1 (:width img) (inc (- y2 y1)))))))

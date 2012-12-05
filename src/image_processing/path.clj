@@ -81,3 +81,9 @@
                     (:y point1))]
           (into {:x x :y y} (img/get-pixel img x y)))))))
 
+(defn nfeature-between-vertical-paths
+  [pathA pathB img]
+  (list (feature-between-vertical-paths pathA pathB img)))
+
+(defn image-between-vertical-paths [pathA pathB img]
+  (nfeat/draw-nfeat-on-white-image (nfeature-between-vertical-paths pathA pathB img)))

@@ -25,6 +25,7 @@
       (* 255 (:bw pixel))
       (throw (IllegalArgumentException. "Pixel is not ':argb', nor ':gray', wtf should i do? hehe")))))
 
+
 (defn color-distance
   "Calculates the norm-2 distance of pixels"
   [pixel1 pixel2]

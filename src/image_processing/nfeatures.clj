@@ -22,6 +22,9 @@
     (catch Exception E
       false)))
 
+(defn nfeat-pix-type [nfeature]
+  (-> nfeature first first pix/pix-type))
+
 (defn image-as-nfeat [Img]
   (list (feat/image-as-feature Img)))
 
@@ -63,7 +66,7 @@
 (defn draw-nfeat-on-white-image
   [nfeature]
   {:pre [(nfeat? nfeature)]}
-  (let [image-type (-> nfeature first first pix/pix-type)]
+  (let [image-type (nfeat-pix-type nfeature)]
     (apply-nfeat-to-image (img/white-image image-type
                                            (->> nfeature (get-nfeature-max :x) inc)
                                            (->> nfeature (get-nfeature-max :y) inc))
@@ -72,7 +75,7 @@
 (defn draw-nfeat-on-blank-image
   [nfeature]
   {:pre [(nfeat? nfeature)]}
-  (let [image-type (-> nfeature first first pix/pix-type)]
+  (let [image-type (nfeat-pix-type nfeature)]
     (apply-nfeat-to-image (img/blank-image
                                            (->> nfeature (get-nfeature-max :x) inc)
                                            (->> nfeature (get-nfeature-max :y) inc))

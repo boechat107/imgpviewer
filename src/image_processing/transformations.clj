@@ -65,19 +65,13 @@
 
 (defn grayscale [Img]
   {:pre [(= (class Img) image_processing.image.Image)]}
-  (let [type (img/get-image-type Img)]
-    (case type
-      :argb (assoc Img :pixels (map #(array-map :gray (pix/grayscale-value %)) (:pixels Img)))
-      :gray Img
-      (throw (IllegalArgumentException. "Can only convert to gray :argb or :gray images"))))
-  )
+  (assoc Img :pixels (mapv #(array-map :gray (pix/grayscale-value %)) (:pixels Img))))
 
 (defn bw [threshold Img]
   {:pre [(= (class Img) image_processing.image.Image)]}
   (let [type (img/get-image-type Img)]
-    (case type
-      :argb (assoc Img :pixels (map #(array-map :bw (if (> (pix/grayscale-value %) threshold) 1 0)) (:pixels Img)))
-      :gray (assoc Img :pixels (map #(array-map :bw (if (> (:gray %) threshold) 1 0)) (:pixels Img)))
-      :bw Img
-      (throw (IllegalArgumentException. "Can only convert to gray :argb or :gray images"))))
-  )
+    (pix/switch-pix-type type
+                         (assoc Img :pixels (map #(array-map :bw (if (> (pix/grayscale-value %) threshold) 1 0)) (:pixels Img)))
+                         (assoc Img :pixels (map #(array-map :bw (if (> (:gray %) threshold) 1 0)) (:pixels Img)))
+                         Img
+                         (throw (IllegalArgumentException. "Pixel type not recognized.")))))

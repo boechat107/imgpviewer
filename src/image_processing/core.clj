@@ -120,7 +120,7 @@
   "Returns the grayscale image (with a lazy sequence of pixels) of a argb image."
   [img]
   {:pre [(= :argb (get-image-type img))]}
-  (Image. (map #(let [rgb [(:r %) (:g %) (:b %)]]
+  (Image. (mapv #(let [rgb [(:r %) (:g %) (:b %)]]
                   {:x (:x %) :y (:y %) :gray (int (mean rgb))})
                (:pixels img)) 
           (:width img)))
