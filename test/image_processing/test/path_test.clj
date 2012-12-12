@@ -33,4 +33,6 @@
     (is (= (-> (list (feature-between-vertical-paths (zigzav-v-path 10) (zigzav-v-path 50) img)) draw-nfeat-on-blank-image)
            (load-file-Img "test/expected_path_test1.png")))
     (is (= (-> (list (feature-between-vertical-paths (zigzav-v-path 10) crossline img)) draw-nfeat-on-blank-image)
-           (load-file-Img "test/expected_path_test2.png")))))
+           (load-file-Img "test/expected_path_test2.png")))
+    (is (= (image-between-vertical-paths (zigzav-v-path 30) (zigzav-v-path 50) img)
+           (load-file-Img "test/expected_path_test3.png")))))

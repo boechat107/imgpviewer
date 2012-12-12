@@ -11,6 +11,16 @@
 ;;  horizontally - horizontal-path
 ;; note that a path is an image-feature, but no the converse ;)
 
+(defn v-path
+  "Given an 'x' position and the image 'height', generates a vertical path"
+  [x height]
+  (map #(hash-map :x x :y %) (range height)))
+
+(defn h-path
+  "Given an 'y' position and the image 'width', generates a horizontal path"
+  [y width]
+  (map #(hash-map :x % :y y) (range width)))
+
 (defn is-v-path?
   "Verifies if it's a v-path, i.e. it has one point for each vertical y-coordinate"
   [path]
@@ -86,4 +96,6 @@
   (list (feature-between-vertical-paths pathA pathB img)))
 
 (defn image-between-vertical-paths [pathA pathB img]
-  (nfeat/draw-nfeat-on-white-image (nfeature-between-vertical-paths pathA pathB img)))
+  (nfeat/draw-nfeat-on-white-image
+   (nfeat/crop
+    (nfeature-between-vertical-paths pathA pathB img))))
