@@ -13,13 +13,13 @@
 
 (defn v-path
   "Given an 'x' position and the image 'height', generates a vertical path"
-  [x height]
-  (map #(hash-map :x x :y %) (range height)))
+  [x img]
+  (map #(hash-map :x x :y %) (range (img/get-height img))))
 
 (defn h-path
   "Given an 'y' position and the image 'width', generates a horizontal path"
-  [y width]
-  (map #(hash-map :x % :y y) (range width)))
+  [y img]
+  (map #(hash-map :x % :y y) (range (:width img))))
 
 (defn is-v-path?
   "Verifies if it's a v-path, i.e. it has one point for each vertical y-coordinate"
@@ -61,6 +61,8 @@
            (feat/get-feature-max :y path)
            (dec (img/get-height img)))))
 
+
+
 (defn paint-path
   ([path img]
      (paint-path path img (pix/RED :argb)))
@@ -71,6 +73,23 @@
                                   (feat/paint-feature color path))))
 
 (def paint-path-rnd-colors nfeat/paint-features-rnd-colors)
+
+(defn min-v-path-distance
+  "Minimum distance between two v-path.
+   For each row, y, will get the min x's difference"
+  [pathA pathB img]
+  {:pre [(v-path-fits-image? pathA img)
+         (v-path-fits-image? pathB img)]}
+  (let [pathA (if (= (-> pathA first :y)
+                     (-> pathB first :y))
+                pathA
+                (reverse pathA))]
+    (apply min
+           (map (fn [point1 point2]
+                   (do
+                     (assert (= (:y point1) (:y point2)))
+                     (Math/abs (- (:x point1) (:x point2)))))
+                pathA pathB))))
 
 (defn feature-between-vertical-paths
   "Get image between two vertical paths, even if the path cross eachother"

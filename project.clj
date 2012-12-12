@@ -1,4 +1,4 @@
-(defproject image-processing "1.0.8-SNAPSHOT"
+(defproject image-processing "1.0.9-SNAPSHOT"
   :description "FIXME: write description"
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.apache.commons/commons-math "2.2"]

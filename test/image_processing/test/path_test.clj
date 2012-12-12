@@ -36,3 +36,9 @@
            (load-file-Img "test/expected_path_test2.png")))
     (is (= (image-between-vertical-paths (zigzav-v-path 30) (zigzav-v-path 50) img)
            (load-file-Img "test/expected_path_test3.png")))))
+
+(deftest min-v-path-distance-test
+  (are [x y] (= x y)
+       6 (min-v-path-distance (zigzav-v-path 10) (v-path 20 img) img)
+       10 (min-v-path-distance (zigzav-v-path 6) (v-path 20 img) img)
+       0 (min-v-path-distance (zigzav-v-path 16) (v-path 20 img) img)))
