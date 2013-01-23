@@ -71,7 +71,7 @@
   {:pre [(= (class Img) image_processing.image.Image)]}
   (let [type (img/get-image-type Img)]
     (pix/switch-pix-type type
-                         (assoc Img :pixels (map #(array-map :bw (if (> (pix/grayscale-value %) threshold) 1 0)) (:pixels Img)))
-                         (assoc Img :pixels (map #(array-map :bw (if (> (:gray %) threshold) 1 0)) (:pixels Img)))
+                         (assoc Img :pixels (mapv #(array-map :bw (if (> (pix/grayscale-value %) threshold) 1 0)) (:pixels Img)))
+                         (assoc Img :pixels (mapv #(array-map :bw (if (> (:gray %) threshold) 1 0)) (:pixels Img)))
                          Img
                          (throw (IllegalArgumentException. "Pixel type not recognized.")))))

@@ -86,4 +86,26 @@
                              (:width img)))]
     (get-image-abs-coords new-pixels w)))
 
-
+(defn increase-size
+  "Changes the size of the image by increasing in the four supplied direction"
+  ([img [north east south west :as coords]]
+     (let [type (get-image-type img)]
+       (increase-size img coords (pix/WHITE type))))
+  ([img [north east south west :as coords] background-pix]
+     {:pre [(= (pix/pix-type background-pix)
+               (get-image-type img))
+            (every? #(<= 0 %) coords)]}
+     (let [width (:width img)
+           height (get-height img)
+           new-width (+ west east width)
+           new-height (+ north south height)]
+       (Image.
+        (vec (concat
+              (repeat (* north new-width) background-pix)
+              (mapcat concat
+                      (repeat (repeat west background-pix))
+                      (get-pixels-of-line img)
+                      (repeat (repeat east background-pix)))
+              (repeat (* south new-width) background-pix)))
+        new-width
+        ))))

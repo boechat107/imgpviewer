@@ -3,7 +3,8 @@
              [image-feature :as feat]
              [nfeatures :as nfeat]
              [image :as img]
-             [pixel :as pix]]))
+             [pixel :as pix]
+             [point :as pt]]))
 
 
 ;;a path is a seq of points which cuts an image 
@@ -74,9 +75,10 @@
 
 (def paint-path-rnd-colors nfeat/paint-features-rnd-colors)
 
-(defn min-v-path-distance
-  "Minimum distance between two v-path.
-   For each row, y, will get the min x's difference"
+(defn min-v-path-subtract
+  "Minimum subtraction between two v-path.
+   For each row, y, will get the min x's difference
+   Used to measure distance and sort vertical paths =)"
   [pathA pathB img]
   {:pre [(v-path-fits-image? pathA img)
          (v-path-fits-image? pathB img)]}
@@ -88,10 +90,30 @@
            (map (fn [point1 point2]
                    (do
                      (assert (= (:y point1) (:y point2)))
-                     (Math/abs (- (:x point1) (:x point2)))))
+                     (- (:x point1) (:x point2))))
                 pathA pathB))))
 
-(defn feature-between-vertical-paths
+(defn sort-paths-by-position
+  "Given a list of paths, sorts them from left to right - if it's possible.
+   i.e. if the paths cross each other, they are considered at the same position"
+  [paths img]
+  (sort-by identity (fn [x y] (min-v-path-subtract x y img)) paths))
+
+(defn v-paths-similarity
+  "Compares two paths according to (map norm pathA pathB), default is vector distance"
+  ([pathA pathB img]
+     (v-paths-similarity pathA pathB img pt/distance))
+  ([pathA pathB img norm]
+     {:pre [(v-path-fits-image? pathA img)
+            (v-path-fits-image? pathB img)]}
+     (let [pathA (if (= (-> pathA first :y)
+                        (-> pathB first :y))
+                   pathA
+                   (reverse pathA))]
+       (/ (apply + (map norm pathA pathB))
+        (count pathA)))))
+
+#_(defn feature-between-vertical-paths-old
   "Get image between two vertical paths, even if the path cross eachother"
   [pathA pathB img]
   {:pre [(v-path-fits-image? pathA img)
@@ -109,6 +131,23 @@
         (let [y (do (assert (= (:y point1) (:y point2)))
                     (:y point1))]
           (into {:x x :y y} (img/get-pixel img x y)))))))
+
+(defn feature-between-vertical-paths
+  "Get image between two vertical paths, even if the path cross eachother"
+  [pathA pathB img]
+  {:pre [(v-path-fits-image? pathA img)
+         (v-path-fits-image? pathB img)]}
+  (let [pathA (if (= (-> pathA first :y)
+                     (-> pathB first :y))
+                pathA
+                (reverse pathA))]
+    (apply concat
+           (pmap (fn [point1 point2]
+                   (let [[from_x to_x] ((juxt min max) (:x point1) (:x point2))
+                         y (:y point1)]
+                     (map #(into {:x % :y y} (img/get-pixel img % y)) (range from_x (inc to_x)))))
+                 pathA
+                 pathB))))
 
 (defn nfeature-between-vertical-paths
   [pathA pathB img]

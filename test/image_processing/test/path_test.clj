@@ -39,6 +39,6 @@
 
 (deftest min-v-path-distance-test
   (are [x y] (= x y)
-       6 (min-v-path-distance (zigzav-v-path 10) (v-path 20 img) img)
-       10 (min-v-path-distance (zigzav-v-path 6) (v-path 20 img) img)
-       0 (min-v-path-distance (zigzav-v-path 16) (v-path 20 img) img)))
+       6 (min-v-path-subtract (v-path 20 img) (zigzav-v-path 10) img)
+       10 (min-v-path-subtract (v-path 20 img) (zigzav-v-path 6) img)
+       0 (min-v-path-subtract (v-path 20 img) (zigzav-v-path 16) img)))
