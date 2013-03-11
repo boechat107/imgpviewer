@@ -4,7 +4,8 @@
              [nfeatures :as nfeat]
              [image :as img]
              [pixel :as pix]
-             [point :as pt]]))
+             [point :as pt]])
+  (:import [image_processing.point Point]))
 
 
 ;;a path is a seq of points which cuts an image 
@@ -15,12 +16,12 @@
 (defn v-path
   "Given an 'x' position and the image 'height', generates a vertical path"
   [x img]
-  (map #(hash-map :x x :y %) (range (img/get-height img))))
+  (map #(Point. x %) (range (img/get-height img))))
 
 (defn h-path
   "Given an 'y' position and the image 'width', generates a horizontal path"
   [y img]
-  (map #(hash-map :x % :y y) (range (:width img))))
+  (map #(Point. % y) (range (:width img))))
 
 (defn is-v-path?
   "Verifies if it's a v-path, i.e. it has one point for each vertical y-coordinate"
@@ -61,8 +62,6 @@
            (feat/get-feature-min :y path)
            (feat/get-feature-max :y path)
            (dec (img/get-height img)))))
-
-
 
 (defn paint-path
   ([path img]
@@ -145,7 +144,7 @@
            (pmap (fn [point1 point2]
                    (let [[from_x to_x] ((juxt min max) (:x point1) (:x point2))
                          y (:y point1)]
-                     (map #(into {:x % :y y} (img/get-pixel img % y)) (range from_x (inc to_x)))))
+                     (map #(into (Point. % y) (img/get-pixel img % y)) (range from_x (inc to_x)))))
                  pathA
                  pathB))))
 

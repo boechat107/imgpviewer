@@ -1,4 +1,4 @@
-(ns image-processing.test.nfeatures-test
+(ns image-processing.test.nfeature-test
   (:use [clojure.test]
         [image-processing.nfeatures]
         [image-processing.charts]

@@ -1,3 +1,0 @@
-(ns image-processing.sobel)
-
-

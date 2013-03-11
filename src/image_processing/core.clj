@@ -57,7 +57,7 @@
 
 
 (defn convert-buffImg-to-image
-  "Returns a Image (with a lazy sequence of pixels) from a BufferedImage."
+  "Returns an Image from a BufferedImage."
   [buffered-image]
   (let [argb-values (mapv #(get-buffImg-pixel buffered-image %)
                          (get-img-coords buffered-image))]
@@ -76,9 +76,6 @@
         (set-buffImg-argb buff-img [x y] [(:a pixel) (:r pixel) (:g pixel) (:b pixel)])))
     buff-img))
 
-
-
-
 (defmethod convert-image-to-buffImg :gray
   [img]
   (let [buff-img (create-empty-buffImg (:width img) (get-height img))]
@@ -94,7 +91,6 @@
       (let [bw (-> (get-pixel img x y) :bw (* 255))]
         (set-buffImg-argb buff-img [x y] [255 bw bw bw])))
     buff-img))
-
 
 (defn save-buffImg
   "Saves the BufferedImage as a PNG file."

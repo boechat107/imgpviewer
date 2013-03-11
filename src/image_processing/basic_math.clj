@@ -17,25 +17,16 @@
   [coll]
   (/ (reduce + coll) (count coll)))
 
-(defn stdev [coll]
+(defn stdev
   "Returns the standard deviation value of a sequence."
+  [coll]
   #^{:arglists [coll]}
   (let [mean (mean coll)]
     (Math/sqrt (double (/ (reduce + (map #(Math/pow (- %1 mean) 2) coll)) (count coll))))))
 
-(defn euclidian-distance
-  "Euclidian distance between two vectors."
-  [vec1 vec2]
-  (Math/sqrt (double (reduce + (map #(square (- %1 %2))
-                                    (rest vec1)
-                                    (rest vec2))))))
-
-
 (defn split-by-symetrical-operator
-  "Split a vector elements into equivalent partitions, according to the symetrical two argument function
-   related?
-   (fn related? [elem1 elem2])
-      returns true if elem1 and elem2 are related, false otherwise"
+  "Split a vector elements into equivalent partitions, according to the symetrical two argument function related?
+   (fn related? [elem1 elem2]): must return true if elem1 and elem2 are related, false otherwise"
   ([related? data]
      {:pre [(not-empty data)
             (fn? related?)]

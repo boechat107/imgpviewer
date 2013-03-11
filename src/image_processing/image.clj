@@ -7,6 +7,9 @@
 
 (defrecord Image [pixels width])
 
+(defn is-img? [Img]
+  (= (type Img) image_processing.image.Image))
+
 (defn get-image-type
   "Returns the type of a image structure:
       :argb, :bw or :gray
@@ -19,11 +22,20 @@
       (and (:r pix) (:g pix) (:b pix)) :argb
       :else nil)))
 
+(defmacro switch-image-type [img expr-argb expr-gray expr-bw]
+  `(case (get-image-type ~img)
+     :argb ~expr-argb
+     :gray ~expr-gray
+     :bw ~expr-bw
+     (throw (IllegalArgumentException. "Image is not :argb, nor :gray, nor :bw. What should i do?"))))
+
 (defn white-image [type width height]
   (let [white-pix (pix/WHITE type)]
     (Image. (vec  (repeat (* width height) white-pix)) width)))
 
-(defn blank-image [width height]
+(defn blank-image
+  "A blank image must be an :a :r :g :b for handling transparency"
+  [width height]
   (Image. (vec (repeat (* width height) {:a 0 :r 0 :g 0 :b 0})) width))
 
 (defn get-pixel

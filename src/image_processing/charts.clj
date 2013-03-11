@@ -96,19 +96,13 @@
 
 (defn- view-nfeature [nfeat [{painttype :painttype}]]
   (let [nfeat (if (= painttype :random)
-                (nfeat/paint-features-rnd-colors nfeat)
+                (nfeat/paint-features-rnd-colors nfeat (nfeat/nfeat-pix-type nfeat))
                 nfeat)]
     (-> nfeat
         nfeat/draw-nfeat-on-blank-image
         view)))
 
-(defmethod view clojure.lang.PersistentList
-  [blob & more]
-  (if (nfeat/nfeat? blob)
-    (view-nfeature blob more)
-    (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
-
-(defmethod view clojure.lang.LazySeq
+(defmethod view clojure.lang.IPersistentCollection
   [blob & more]
   (if (nfeat/nfeat? blob)
     (view-nfeature blob more)

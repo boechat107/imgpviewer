@@ -28,6 +28,19 @@
 (defn image-as-nfeat [Img]
   (list (feat/image-as-feature Img)))
 
+(defn nfilter
+  "filter pixels from all nfeatures, removes empty features"
+  [function nfeature]
+  {:pre [(nfeat? nfeature) (fn? function)]}
+  (filter not-empty
+          (map #(filter function %) nfeature)))
+
+(defn nmap
+  "Applies function to all pixels, in all features"
+  [function nfeature]
+  {:pre [(nfeat? nfeature) (fn? function)]}
+  (map #(map function %) nfeature))
+
 (defn get-nfeature-max
   "get the the max value for a 'key' among all nfeatures"
   [key nfeature]
@@ -39,7 +52,6 @@
   [key nfeature]
   {:pre [(nfeat? nfeature)]}
   (apply min (map (partial feat/get-feature-min key) nfeature)))
-
 
 (defn get-nfeature-height
   "Get the nfeature height, discounting white borders"
@@ -73,13 +85,14 @@
                           nfeature)))
 
 (defn draw-nfeat-on-blank-image
+  "Outputs an :argb image with the nfeature"
   [nfeature]
   {:pre [(nfeat? nfeature)]}
   (let [image-type (nfeat-pix-type nfeature)]
     (apply-nfeat-to-image (img/blank-image
-                                           (->> nfeature (get-nfeature-max :x) inc)
-                                           (->> nfeature (get-nfeature-max :y) inc))
-                          nfeature)))
+                           (->> nfeature (get-nfeature-max :x) inc)
+                           (->> nfeature (get-nfeature-max :y) inc))
+                          (nmap pix/argb<- nfeature))))
 
 (defn split-into-connex
   "For a given nfeature, split each feature into its connex elements
@@ -88,19 +101,6 @@
   [connect-fn nfeature]
   {:pre [(nfeat? nfeature)]}
   (mapcat (partial feat/split-feature-into-connex connect-fn) nfeature))
-
-(defn nfilter
-  "filter pixels from all nfeatures, removes empty features"
-  [function nfeature]
-  {:pre [(nfeat? nfeature)]}
-  (filter not-empty
-          (map #(filter function %) nfeature)))
-
-(defn nmap
-  "Applies function to all pixels, in all features"
-  [function nfeature]
-  {:pre [(nfeat? nfeature)]}
-  (map #(map function %) nfeature))
 
 (defn crop
   "crop the nfeature

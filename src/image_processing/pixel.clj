@@ -1,15 +1,6 @@
 (ns image-processing.pixel
   (:use [image-processing.basic-math :only [mean]]))
 
-(defmacro switch-pix-type [type expr-argb expr-gray expr-bw & expr-else]
-  (assert (or (nil? expr-else) (= 1 (count expr-else))))
-  (concat
-   `(case ~type
-      :argb ~expr-argb
-      :gray ~expr-gray
-      :bw ~expr-bw)
-   expr-else))
-
 (defn pix-type [pix]
   (cond
    (:bw pix) :bw
@@ -17,13 +8,28 @@
    (and (:r pix) (:g pix) (:b pix)) :argb
    :else nil))
 
+(defmacro switch-pix-type [type expr-argb expr-gray expr-bw]
+  `(case ~type
+     :argb ~expr-argb
+     :gray ~expr-gray
+     :bw ~expr-bw
+     (throw (IllegalArgumentException. "Pixel is not :argb, nor :gray, nor :bw. What should i do?"))))
+
+(defn argb<- [pixel]
+  (switch-pix-type (pix-type pixel)
+                   pixel
+                   ;using dissoc, because pixel may contain other
+                   ;information (such as :x :y)
+                   (let [intens (:gray pixel)]
+                     (into (dissoc pixel :gray) {:a 255 :r intens :g intens :b intens}))
+                   (let [intens (* 255 (:bw pixel))]
+                     (into (dissoc pixel :bw) {:a 255 :r intens :g intens :b intens}))))
+
 (defn grayscale-value [pixel]
-  (let [ptype (pix-type pixel)]
-    (switch-pix-type ptype
-      (apply min ((juxt :r :g :b) pixel))
-      (:gray pixel)
-      (* 255 (:bw pixel))
-      (throw (IllegalArgumentException. "Pixel is not ':argb', nor ':gray', wtf should i do? hehe")))))
+  (switch-pix-type (pix-type pixel)
+                   (apply min ((juxt :r :g :b) pixel))
+                   (:gray pixel)
+                   (* 255 (:bw pixel))))
 
 
 (defn color-distance
@@ -54,20 +60,17 @@
   (switch-pix-type type
                    {:a 255 :r 255 :g 255 :b 255}
                    {:gray 255}
-                   {:bw 1}
-                   (throw (IllegalArgumentException. "Unknown image type"))))
+                   {:bw 1}))
 
 (defn BLACK [type]
   (switch-pix-type type
                    {:a 255 :r 0 :g 0 :b 0}
                    {:gray 0}
-                   {:bw 0}
-                   (throw (IllegalArgumentException. "Unknown image type"))))
+                   {:bw 0}))
 
 (defn RED [type]
   (let [exception #(throw (IllegalArgumentException. "Unable to have RED pix of type " type))]
     (switch-pix-type type
                      {:a 255 :r 255 :g 0 :b 0}
-                     exception
                      exception
                      exception)))

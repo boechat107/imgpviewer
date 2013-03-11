@@ -4,13 +4,13 @@
             [image-processing.basic-math :as bmath])
 
   (:import [image_processing.image Image]))
-;an image feature is just a list of pixels
-;(pix-1 pix-2 ... pix-n)
+;;an image feature is just a list of pixels
+;;(pix-1 pix-2 ... pix-n)
 
-;this class is serves only to define functions for
-;image-feature, they are not closed operations
+;;this class is serves only to define functions for
+;;image-feature, they are not closed operations
 
-;upper abstraction, n-feat is closed =)
+;;upper abstraction, n-feat is closed =)
 
 (defn image-as-feature
   "Transform an Image to an image-feature"
