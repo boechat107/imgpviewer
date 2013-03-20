@@ -1,11 +1,11 @@
 (ns image-processing.test.hist-view-gui
-    (:import
-      (javax.imageio ImageIO) 
+  (:import
+     (javax.imageio ImageIO) 
       (java.io File))
     (:use
-      [clojure.test]
-      [seesaw core make-widget border]
-      [image-processing.hist-view-gui]))
+     [clojure.test]
+     [seesaw core make-widget border]
+     [image-processing.hist-view-gui]))
 
 ; FIXME: wait for a user action.
 
@@ -27,6 +27,6 @@
         show!)
     [hist-panel img-group]))
 
-(def z (create-frame))
+#_(def z (create-frame))
 
-(get-selected-img (second z))
+#_(get-selected-img (second z))

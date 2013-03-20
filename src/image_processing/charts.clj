@@ -11,9 +11,9 @@
                                     DefaultBoxAndWhiskerCategoryDataset]
       [org.jfree.data.xy XYSeries XYSeriesCollection])
     (:use
-      [image-processing.core :only (convert-image-to-buffImg)]
-      [image-processing.image]
-      [seesaw core make-widget]))
+     [image-processing.core :only (convert-image-to-buffImg)]
+     [image-processing.nfeatures :as nfeat]
+     [seesaw core make-widget]))
 
 
 ; TODO: option to rotate the histogram for horizontal histograms.
@@ -43,7 +43,7 @@
          background-img (or (:bg-img opts) nil)
          data-series (XYSeries. series-lab)
          dataset (XYSeriesCollection.)]
-     (dorun (map #(.add data-series %1 %2) (range 1 (inc (count x))) x)) 
+     (dorun (map #(.add data-series %1 %2) (range (count x)) x)) 
      (.addSeries dataset data-series)
      (let [chart (org.jfree.chart.ChartFactory/createHistogram
                    title
@@ -54,15 +54,17 @@
                    legend?		; no legend
                    true			; tooltips
                    false)] 
-       (.setBackgroundImage chart background-img) ; does not work
-       (.setBackgroundPaint chart (Color. 0 0 0 0)) ; does not work
+       ;(.setBackgroundImage chart background-img) ; does not work
+       ;(.setBackgroundPaint chart (Color. 0 0 0 0)) ; does not work
        chart))))
 
 
-(defmulti view (fn [arg] (type arg)))
+(defmulti view
+  (fn [arg & more]
+    (type arg)))
 
 (defmethod view org.jfree.chart.JFreeChart
-  [chart]
+  [chart & more]
   (let [window-title "JFree Chart"
         width 500
         height 400
@@ -73,15 +75,36 @@
     frame))
 
 (defmethod view java.awt.image.BufferedImage
-  [buff-img]
-  (-> (frame :title "Image Viewer" 
-             :content (label :border 10 :icon buff-img))
-      pack!
-      show!))
+  [buff-img & more]
+  (let [grid (grid-panel
+               :border 5
+               :hgap 10 :vgap 10
+               :columns (min 6 (max 1 (count more))) 
+               :items (map #(label :icon %) (conj more buff-img)))]
+    (-> (frame :title "Image Viewer" 
+               :content grid)
+        pack!
+        show!)))
 
 (defmethod view image_processing.image.Image
-  [img]
+  [img & more]
   (-> (frame :title "Image Viewer" 
              :content (label :border 10 :icon (convert-image-to-buffImg img)))
       pack!
       show!)) 
+
+
+(defn- view-nfeature [nfeat [{painttype :painttype}]]
+  (let [nfeat (if (= painttype :random)
+                (nfeat/paint-features-rnd-colors nfeat (nfeat/nfeat-pix-type nfeat))
+                nfeat)]
+    (-> nfeat
+        nfeat/draw-nfeat-on-blank-image
+        view)))
+
+(defmethod view clojure.lang.IPersistentCollection
+  [blob & more]
+  (if (nfeat/nfeat? blob)
+    (view-nfeature blob more)
+    (throw (IllegalArgumentException. "Could not dispatch on what you send me..."))))
+
