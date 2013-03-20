@@ -24,12 +24,14 @@
 
 ;(def k (get-subimage w 0 0 80 20))
 
-(def img (-> (load-file-buffImg "test/2dveac.jpg")
-             (convert-buffImg-to-image)
-             (to-binary 150)
-             (erode 0.15 0.15)
-             (convert-image-to-buffImg)
-             (scale-image 30 30)))
+
+
+;; (def img (-> (load-file-buffImg "test/2dveac.jpg")
+;;              (convert-buffImg-to-image)
+;;              (to-binary 150)
+;;              (erode 0.15 0.15)
+;;              (convert-image-to-buffImg)
+;;              (scale-image 30 30)))
 
 ;(def s (get-subimage img 0 6 (:width img) 30))
 
