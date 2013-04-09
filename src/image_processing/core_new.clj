@@ -21,6 +21,10 @@
   (letfn [(eq [t] (= type t))]
     (or (eq :argb) (eq :rgb) (eq :gray))))
 
+;;; 
+;;; Functions that depends of the library used to represent the image information.
+;;; 
+
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
@@ -47,11 +51,18 @@
        :gray (constructor [(ic/matrix data ncols)]))))
 
 (defn get-xy
-  "Returns the value of the representation of pixel [x, y]."
+  "Returns the value of the representation of pixel [x, y], where x increases 
+  for columns."
   [^Image img x y]
+  {:pre [(every? ic/matrix? (:channels img))]}
   (->> (:channels img)
-       (map #(ic/$ x y %))
+       ;; ys are the rows and xs are the columns. 
+       (map #(ic/$ y x %))
        vec))
+
+;;;
+;;; End of the section of code specific for the library used to represent an image.
+;;; 
 
 (defn argb<-intcolor
   "Convert the 32 bits color to ARGB. It returns a map {:a :r :g :b}."
@@ -74,7 +85,7 @@
   [filepath]
   (let [buff (ImageIO/read (File. filepath))
         ncols (.getWidth buff)
-        buff-data (for [x (range ncols), y (range (.getHeight buff))]
+        buff-data (for [y (range (.getHeight buff)), x (range ncols)]
                     (.getRGB buff x y))]
     (-> (map argb<-intcolor buff-data)
         (make-image ncols :argb))))
