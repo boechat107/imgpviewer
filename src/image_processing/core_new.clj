@@ -18,8 +18,11 @@
 
 (defn valid-type?
   [type]
-  (letfn [(eq [t] (= type t))]
-    (or (eq :argb) (eq :rgb) (eq :gray))))
+  (some #(= type %) [:argb :rgb :gray]))
+
+(defn color-type?
+  [img]
+  (some #(= % (:type img)) [:argb :rgb]))
 
 ;;; 
 ;;; Functions that depends of the library used to represent the image information.
