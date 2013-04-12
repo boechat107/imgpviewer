@@ -1,6 +1,6 @@
 (ns image-processing.processing
   (:require 
-    [image-processing.core :as ipc]
+    [image-processing.core-new :as ipc]
     [incanter.core :as ic]
     )
   )
@@ -14,6 +14,8 @@
   ;; Todo: Just two types of color spaces are assumed, argb and rgb.
   (let [[rm gm bm] (if (= :argb (:type img))
                      (rest (:channels img))
-                     (:channels img))])
-  (ic/matrix-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3))
-                 rm gm bm))
+                     (:channels img))]
+    (-> (ic/matrix-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3))
+                       rm gm bm)
+        flatten
+        (ipc/make-image (ipc/ncols img) :gray))))

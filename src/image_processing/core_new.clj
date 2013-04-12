@@ -94,6 +94,7 @@
         (make-image ncols :argb))))
 
 (defn to-buffered-image
+  ;;todo: consider grayscale images
   [img]
   {:pre [(image? img)]}
   (let [h (nrows img)
