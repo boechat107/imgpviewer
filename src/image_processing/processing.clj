@@ -5,7 +5,7 @@
     )
   )
 
-(defn color-to-gray
+(defn argb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
   http://en.wikipedia.org/wiki/Grayscale"
@@ -19,3 +19,13 @@
                        rm gm bm)
         flatten
         (ipc/make-image (ipc/ncols img) :gray))))
+
+(defn gray-to-argb
+  "Repeats the only grayscale channel for each color channel and returns a new ARGB
+  Image."
+  [img]
+  {:pre [(= :gray (:type img))]}
+  (let [gray-ch (first (:channels img))]
+    (ipc/make-image (conj (repeat 3 gray-ch)
+                          (ic/matrix 255 (ipc/nrows img) (ipc/ncols img)))
+                    :argb)))

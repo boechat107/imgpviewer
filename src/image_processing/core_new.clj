@@ -43,7 +43,10 @@
   pixels and the color space of the image. The data of an image is expected as a
   collection with each pixel value of the image, each row concatenated after the
   other."
-  [data ncols type]
+  ([data type]
+   {:pre [(valid-type? type) (or (every? ic/matrix? data) (ic/matrix? data))]}
+   (Image. (if (coll? data) data [data]) type))
+  ([data ncols type]
    {:pre [(valid-type? type) (or (every? coll? data) (coll? data))]}
    (letfn [(constructor [chs]
              (Image. chs type))]
@@ -51,7 +54,7 @@
        :argb (constructor (vec (map #(-> (map % data)
                                          (ic/matrix ncols))
                                     [:a :r :g :b])))
-       :gray (constructor [(ic/matrix data ncols)]))))
+       :gray (constructor [(ic/matrix data ncols)])))))
 
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
