@@ -56,7 +56,7 @@
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
   for columns."
-  [^Image img x y]
+  [img x y]
   {:pre [(every? ic/matrix? (:channels img))]}
   (->> (:channels img)
        ;; ys are the rows and xs are the columns. 
@@ -94,15 +94,20 @@
         (make-image ncols :argb))))
 
 (defn to-buffered-image
-  ;;todo: consider grayscale images
+  "Converts an ARGB Image to a BufferedImage."
   [img]
   {:pre [(image? img)]}
   (let [h (nrows img)
         w (ncols img)
         buff (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
-        ]
+        pix-val (if (= :gray (:type img))
+                  ;; The grayscale value is used for the three channels (RGB) and the
+                  ;; transparency is set to 255.
+                  (fn [x y] (conj (->> (get-xy img x y) first (repeat 3))
+                                  255))
+                  (fn [x y] (get-xy img x y)))]
     (doseq [[x y] (for [x (range w), y (range h)] [x y])]
-      (->> (get-xy img x y) 
+      (->> (pix-val x y) 
            intcolor<-argb
            (.setRGB buff x y)))
     buff))
