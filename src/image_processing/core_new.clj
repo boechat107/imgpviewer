@@ -28,6 +28,10 @@
   [img]
   (= :gray (:type img)))
 
+(defn argb-type?
+  [img]
+  (= :argb (:type img)))
+
 ;;; 
 ;;; Functions that depends of the library used to represent the image information.
 ;;; 

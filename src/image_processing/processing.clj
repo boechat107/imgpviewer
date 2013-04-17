@@ -43,15 +43,17 @@
   ;; variable mask size.
   (let [nr (ic/nrow (first channels))
         nc (ic/ncol (first channels))
-        real-xy (fn [rc c m] 
+        real-xy (fn [c m] 
                   ;; Returns c if it is between the boundaries of the image. 
-                  (if (or (neg? c) (== c m)) rc c))
+                  (min (dec m) (max 0 c)))
         kernel (fn [mat x y] 
                  (->> (for [ky (range (dec y) (+ 2 y)),
                             kx (range (dec x) (+ 2 x))]
-                        (ic/$ (real-xy y ky nr) (real-xy x kx nc) mat))
+                        (ic/$ (real-xy ky nr) (real-xy kx nc) mat))
                       (map #(* %1 %2) mask)
-                      ic/sum))]
+                      ic/sum
+                      (min 255)
+                      (max 0)))]
     (->> (map #(grid-apply (partial kernel %)
                            0 nc 0 nr)
               channels) 
@@ -69,3 +71,27 @@
                 corner  edge    corner]]
       (-> (convolve (:channels img) mask)
           (ipc/make-image (:type img))))))
+
+(defn- remove-alpha
+  "If the Image is ARGB, returns just the RGB channels as a list of matrices;
+  otherwise, the original channels are returned."
+  [img]
+  (if (ipc/argb-type? img) (rest (:channels img)) (:channels img)))
+
+(defn- include-alpha
+  "If the Image is ARGB, the first channel is conjoined with given list of
+  matrices."
+  [img data]
+  (if (ipc/argb-type? img) (conj data (first (:channels img))) data))
+
+(defn binarize
+  "Returns a new Image where each pixel value is set to 0 or 255. If the original
+  pixel value is below the threshold, the value is set to 0; otherwise, the value is
+  set to 255."
+  [img th]
+  (->> (remove-alpha img)
+       (map (fn [ch]
+              (ic/matrix-map #(if (> % th) 255 0) ch)))
+       (map ic/matrix)
+       (include-alpha img)
+       (#(ipc/make-image % (:type img)))))
