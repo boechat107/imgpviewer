@@ -1,5 +1,4 @@
 (ns image-processing.basic-math
-  (:require [clojure.contrib.math :as cmath])
   (:import
       ;[org.apache.commons.math.stat.descriptive.moment Variance]
       [java.lang Math]))

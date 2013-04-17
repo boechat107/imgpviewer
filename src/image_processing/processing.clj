@@ -17,8 +17,8 @@
                      (:channels img))]
     (-> (ic/matrix-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3))
                        rm gm bm)
-        flatten
-        (ipc/make-image (ipc/ncols img) :gray))))
+        ic/matrix
+        (ipc/make-image  :gray))))
 
 (defn gray-to-argb
   "Repeats the only grayscale channel for each color channel and returns a new ARGB
@@ -47,6 +47,7 @@
                   ;; Returns c if it is between the boundaries of the image. 
                   (min (dec m) (max 0 c)))
         kernel (fn [mat x y] 
+                 ;; Apply the mask on a pixel given by [x,y] and its neighbor pixels.
                  (->> (for [ky (range (dec y) (+ 2 y)),
                             kx (range (dec x) (+ 2 x))]
                         (ic/$ (real-xy ky nr) (real-xy kx nc) mat))
