@@ -10,7 +10,7 @@
     )
   )
 
-(defrecord Image [channels type])
+(defrecord Image [mat type])
 
 (defn image?
   [obj]
@@ -19,6 +19,10 @@
 (defn valid-type?
   [type]
   (some #(= type %) [:argb :rgb :gray]))
+
+(defn mat?
+  [obj]
+  (and (vector? obj) (every? vector? obj)))
 
 (defn color-type?
   [img]
@@ -39,40 +43,44 @@
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
-  (ic/nrow (first (:channels img))))
+  (count (:mat img)))
 
 (defn ncols
   "Returns the number of rows of an Image."
   [^Image img]
-  (ic/ncol (first (:channels img))))
+  (count (first (:mat img))))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
-  pixels and the color space of the image. The data of an image is expected as a
-  collection with each pixel value of the image, each row concatenated after the
-  other."
-  ([data type]
-   {:pre [(valid-type? type) (or (every? ic/matrix? data) (ic/matrix? data))]}
-   (Image. (if (coll? data) data [data]) type))
-  ([data ncols type]
-   {:pre [(valid-type? type) (or (every? coll? data) (coll? data))]}
-   (letfn [(constructor [chs]
-             (Image. chs type))]
-     (condp = type 
-       :argb (constructor (vec (map #(-> (map % data)
-                                         (ic/matrix ncols))
-                                    [:a :r :g :b])))
-       :gray (constructor [(ic/matrix data ncols)])))))
+  pixels and the color space of the image. 
+  data-mat must be something like this:
+  [[    ]
+   [    ]
+   ...
+   [    ]]
+  data-array must be just a list of vectors (for RGB images) or of numbers, sorted by
+  their position in the image.
+  0 +----------------+ w - 1
+    |                |
+    |                |
+    +----------------+ h*w - 1"
+  ([data-mat type]
+   {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
+   (Image.  data-mat type))
+  ([data-array ncols type]
+   {:pre [(valid-type? type) (coll? data)]}
+   (letfn [(constructor [m] (Image. m type))]
+     (->> data-array 
+       (partition ncols)
+       (map vec)
+       vec
+       constructor))))
 
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
   for columns."
   [img x y]
-  {:pre [(every? ic/matrix? (:channels img))]}
-  (->> (:channels img)
-       ;; ys are the rows and xs are the columns. 
-       (map #(ic/$ y x %))
-       vec))
+  (get-in (:mat img) [y x]))
 
 ;;;
 ;;; End of the section of code specific for the library used to represent an image.
@@ -96,13 +104,14 @@
         (.intValue))))
 
 (defn load-file-image
+  "Returns a RGB Image from a file image."
   [filepath]
   (let [buff (ImageIO/read (File. filepath))
         ncols (.getWidth buff)
         buff-data (for [y (range (.getHeight buff)), x (range ncols)]
                     (.getRGB buff x y))]
-    (-> (map argb<-intcolor buff-data)
-        (make-image ncols :argb))))
+    (-> (map (comp (juxt :r :g :b) argb<-intcolor) buff-data)
+        (make-image ncols argb))))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
@@ -114,9 +123,10 @@
         pix-val (if (= :gray (:type img))
                   ;; The grayscale value is used for the three channels (RGB) and the
                   ;; transparency is set to 255.
+                  ;; todo: rewrite 
                   (fn [x y] (conj (->> (get-xy img x y) first (repeat 3))
                                   255))
-                  (fn [x y] (get-xy img x y)))]
+                  (fn [x y] (conj (get-xy img x y) 255)))]
     (doseq [[x y] (for [x (range w), y (range h)] [x y])]
       (->> (pix-val x y) 
            intcolor<-argb
