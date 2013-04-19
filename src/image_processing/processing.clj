@@ -30,6 +30,13 @@
                           (ic/matrix 255 (ipc/nrows img) (ipc/ncols img)))
                     :argb)))
 
+(defn rgb-to-argb 
+  "Adds the transparency channel to a rgb Image."
+  [img]
+  {:pre [(= :rgb (:type img))]}
+  
+  )
+
 (defn grid-apply
   "Returns a sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
