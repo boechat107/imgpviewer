@@ -77,10 +77,15 @@
 
 (defn mat-map
   "Applies a function f to each element of the matrix mat, returning a new mat
-  structure with the new values."
+  structure (vector of vectors) with the new values."
   ([f mat]
-   (map (fn [r]
-          
-          ))
+   (mapv #(mapv f %) mat))
+  ([f m & ms]
+   (apply mapv (fn [& a] (apply mapv f a)) m ms)))
+
+(defn mat-pmap
+  "Like mat-map, except f is applied in parallel."
+  ([f mat]
+   ;; todo
    )
   )
