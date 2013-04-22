@@ -59,14 +59,13 @@
     +----------------+ h*w - 1"
   ([data-mat type]
    {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
-   (Image.  data-mat type))
+   (Image. data-mat type))
   ([data-array ncols type]
-   {:pre [(valid-type? type) (coll? data)]}
+   {:pre [(valid-type? type) (sequential? data-array)]}
    (letfn [(constructor [m] (Image. m type))]
      (->> data-array 
        (partition ncols)
-       (map vec)
-       vec
+       (mapv vec)
        constructor))))
 
 (defn get-xy

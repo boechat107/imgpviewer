@@ -1,41 +1,37 @@
 (ns image-processing.processing
   (:require 
     [image-processing.core-new :as ipc]
+    [image-processing.utils :as ut]
     [incanter.core :as ic]
     )
   )
 
-(defn argb-to-gray
+(defn rgb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
   http://en.wikipedia.org/wiki/Grayscale"
   [img]
-  {:pre [(ipc/color-type? img)]}
-  ;; Todo: Just two types of color spaces are assumed, argb and rgb.
-  (let [[rm gm bm] (if (= :argb (:type img))
-                     (rest (:channels img))
-                     (:channels img))]
-    (-> (ic/matrix-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3))
-                       rm gm bm)
-        ic/matrix
-        (ipc/make-image  :gray))))
+  {:pre [(= :rgb (:type img))]}
+  (->> (:mat img)
+       ;; todo: only rgb is covered.
+       (ipc/mat-map #(let [[r g b] %]
+                       (+ (* 0.2126 r) (* 0.7152 g) (* 0.0722 b))))
+       (#(ipc/make-image % :gray))))
 
-(defn gray-to-argb
-  "Repeats the only grayscale channel for each color channel and returns a new ARGB
+(defn gray-to-rgb
+  "Repeats the only grayscale channel for each color channel and returns a new RGB
   Image."
   [img]
   {:pre [(= :gray (:type img))]}
-  (let [gray-ch (first (:channels img))]
-    (ipc/make-image (conj (repeat 3 gray-ch)
-                          (ic/matrix 255 (ipc/nrows img) (ipc/ncols img)))
-                    :argb)))
+  (-> (ipc/mat-map #(vector % % %) (:mat img))
+      (ipc/make-image :rgb)))
 
 (defn rgb-to-argb 
   "Adds the transparency channel to a rgb Image."
   [img]
   {:pre [(= :rgb (:type img))]}
-  
-  )
+  (-> (ipc/mat-map #(vector 255 (0 %) (1 %) (2 %)) (:mat img))
+      (ipc/make-image :argb)))
 
 (defn grid-apply
   "Returns a sequence resulting from the application of the function f to each 
@@ -45,27 +41,36 @@
     (f x y)))
 
 (defn convolve
-  [channels mask]
+  [img mask]
   ;; todo: speed up with discrete Fourier transform.
   ;; variable mask size.
-  (let [nr (ic/nrow (first channels))
-        nc (ic/ncol (first channels))
+  (let [nr (ipc/nrows img)
+        nc (ipc/ncols img)
         real-xy (fn [c m] 
                   ;; Returns c if it is between the boundaries of the image. 
                   (min (dec m) (max 0 c)))
-        kernel (fn [mat x y] 
+        kernel (fn [x y] 
                  ;; Apply the mask on a pixel given by [x,y] and its neighbor pixels.
                  (->> (for [ky (range (dec y) (+ 2 y)),
                             kx (range (dec x) (+ 2 x))]
-                        (ic/$ (real-xy ky nr) (real-xy kx nc) mat))
-                      (map #(* %1 %2) mask)
-                      ic/sum
-                      (min 255)
-                      (max 0)))]
-    (->> (map #(grid-apply (partial kernel %)
-                           0 nc 0 nr)
-              channels) 
-      (map #(ic/matrix % nc)))))
+                        (to-vec 
+                          (ipc/get-xy img (real-xy kx nc) (real-xy ky nr))))
+                      ;; Multiplication of each pixel of the mask.
+                      (map #(ut/mult %1 %2) mask)
+                      (#(if (ipc/gray-type? img)
+                          ;; When img is a grayscale Image, their pixels value are
+                          ;; just numbers instead of a vector of numbers.
+                          (->> (ic/sum %)
+                               (min 255)
+                               (max 0))
+                          (->> (map ic/sum)
+                               (map #(min % 255))
+                               (map #(max %0))
+                               vec)))))]
+    (->> (grid-apply kernel 0 nc 0 nr)
+         (partition nc)
+         (mapv vec)
+         (#(ipc/make-image % (:type img))))))
 
 (defn erode
   "Erodes a Image, a basic operation in the area of the mathematical morphology.
