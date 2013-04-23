@@ -30,7 +30,14 @@
   "Adds the transparency channel to a rgb Image."
   [img]
   {:pre [(= :rgb (:type img))]}
-  (-> (ipc/mat-map #(vector 255 (0 %) (1 %) (2 %)) (:mat img))
+  (-> (ipc/mat-map #(concat [255] %) (:mat img))
+      (ipc/make-image :argb)))
+
+(defn gray-to-argb 
+  "Converts the color space from grayscale to ARGB."
+  [img]
+  {:pre [(= :gray (:type img))]}
+  (-> (ipc/mat-map #(vector 255 % % %) (:mat img))
       (ipc/make-image :argb)))
 
 (defn grid-apply
@@ -55,6 +62,9 @@
   ;; variable mask size.
   (let [nr (ipc/nrows img)
         nc (ipc/ncols img)
+        sample (ipc/get-xy img 0 0)
+        ;; Dimensionality of the color space.
+        nv (when (coll? sample) (count sample))
         real-xy (fn [c m] 
                   ;; Returns c if it is between the boundaries of the image. 
                   (min (dec m) (max 0 c)))
@@ -62,11 +72,11 @@
                  ;; Apply the mask on a pixel given by [x,y] and its neighbor pixels.
                  (->> (for [ky (range (dec y) (+ 2 y)),
                             kx (range (dec x) (+ 2 x))]
-                        (to-vec 
-                          (ipc/get-xy img (real-xy kx nc) (real-xy ky nr))))
+                        (ipc/get-xy img (real-xy kx nc) (real-xy ky nr)))
                       ;; Multiplication of each pixel of the mask.
-                      (map #(ut/mult %1 %2) mask)
-                      (if-map ic/sum)
+                      (map #(ut/mult-vec %1 %2) mask)
+                      (reduce #(if nv (map + %1 %2) (+ %1 %2)) 
+                              (if nv (repeat nv 0) 0))
                       (if-map #(min 255 %))
                       (if-map #(max 0 %))))]
     (->> (grid-apply kernel 0 nc 0 nr)
