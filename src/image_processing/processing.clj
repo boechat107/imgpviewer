@@ -40,6 +40,15 @@
   (for [y (range y-min y-max), x (range x-min x-max)]
     (f x y)))
 
+(defn- if-map 
+  "If the argument is a collection, applies f to every element, returning a vector
+  (mapv is used); otherwise, f is directly applied to the argument.
+  The initial purpose of this function is apply operations to images of different
+  color spaces, like grayscale (pixels value are just numbers) and rgb (pixels values
+  are a vector of numbers)."
+  [f a]
+  (if (coll? a) (mapv f a) (f a)))
+
 (defn convolve
   [img mask]
   ;; todo: speed up with discrete Fourier transform.
@@ -57,16 +66,9 @@
                           (ipc/get-xy img (real-xy kx nc) (real-xy ky nr))))
                       ;; Multiplication of each pixel of the mask.
                       (map #(ut/mult %1 %2) mask)
-                      (#(if (ipc/gray-type? img)
-                          ;; When img is a grayscale Image, their pixels value are
-                          ;; just numbers instead of a vector of numbers.
-                          (->> (ic/sum %)
-                               (min 255)
-                               (max 0))
-                          (->> (map ic/sum)
-                               (map #(min % 255))
-                               (map #(max %0))
-                               vec)))))]
+                      (if-map ic/sum)
+                      (if-map #(min 255 %))
+                      (if-map #(max 0 %))))]
     (->> (grid-apply kernel 0 nc 0 nr)
          (partition nc)
          (mapv vec)
@@ -82,29 +84,13 @@
     (let [mask [corner  edge    corner
                 edge    1.0     edge
                 corner  edge    corner]]
-      (-> (convolve (:channels img) mask)
-          (ipc/make-image (:type img))))))
-
-(defn- remove-alpha
-  "If the Image is ARGB, returns just the RGB channels as a list of matrices;
-  otherwise, the original channels are returned."
-  [img]
-  (if (ipc/argb-type? img) (rest (:channels img)) (:channels img)))
-
-(defn- include-alpha
-  "If the Image is ARGB, the first channel is conjoined with given list of
-  matrices."
-  [img data]
-  (if (ipc/argb-type? img) (conj data (first (:channels img))) data))
+      (convolve img mask))))
 
 (defn binarize
   "Returns a new Image where each pixel value is set to 0 or 255. If the original
   pixel value is below the threshold, the value is set to 0; otherwise, the value is
   set to 255."
   [img th]
-  (->> (remove-alpha img)
-       (map (fn [ch]
-              (ic/matrix-map #(if (> % th) 255 0) ch)))
-       (map ic/matrix)
-       (include-alpha img)
-       (#(ipc/make-image % (:type img)))))
+  (letfn [(threshold [n] (if (> n th) 255 0))]
+    (-> (ipc/mat-map #(if-map threshold %) (:mat img))
+        (ipc/make-image (:type img)))))
