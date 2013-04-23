@@ -2,6 +2,7 @@
   (:require 
     [image-processing.core-new :as ipc]
     [image-processing.processing :as pr]
+    [image-processing.helpers :as ih]
     [image-processing.core :as oc]
     [image-processing.transformations :as tr]
     [image-processing.charts :as ch]
@@ -11,11 +12,11 @@
 
 (defn time-test 
   []
-  (let [img (time (ipc/load-file-image "test/test.jpg")),
-        gray (time (pr/argb-to-gray img)),
+  (let [img (time (ih/load-file-image "test/test.jpg")),
+        gray (time (pr/rgb-to-gray img)),
         bw (time (pr/binarize gray 100)),
         er (time (pr/erode bw))]
-    (time (ipc/view img gray bw er))))
+    (time (ih/view img gray bw er))))
 
 (defn time-test-two 
   []
