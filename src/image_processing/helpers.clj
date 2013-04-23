@@ -36,24 +36,21 @@
         buff-data (for [y (range (.getHeight buff)), x (range ncols)]
                     (.getRGB buff x y))]
     (-> (map (comp (juxt :r :g :b) argb<-intcolor) buff-data)
-        (make-image ncols argb))))
+        (ipc/make-image ncols :rgb))))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
   [img]
-  {:pre [(image? img)]}
-  (let [h (nrows img)
-        w (ncols img)
+  {:pre [(ipc/image? img)]}
+  (let [h (ipc/nrows img)
+        w (ipc/ncols img)
         buff (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
-        pix-val (if (= :gray (:type img))
-                  ;; The grayscale value is used for the three channels (RGB) and the
-                  ;; transparency is set to 255.
-                  ;; todo: rewrite 
-                  (fn [x y] (conj (->> (get-xy img x y) first (repeat 3))
-                                  255))
-                  (fn [x y] (conj (get-xy img x y) 255)))]
+        argb-img (condp = (:type img)
+                   :gray (pr/gray-to-argb img)
+                   :rgb (pr/rgb-to-argb img)
+                   :argb img)]
     (doseq [[x y] (for [x (range w), y (range h)] [x y])]
-      (->> (pix-val x y) 
+      (->> (ipc/get-xy argb-img x y) 
            intcolor<-argb
            (.setRGB buff x y)))
     buff))
