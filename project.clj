@@ -1,8 +1,6 @@
-(defproject image-processing "1.0.12-SNAPSHOT"
-  :description "FIXME: write description"
+(defproject image-processing "2.0.0-SNAPSHOT"
+  :description "An image processing library using Clojure data structures."
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [incanter/jfreechart "1.0.13-no-gnujaxp"]
                  [incanter/incanter-core "1.5.0-SNAPSHOT"]
-                 [seesaw "1.4.1"]
-                 [org.clojure/tools.trace "0.7.3"]]
+                 [seesaw "1.4.3"]]
   :jar-exclusions [#"(?:^|/).svn/"])
