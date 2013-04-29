@@ -10,7 +10,7 @@
    :white [255 255 255]})
 
 (defn abs-distance
-  "Returns the absolute distance between rgb colors."
+  "Returns the absolute distance between rgb colors. Also known as Manhattan distance."
   [c1 c2]
   (->> (map - c1 c2)
        (map ic/abs)

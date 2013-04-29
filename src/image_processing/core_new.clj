@@ -88,3 +88,11 @@
    ;; todo
    )
   )
+
+(defn mat-map-indexed 
+  "Like mat-map, but the function must receive the row and column indexes as the
+  first two arguments."
+  ([f mat]
+   (vec (map-indexed (fn [r-idx row] 
+                       (vec (map-indexed #(f r-idx %1 %2) row)))
+                     mat))))
