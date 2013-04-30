@@ -14,7 +14,6 @@
   [img]
   {:pre [(= :rgb (:type img))]}
   (->> (:mat img)
-       ;; todo: only rgb is covered.
        (ipc/mat-map #(let [[r g b] %]
                        (+ (* 0.2126 r) (* 0.7152 g) (* 0.0722 b))))
        (#(ipc/make-image % :gray))))
@@ -56,7 +55,7 @@
        ;; Splits the pixels in 4 slices.
        (partition-all (-> (inc (- y-max y-min))
                           (* (inc (- x-max x-min)))
-                          (/ 4)
+                          (/ 2)
                           int))
        (pmap (fn [slice]
                (doall (map #(f (first %) (second %)) slice))))
@@ -108,7 +107,7 @@
   ;; variable mask size.
   (let [nr (ipc/nrows img)
         nc (ipc/ncols img)]
-    (->> (grid-apply #(apply-kernel img %1 %2 mask) 0 nc 0 nr)
+    (->> (pgrid-apply #(apply-kernel img %1 %2 mask) 0 nc 0 nr)
          (partition nc)
          (mapv vec)
          (#(ipc/make-image % (:type img))))))
@@ -156,10 +155,19 @@
                  (map #(coef (ipc/get-xy img x y) %))
                  ((fn [cs] (map #(/ % (ic/sum cs)) cs)))
                  (apply-kernel img x y)))]
-    (->> (pgrid-apply pix-val
-                     0 (ipc/ncols img)
-                     0 (ipc/nrows img))
-      (partition (ipc/ncols img))
-      (mapv vec)
+    (->> (reduce (fn [m y]
+                   (->> (reduce #(conj! %1 (pix-val %2 y))
+                                (transient [])
+                                (range (ipc/ncols img)))
+                        persistent!
+                        (conj! m))) 
+                 (transient [])
+                 (range (ipc/nrows img)))
+      persistent!
+;      (grid-apply pix-val
+;                  0 (ipc/ncols img)
+;                  0 (ipc/nrows img))
+;      (partition (ipc/ncols img))
+;      (mapv vec)
       (#(ipc/make-image % (:type img)))
       )))

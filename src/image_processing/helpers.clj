@@ -31,12 +31,14 @@
 (defn load-file-image
   "Returns a RGB Image from a file image."
   [filepath]
-  (let [buff (ImageIO/read (File. filepath))
-        ncols (.getWidth buff)
-        buff-data (for [y (range (.getHeight buff)), x (range ncols)]
-                    (.getRGB buff x y))]
-    (-> (map (comp (juxt :r :g :b) argb<-intcolor) buff-data)
-        (ipc/make-image ncols :rgb))))
+  (let [buff (ImageIO/read (File. filepath))]
+    (-> (mapv (fn [y]
+                (mapv (comp (juxt :r :g :b)
+                            argb<-intcolor 
+                            #(.getRGB buff % y)) 
+                      (range (.getWidth buff))))
+              (range (.getHeight buff)))
+        (ipc/make-image :rgb))))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
@@ -49,10 +51,11 @@
                    :gray (pr/gray-to-argb img)
                    :rgb (pr/rgb-to-argb img)
                    :argb img)]
-    (doseq [[x y] (for [x (range w), y (range h)] [x y])]
-      (->> (ipc/get-xy argb-img x y) 
-           intcolor<-argb
-           (.setRGB buff x y)))
+    (doseq [[y row] (map-indexed #(vector %1 %2) (:mat argb-img))]
+      (doseq [[x elem] (map-indexed #(vector %1 %2) row)]
+        (->> elem 
+             intcolor<-argb
+             (.setRGB buff x y))))
     buff))
 
 (defn view 
