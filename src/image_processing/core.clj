@@ -154,6 +154,20 @@
     (fn [lin & args] (count (filter #(zero? (:bw %)) lin)))
     (partition (:width img) (:pixels img))))
 
+(defn grayscale-histogram
+  "Returns a list where each element is the count of gray pixels with that intensity
+  e.g.
+    (30, 40, 50 ... 20)
+      ^               ^- Count of pixels with gray intensity of 255
+      |- Count of pixels with gray intensity of 0"  
+  [img]
+  (let [freq-map (->> img
+                      to-grayscale
+                      :pixels
+                      (map :gray)
+                      frequencies)]
+    (map #(get freq-map % 0) (range 256))))
+
 
 (defn- convolution
   "General routine to convolute a mask over a Image."
