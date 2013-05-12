@@ -3,7 +3,7 @@
     [image-processing.core-new :as ipc]
     [image-processing.processing :as pr]
     [seesaw.core :as w]
-    [mikera.vectorz.matrix :as mz]
+    [clojure.core.matrix :as mx]
     )
   (:import 
     [java.io File]
@@ -35,8 +35,7 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        chs (repeatedly 3 #(mz/new-matrix nr nc))
-        ]
+        chs (repeatedly 3 #(mx/new-matrix nr nc))]
     (dotimes [x (range nr)]
       (dotimes [y (range nc)]
         (let [pix (->> (.getRGB buff x y)
@@ -58,11 +57,10 @@
                    :gray (pr/gray-to-argb img)
                    :rgb (pr/rgb-to-argb img)
                    :argb img)]
-    (dorun 
-      (map #(->> (intcolor<-argb %1)
-                 (.setRGB buff (first %2) (second %2))) 
-           (ipc/get-seq-pixels argb-img)
-           (for [y (range h), x (range w)] [x y])))
+    (for [y (range h), x (range w)] 
+      (->> (ipc/get-pixel argb-img x y)
+           intcolor<-argb
+           (.setRGB buff x y)))
     buff))
 
 (defn view 
