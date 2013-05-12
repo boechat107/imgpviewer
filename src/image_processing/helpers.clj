@@ -3,6 +3,7 @@
     [image-processing.core-new :as ipc]
     [image-processing.processing :as pr]
     [seesaw.core :as w]
+    [mikera.vectorz.matrix :as mz]
     )
   (:import 
     [java.io File]
@@ -31,14 +32,20 @@
 (defn load-file-image
   "Returns a RGB Image from a file image."
   [filepath]
-  (let [buff (ImageIO/read (File. filepath))]
-    (-> (mapv (fn [y]
-                (mapv (comp (juxt :r :g :b)
-                            argb<-intcolor 
-                            #(.getRGB buff % y)) 
-                      (range (.getWidth buff))))
-              (range (.getHeight buff)))
-        (ipc/make-image :rgb))))
+  (let [buff (ImageIO/read (File. filepath))
+        nr (.getHeight buff)
+        nc (.getWidth buff)
+        chs (repeatedly 3 #(mz/new-matrix nr nc))
+        ]
+    (dotimes [x (range nr)]
+      (dotimes [y (range nc)]
+        (let [pix (->> (.getRGB buff x y)
+                       argb<-intcolor)]
+          (dorun 
+            (map #(->> (%2 pix) (mz/set %1 x y))
+                 chs
+                 [:r :g :b])))))
+    (ipc/make-image chs :rgb)))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
@@ -51,11 +58,11 @@
                    :gray (pr/gray-to-argb img)
                    :rgb (pr/rgb-to-argb img)
                    :argb img)]
-    (doseq [[y row] (map-indexed #(vector %1 %2) (:mat argb-img))]
-      (doseq [[x elem] (map-indexed #(vector %1 %2) row)]
-        (->> elem 
-             intcolor<-argb
-             (.setRGB buff x y))))
+    (dorun 
+      (map #(->> (intcolor<-argb %1)
+                 (.setRGB buff (first %2) (second %2))) 
+           (ipc/get-seq-pixels argb-img)
+           (for [y (range h), x (range w)] [x y])))
     buff))
 
 (defn view 

@@ -2,11 +2,12 @@
   (:require 
     [incanter.core :as ic]
     [clojure.core.matrix :as mx]
+    [mikera.vectorz.matrix :as mz]
     ))
 
 (mx/set-current-implementation :vectorz)
 
-(defrecord Image [mat type])
+(defrecord Image [chs type])
 
 (defn image?
   [obj]
@@ -39,35 +40,40 @@
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
-  (mx/row-count (:mat img)))
+  (mx/row-count (first (:chs img))))
 
 (defn ncols
   "Returns the number of rows of an Image."
   [^Image img]
-  (mx/column-count (:mat img)))
+  (mx/column-count (first (:chs img))))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
   pixels and the color space of the image. 
-  The image data is stored as clojure.matrix and the value of each pixel is
-  represented by a vector of scalars (for colored images) or by just a scalar (for
-  grayscale images)."
-  ([data-mat type]
-   {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
-   (Image. (mx/matrix data-mat) type))
-  ([data-array ncols type]
-   {:pre [(valid-type? type) (sequential? data-array)]}
-   (->> data-array 
-        (partition ncols)
-        (mapv vec)
-        mx/matrix
-        (Image. type))))
+  The image data is stored as different channels, each one as a clojure.matrix, and
+  the value of each pixel a double value."
+  ([data-chs type]
+   {:pre [(valid-type? type) (every? mz/matrix? data-chs)]}
+   (Image. data-chs type)))
 
-(defn get-xy
+(defn get-pixel
   "Returns the value of the representation of pixel [x, y], where x increases 
   for columns."
   [img x y]
-  (get-in (:mat img) [y x]))
+  (if (color-type? img)
+    (-> (mx/slice (:mat img) y)
+        (mx/mget x))
+    (mx/mget (:mat img) x y)))
+
+(defn get-seq-pixels 
+  "Returns a sequence that contains the value of each pixel, one row after the
+  other."
+  [img]
+  (let [pixs (mx/eseq (:mat img))]
+    (condp = (:type img)
+      :gray pixs
+      :rgb (partition 3 pixs)
+      :argb (partition 4 pixs))))
 
 (defn mat-map
   "Applies a function f to each element of the matrix mat, returning a new mat
