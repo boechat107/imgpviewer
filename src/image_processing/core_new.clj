@@ -1,7 +1,10 @@
 (ns image-processing.core-new
   (:require 
     [incanter.core :as ic]
+    [clojure.core.matrix :as mx]
     ))
+
+(mx/set-current-implementation :vectorz)
 
 (defrecord Image [mat type])
 
@@ -15,7 +18,7 @@
 
 (defn mat?
   [obj]
-  (and (vector? obj) (every? vector? obj)))
+  (mx/matrix? obj))
 
 (defn color-type?
   [img]
@@ -36,37 +39,29 @@
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
-  (count (:mat img)))
+  (mx/row-count (:mat img)))
 
 (defn ncols
   "Returns the number of rows of an Image."
   [^Image img]
-  (count (first (:mat img))))
+  (mx/column-count (:mat img)))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
   pixels and the color space of the image. 
-  data-mat must be something like this:
-  [[    ]
-   [    ]
-   ...
-   [    ]]
-  data-array must be just a list of vectors (for RGB images) or of numbers, sorted by
-  their position in the image.
-  0 +----------------+ w - 1
-    |                |
-    |                |
-    +----------------+ h*w - 1"
+  The image data is stored as clojure.matrix and the value of each pixel is
+  represented by a vector of scalars (for colored images) or by just a scalar (for
+  grayscale images)."
   ([data-mat type]
    {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
-   (Image. data-mat type))
+   (Image. (mx/matrix data-mat) type))
   ([data-array ncols type]
    {:pre [(valid-type? type) (sequential? data-array)]}
-   (letfn [(constructor [m] (Image. m type))]
-     (->> data-array 
-       (partition ncols)
-       (mapv vec)
-       constructor))))
+   (->> data-array 
+        (partition ncols)
+        (mapv vec)
+        mx/matrix
+        (Image. type))))
 
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
