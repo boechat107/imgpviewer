@@ -33,10 +33,6 @@
   [img]
   (= :argb (:type img)))
 
-;;; 
-;;; Functions that depends of the library used to represent the image information.
-;;; 
-
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
@@ -44,8 +40,20 @@
 
 (defn ncols
   "Returns the number of rows of an Image."
-  [^Image img]
+  [img]
   (mx/column-count (first (:chs img))))
+
+(defn new-channel-matrix 
+  "Returns a matrix used to represent a color channel data."
+  ;; todo: pull request to mikera to fill a matrix.
+  ;; problem with x y indexing
+  ([nrows ncols] (new-channel-matrix nrows ncols 0.0))
+  ([nrows ncols dv]
+   (let [m (mx/new-matrix nrows ncols)] 
+     (dotimes [r nrows]
+       (dotimes [c ncols]
+         (mx/mset! m r c dv)))
+     m)))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
@@ -54,7 +62,8 @@
   the value of each pixel a double value."
   ([data-chs type]
    {:pre [(valid-type? type) (every? mz/matrix? data-chs)]}
-   (Image. data-chs type)))
+   (Image. (if (vector? data-chs) data-chs (vec data-chs)) 
+           type)))
 
 (defn get-pixel
   "Returns the value of the representation of pixel [x, y], where x increases 
@@ -64,8 +73,9 @@
        (mapv #(mx/mget % x y))))
 
 (defn img-map
-  "Applies a function f to each pixel of an image. The function f should accept a 
-  vector with the value of each color channel of the pixel.
+  "Applies a function f to each pixel of an image, over each channel of the pixel.
+  The function f should accept a scalar representing the value of a color channel of
+  the pixel.
   Returns a new image with the same color space."
   ([f img]
    (-> (mapv #(mx/emap f %) (:chs img))
@@ -83,9 +93,10 @@
 (defn chs-map
   "Like img-map, but f should accept a vector of scalars, each one representing the pixel
   value of a color channel. 
-  Returns a new grayscale image with just one color channel."
+  Returns a new image with just one color channel."
   [f img]
    (-> (apply mx/emap f (:chs img))
+       vector
        (make-image :gray)))
 
 ; (defn mat-pmap

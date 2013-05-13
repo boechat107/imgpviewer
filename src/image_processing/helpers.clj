@@ -36,15 +36,15 @@
         nr (.getHeight buff)
         nc (.getWidth buff)
         chs (repeatedly 3 #(mx/new-matrix nr nc))]
-    (dotimes [x (range nr)]
-      (dotimes [y (range nc)]
-        (let [pix (->> (.getRGB buff x y)
+    (dotimes [c nc]
+      (dotimes [r nr]
+        (let [pix (->> (.getRGB buff c r)
                        argb<-intcolor)]
           (dorun 
-            (map #(->> (%2 pix) (mz/set %1 x y))
+            (map #(->> (%2 pix) (mx/mset! %1 r c))
                  chs
                  [:r :g :b])))))
-    (ipc/make-image chs :rgb)))
+    (ipc/make-image (vec chs) :rgb)))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
