@@ -22,12 +22,11 @@
 
 (defn intcolor<-argb
   "Converts the components ARGB to a 32 bits integer color."
-  [argb]
-  (let [[a r g b] (map int argb)]
-    (-> (bit-or (bit-shift-left a 24)
-                (bit-or (bit-shift-left r 16)
-                        (bit-or (bit-shift-left g 8) b)))
-        (.intValue))))
+  [a r g b]
+  (-> (bit-or (bit-shift-left (int a) 24)
+              (bit-or (bit-shift-left (int r) 16)
+                      (bit-or (bit-shift-left (int g) 8) (int b))))
+      (.intValue)))
 
 (defn load-file-image
   "Returns a RGB Image from a file image."
@@ -53,14 +52,12 @@
   (let [h (ipc/nrows img)
         w (ipc/ncols img)
         buff (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
-        argb-img (condp = (:type img)
-                   :gray (pr/gray-to-argb img)
-                   :rgb (pr/rgb-to-argb img)
-                   :argb img)]
-    (for [y (range h), x (range w)] 
-      (->> (ipc/get-pixel argb-img x y)
-           intcolor<-argb
-           (.setRGB buff x y)))
+        rgb-img (if (= (:type img) :gray) (pr/gray-to-rgb img) img)]
+    (dorun 
+      (for [y (range h), x (range w)] 
+        (->> (ipc/get-pixel rgb-img x y)
+             (apply intcolor<-argb 255)
+             (.setRGB buff x y))))
     buff))
 
 (defn view 

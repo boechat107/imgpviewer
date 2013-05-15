@@ -8,6 +8,9 @@
     )
   )
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (defn rgb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
@@ -15,8 +18,7 @@
   [img]
   {:pre [(= :rgb (:type img))]}
   (->> img
-       (ipc/chs-map #(let [[r g b] [%1 %2 %3]]
-                       (+ (* 0.2126 r) (* 0.7152 g) (* 0.0722 b))))))
+       (ipc/chs-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3)))))
 
 (defn gray-to-rgb
   "Repeats the only grayscale channel for each color channel and returns a new RGB
@@ -31,6 +33,7 @@
   [img]
   {:pre [(= :rgb (:type img))]}
   (-> (:chs img)
+      seq
       (conj (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img) 255))
       (ipc/make-image :argb)))
 

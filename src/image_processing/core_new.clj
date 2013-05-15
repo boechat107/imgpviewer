@@ -5,6 +5,9 @@
     [mikera.vectorz.matrix :as mz]
     ))
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (mx/set-current-implementation :vectorz)
 
 (defrecord Image [chs type])
@@ -66,11 +69,10 @@
            type)))
 
 (defn get-pixel
-  "Returns the value of the representation of pixel [x, y], where x increases 
-  for columns."
+  "Returns a vector with the values of the pixel [x, y] for each channel."
   [img x y]
   (->> (:chs img)
-       (mapv #(mx/mget % x y))))
+       (mapv #(mx/mget % y x))))
 
 (defn img-map
   "Applies a function f to each pixel of an image, over each channel of the pixel.
