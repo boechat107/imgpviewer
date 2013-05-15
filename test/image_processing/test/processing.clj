@@ -7,7 +7,7 @@
 
 (defn time-test 
   []
-  (let [img (time (ih/load-file-image "test/test.jpg")),
+  (let [img (time (ih/load-file-image "test/cnh.png"))
         gray (time (pr/rgb-to-gray img)),
 ;        bw (time (pr/binarize gray 100)),
 ;        er (time (pr/erode bw))

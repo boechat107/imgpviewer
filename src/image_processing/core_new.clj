@@ -97,9 +97,22 @@
   value of a color channel. 
   Returns a new image with just one color channel."
   [f img]
-   (-> (apply mx/emap f (:chs img))
-       vector
-       (make-image :gray)))
+  (let [new-ch (mx/new-matrix (nrows img) (ncols img))
+        n-chs (count (:chs img))
+        chs-vals (double-array n-chs)]
+    (dotimes [r (nrows img)]
+      (dotimes [c (ncols img)]
+        (dotimes [ch-idx n-chs]
+          (->> (mx/mget ((:chs img) ch-idx) r c)
+               (aset-double chs-vals ch-idx)))
+        (->> (seq chs-vals)
+             (apply f)
+             (mx/mset! new-ch r c))))
+    (make-image [new-ch] :gray))
+;  (-> (apply mx/emap f (:chs img))
+;      vector
+;      (make-image :gray))
+  )
 
 ; (defn mat-pmap
 ;   "Like mat-map, except f is applied in parallel."

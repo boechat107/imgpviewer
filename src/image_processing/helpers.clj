@@ -13,12 +13,28 @@
   )
 
 (defn argb<-intcolor
-  "Convert the 32 bits color to ARGB. It returns a map {:a :r :g :b}."
+  "Convert the 32 bits color to ARGB. It returns a vector [a r g b]."
   [color]
-  {:a (bit-and (bit-shift-right color 24) 0xff) 
-  :r (bit-and (bit-shift-right color 16) 0xff) 
-  :g (bit-and (bit-shift-right color 8) 0xff) 
-  :b (bit-and color 0xff)})
+  (vector 
+    (bit-and (bit-shift-right color 24) 0xff) 
+    (bit-and (bit-shift-right color 16) 0xff) 
+    (bit-and (bit-shift-right color 8) 0xff) 
+    (bit-and color 0xff)))
+
+(defn r<-intcolor 
+  "Returns the red value from a ARGB integer."
+  [color]
+  (bit-and (bit-shift-right color 16) 0xff))
+
+(defn g<-intcolor 
+  "Returns the green value from a ARGB integer."
+  [color]
+  (bit-and (bit-shift-right color 8) 0xff))
+
+(defn b<-intcolor 
+  "Returns the blue value from a ARGB integer."
+  [color]
+  (bit-and color 0xff))
 
 (defn intcolor<-argb
   "Converts the components ARGB to a 32 bits integer color."
@@ -34,15 +50,13 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        chs (repeatedly 3 #(mx/new-matrix nr nc))]
+        chs (vec (repeatedly 3 #(mx/new-matrix nr nc)))]
     (dotimes [c nc]
       (dotimes [r nr]
-        (let [pix (->> (.getRGB buff c r)
-                       argb<-intcolor)]
-          (dorun 
-            (map #(->> (%2 pix) (mx/mset! %1 r c))
-                 chs
-                 [:r :g :b])))))
+        (let [int-pix (.getRGB buff c r)]
+          (mx/mset! (chs 0) r c (r<-intcolor int-pix))
+          (mx/mset! (chs 1) r c (g<-intcolor int-pix))
+          (mx/mset! (chs 2) r c (b<-intcolor int-pix)))))
     (ipc/make-image (vec chs) :rgb)))
 
 (defn to-buffered-image

@@ -75,23 +75,23 @@
 ;  are a vector of numbers)."
 ;  [f a]
 ;  (if (coll? a) (mapv f a) (f a)))
-;
-;(defn get-neighbour-pixels
-;  "Returns the 9 pixels of a squared area around the [x, y] pixel. If a neighbor
-;  pixel is outside the boundaries of the image, the nearest pixel is returned.
-;  [0 1 2
-;  3 4 5
-;  6 7 8]"
-;  [img x y]
-;  (let [real-xy (fn [c m] 
-;                  ;; Returns c if it is between the boundaries of the image. 
-;                  (min (dec m) (max 0 c)))]
-;    (for [ky (range (dec y) (+ 2 y)),
-;          kx (range (dec x) (+ 2 x))]
-;      (ipc/get-xy img 
-;                  (real-xy kx (ipc/ncols img))
-;                  (real-xy ky (ipc/nrows img))))))
-;
+
+(defn get-neighbour-pixels
+  "Returns the 9 pixels of a squared area around the [x, y] pixel. If a neighbor
+  pixel is outside the boundaries of the image, the nearest pixel is returned.
+  [0 1 2
+  3 4 5
+  6 7 8]"
+  [img x y]
+  (let [real-xy (fn [c m] 
+                  ;; Returns c if it is between the boundaries of the image. 
+                  (min (dec m) (max 0 c)))]
+    (for [ky (range (dec y) (+ 2 y)),
+          kx (range (dec x) (+ 2 x))]
+      (ipc/get-pixel img 
+                  (real-xy kx (ipc/ncols img))
+                  (real-xy ky (ipc/nrows img))))))
+
 ;(defn apply-kernel 
 ;  "Just applies a kernel mask to a [x, y] pixel and its neighbors."
 ;  [img x y mask]
@@ -101,6 +101,7 @@
 ;    (->> (get-neighbour-pixels img x y)
 ;         ;; Multiplication of each pixel of the mask.
 ;         (map #(ut/mult-vec %1 %2) mask)
+;         ()
 ;         (reduce #(if nv (map + %1 %2) (+ %1 %2)) 
 ;                 (if nv (repeat nv 0) 0))
 ;         (if-map #(min 255 %))
