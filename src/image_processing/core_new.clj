@@ -3,7 +3,7 @@
     [incanter.core :as ic]
     ))
 
-(defrecord Image [mat type])
+(defrecord Image [mat type nrows ncols])
 
 (defn image?
   [obj]
@@ -36,12 +36,12 @@
 (defn nrows
   "Returns the number of rows of an Image."
   [^Image img]
-  (count (:mat img)))
+  (:nrows img))
 
 (defn ncols
   "Returns the number of rows of an Image."
   [^Image img]
-  (count (first (:mat img))))
+  (:ncols img))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
@@ -59,14 +59,7 @@
     +----------------+ h*w - 1"
   ([data-mat type]
    {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
-   (Image. data-mat type))
-  ([data-array ncols type]
-   {:pre [(valid-type? type) (sequential? data-array)]}
-   (letfn [(constructor [m] (Image. m type))]
-     (->> data-array 
-       (partition ncols)
-       (mapv vec)
-       constructor))))
+   (Image. data-mat type (count data-mat) (count (first data-mat)))))
 
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 

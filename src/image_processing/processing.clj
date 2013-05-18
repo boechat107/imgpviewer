@@ -44,23 +44,17 @@
   "Returns a sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
   [f x-min x-max y-min y-max]
-  (for [y (range y-min y-max), x (range x-min x-max)]
-    (f x y)))
+  (mapv (fn [y]
+          (mapv #(f % y) (range x-min x-max)))
+        (range y-min y-max)))
 
 (defn pgrid-apply
   "Like grid-apply, but the function is applied in parallel."
   [f x-min x-max y-min y-max]
-  (->> (for [y (range y-min y-max), x (range x-min x-max)]
-         [x y])
-       ;; Splits the pixels in 4 slices.
-       (partition-all (-> (inc (- y-max y-min))
-                          (* (inc (- x-max x-min)))
-                          (/ 2)
-                          int))
-       (pmap (fn [slice]
-               (doall (map #(f (first %) (second %)) slice))))
-       (apply concat)
-       ))
+  (vec
+    (pmap (fn [y]
+            (mapv #(f % y) (range x-min x-max)))
+          (range y-min y-max))))
 
 (defn- if-map 
   "If the argument is a collection, applies f to every element, returning a vector
@@ -81,11 +75,11 @@
   (let [real-xy (fn [c m] 
                   ;; Returns c if it is between the boundaries of the image. 
                   (min (dec m) (max 0 c)))]
-    (for [ky (range (dec y) (+ 2 y)),
-          kx (range (dec x) (+ 2 x))]
+    (vec (for [ky [(dec y) y (inc y)],
+          kx [(dec x) x (inc x)]]
       (ipc/get-xy img 
                   (real-xy kx (ipc/ncols img))
-                  (real-xy ky (ipc/nrows img))))))
+                  (real-xy ky (ipc/nrows img)))))))
 
 (defn apply-kernel 
   "Just applies a kernel mask to a [x, y] pixel and its neighbors."
@@ -101,15 +95,22 @@
          (if-map #(min 255 %))
          (if-map #(max 0 %)))))
 
+(defn apply-kernel-one
+  "Applies a convolution kernel for one channel images."
+  [img x y mask]
+  (->> (get-neighbour-pixels img x y)
+       (map * mask)
+       (reduce +)
+       (min 255)
+       (max 0)))
+
 (defn convolve
   [img mask]
   ;; todo: speed up with discrete Fourier transform.
   ;; variable mask size.
   (let [nr (ipc/nrows img)
         nc (ipc/ncols img)]
-    (->> (pgrid-apply #(apply-kernel img %1 %2 mask) 0 nc 0 nr)
-         (partition nc)
-         (mapv vec)
+    (->> (grid-apply #(apply-kernel-one img %1 %2 mask) 0 nc 0 nr)
          (#(ipc/make-image % (:type img))))))
 
 (defn erode
