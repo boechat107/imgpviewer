@@ -8,17 +8,20 @@
     )
   )
 
-(set! *warn-on-reflection* true)
-(set! *unchecked-math* true)
-
 (defn rgb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
   http://en.wikipedia.org/wiki/Grayscale"
   [img]
   {:pre [(= :rgb (:type img))]}
-  (->> img
-       (ipc/chs-map #(+ (* 0.2126 %1) (* 0.7152 %2) (* 0.0722 %3)))))
+  (let [ch (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img))]
+    (doall
+      (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
+                            (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
+                            (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
+                            (mx/mset! ch %2 %1)) 
+                      0 (ipc/ncols img) 0 (ipc/nrows img)))
+    (ipc/make-image [ch] :gray)))
 
 (defn gray-to-rgb
   "Repeats the only grayscale channel for each color channel and returns a new RGB
@@ -45,28 +48,6 @@
       (conj (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img) 255))
       (ipc/make-image :argb)))
 
-;(defn grid-apply
-;  "Returns a sequence resulting from the application of the function f to each 
-;  value of the grid built with the rectangle x-min, x-max, y-min, y-max."
-;  [f x-min x-max y-min y-max]
-;  (for [y (range y-min y-max), x (range x-min x-max)]
-;    (f x y)))
-;
-;(defn pgrid-apply
-;  "Like grid-apply, but the function is applied in parallel."
-;  [f x-min x-max y-min y-max]
-;  (->> (for [y (range y-min y-max), x (range x-min x-max)]
-;         [x y])
-;       ;; Splits the pixels in 4 slices.
-;       (partition-all (-> (inc (- y-max y-min))
-;                          (* (inc (- x-max x-min)))
-;                          (/ 2)
-;                          int))
-;       (pmap (fn [slice]
-;               (doall (map #(f (first %) (second %)) slice))))
-;       (apply concat)
-;       ))
-;
 ;(defn- if-map 
 ;  "If the argument is a collection, applies f to every element, returning a vector
 ;  (mapv is used); otherwise, f is directly applied to the argument.

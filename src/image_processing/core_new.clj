@@ -50,7 +50,7 @@
   "Returns a matrix used to represent a color channel data."
   ;; todo: pull request to mikera to fill a matrix.
   ;; problem with x y indexing
-  ([nrows ncols] (new-channel-matrix nrows ncols 0.0))
+  ([nrows ncols] (mx/new-matrix nrows ncols))
   ([nrows ncols dv]
    (let [m (mx/new-matrix nrows ncols)] 
      (dotimes [r nrows]
@@ -69,10 +69,14 @@
            type)))
 
 (defn get-pixel
-  "Returns a vector with the values of the pixel [x, y] for each channel."
-  [img x y]
+  "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
+  returned; otherwise, a scalar is returned."
+  ([img x y]
   (->> (:chs img)
        (mapv #(mx/mget % y x))))
+  ([img x y ch]
+   (-> ((:chs img) ch)
+       (mx/mget y x))))
 
 (defn img-map
   "Applies a function f to each pixel of an image, over each channel of the pixel.
@@ -102,29 +106,24 @@
         chs-vals (double-array n-chs)]
     (dotimes [r (nrows img)]
       (dotimes [c (ncols img)]
-        (dotimes [ch-idx n-chs]
-          (->> (mx/mget ((:chs img) ch-idx) r c)
-               (aset-double chs-vals ch-idx)))
-        (->> (seq chs-vals)
+        (->> (map #(mx/mget % r c) (:chs img))
+             vec
              (apply f)
              (mx/mset! new-ch r c))))
-    (make-image [new-ch] :gray))
-;  (-> (apply mx/emap f (:chs img))
-;      vector
-;      (make-image :gray))
-  )
+    (make-image [new-ch] :gray)))
 
-; (defn mat-pmap
-;   "Like mat-map, except f is applied in parallel."
-;   ([f mat]
-;    ;; todo
-;    )
-;   )
-; 
-; (defn mat-map-indexed 
-;   "Like mat-map, but the function must receive the row and column indexes as the
-;   first two arguments."
-;   ([f mat]
-;    (mapv (fn [r y]
-;            (mapv #(f %2 y %1) r (range (count r))))
-;          mat (range (count mat)))))
+(defn grid-apply
+  "Returns a lazy sequence resulting from the application of the function f to each 
+  value of the grid built with the rectangle x-min, x-max, y-min, y-max."
+  [f x-min x-max y-min y-max]
+  (for [y (range y-min y-max), x (range x-min x-max)]
+    (f x y)))
+
+(defn pgrid-apply
+  "Returns a lazy sequence resulting from the application of the function f to each 
+  value of the grid built with the rectangle x-min, x-max, y-min, y-max."
+  [f x-min x-max y-min y-max]
+  (pmap (fn [y]
+          (doall
+            (map #(f % y) (range x-min x-max))))
+        (range y-min y-max)))
