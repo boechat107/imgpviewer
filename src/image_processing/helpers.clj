@@ -3,7 +3,6 @@
     [image-processing.core-new :as ipc]
     [image-processing.processing :as pr]
     [seesaw.core :as w]
-    [clojure.core.matrix :as mx]
     )
   (:import 
     [java.io File]
@@ -50,14 +49,14 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        chs (vec (repeatedly 3 #(mx/new-matrix nr nc)))]
+        [rch gch bch] (repeatedly 3 #(ipc/new-channel-matrix nr nc))]
     (dotimes [c nc]
       (dotimes [r nr]
         (let [int-pix (.getRGB buff c r)]
-          (mx/mset! (chs 0) r c (r<-intcolor int-pix))
-          (mx/mset! (chs 1) r c (g<-intcolor int-pix))
-          (mx/mset! (chs 2) r c (b<-intcolor int-pix)))))
-    (ipc/make-image (vec chs) :rgb)))
+          (aset-int rch r c (r<-intcolor int-pix))
+          (aset-int gch r c (g<-intcolor int-pix))
+          (aset-int bch r c (b<-intcolor int-pix)))))
+    (ipc/make-image [rch gch bch] :rgb)))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."

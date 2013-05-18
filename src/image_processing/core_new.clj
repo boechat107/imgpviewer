@@ -70,6 +70,12 @@
    (-> ((:chs img) ch)
        (aget y x))))
 
+(defn set-pixel!
+  "Sets the value of the [x, y] pixel."
+  [img x y ch val]
+  (-> ((:chs img) ch)
+      (aset-int val)))
+
 ;(defn img-map
 ;  "Applies a function f to each pixel of an image, over each channel of the pixel.
 ;  The function f should accept a scalar representing the value of a color channel of
@@ -112,10 +118,10 @@
     (f x y)))
 
 (defn pgrid-apply
-  "Returns a lazy sequence resulting from the application of the function f to each 
-  value of the grid built with the rectangle x-min, x-max, y-min, y-max."
+  "Like grid-apply, but the rows are processed in parallel."
   [f x-min x-max y-min y-max]
-  (pmap (fn [y]
-          (doall
-            (map #(f % y) (range x-min x-max))))
-        (range y-min y-max)))
+  (doall
+    (pmap (fn [y]
+            (doall
+              (map #(f % y) (range x-min x-max))))
+          (range y-min y-max))))
