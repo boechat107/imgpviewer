@@ -53,7 +53,7 @@ sorted by method name."
   Reference:
   http://clj-me.cgrand.net/2009/10/15/multidim-arrays/"
   [hint array & idxsv]
-  (let [hints {doubles double ints int}
+  (let [hints '{doubles double ints int}
         [v idx & sxdi] (reverse idxsv)
         idxs (reverse sxdi)
         v (if-let [h (hints hint)] (list h v) v)
@@ -63,3 +63,13 @@ sorted by method name."
         a-sym (with-meta (gensym "a") {:tag hint})]
     `(let [~a-sym ~nested-array]
        (aset ~a-sym ~idx ~v))))
+
+(defmacro mult-aclone
+  "Returns a clone of a two dimensional array."
+  [hint array]
+  `(let [array# ~(vary-meta array assoc :tag 'objects)
+         m# (aclone array#)]
+     (dotimes [n# (alength array#)]
+       (let [a# (aget array# n#)]
+         (aset m# n# (aclone a#))))
+     m#))
