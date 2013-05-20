@@ -4,6 +4,4 @@
                  [incanter/incanter-core "1.5.0-SNAPSHOT"]
                  [seesaw "1.4.3"]
                  ]
-  :global-vars {*warn-on-reflection* true
-                *assert* false}
   :jar-exclusions [#"(?:^|/).svn/"])
