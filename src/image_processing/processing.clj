@@ -4,7 +4,6 @@
     [image-processing.utils :as ut]
     [image-processing.rgb-color :as rgb]
     [incanter.core :as ic]
-    [clojure.core.matrix :as mx]
     )
   )
 
@@ -19,7 +18,7 @@
       (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
                             (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
                             (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
-                            (mx/mset! ch %2 %1)) 
+                            (ut/mult-aset ints ch %2 %1)) 
                       0 (ipc/ncols img) 0 (ipc/nrows img)))
     (ipc/make-image [ch] :gray)))
 
@@ -28,25 +27,8 @@
   Image."
   [img]
   {:pre [(= :gray (:type img))]}
-  (-> (repeatedly 3 #(mx/clone (first (:chs img))))
+  (-> (repeatedly 3 #(ut/mult-aclone ints (first (:chs img))))
       (ipc/make-image :rgb)))
-
-(defn rgb-to-argb 
-  "Adds the transparency channel to a rgb Image."
-  [img]
-  {:pre [(= :rgb (:type img))]}
-  (-> (:chs img)
-      seq
-      (conj (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img) 255))
-      (ipc/make-image :argb)))
-
-(defn gray-to-argb 
-  "Converts the color space from grayscale to ARGB."
-  [img]
-  {:pre [(= :gray (:type img))]}
-  (-> (repeatedly 3 #(mx/clone (first (:chs img))))
-      (conj (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img) 255))
-      (ipc/make-image :argb)))
 
 ;(defn- if-map 
 ;  "If the argument is a collection, applies f to every element, returning a vector

@@ -4,6 +4,9 @@
     [incanter.core :as ic]
     ))
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (defrecord Image [chs type nrows ncols])
 
 (defn image?
@@ -59,14 +62,19 @@
    {:pre [(valid-type? type) (every? channel? data-chs)]}
    (let [ch (first data-chs)]
      (Image. (if (vector? data-chs) data-chs (vec data-chs))
-             type (alength ch) (alength (aget ch 0))))))
+             type (alength #^objects ch) (alength ^ints (aget #^objects ch 0))))))
+
+(defn new-image
+  "Returns an empty image with the given dimension and number of color channels."
+  [nrows ncols dim]
+  )
 
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned."
   ([img x y]
   (->> (:chs img)
-       (mapv #(aget ints % y x))))
+       (mapv #(ut/mult-aget ints % y x))))
   ([img x y ch]
    (ut/mult-aget ints ((:chs img) ch) y x)))
 

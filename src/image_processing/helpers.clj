@@ -2,6 +2,7 @@
   (:require 
     [image-processing.core-new :as ipc]
     [image-processing.processing :as pr]
+    [image-processing.utils :as ut]
     [seesaw.core :as w]
     )
   (:import 
@@ -10,6 +11,9 @@
     [java.awt.image BufferedImage]  
     )
   )
+
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
 
 (defn argb<-intcolor
   "Convert the 32 bits color to ARGB. It returns a vector [a r g b]."
@@ -38,14 +42,14 @@
 (defn intcolor<-argb
   "Converts the components ARGB to a 32 bits integer color."
   [a r g b]
-  (-> (bit-or (bit-shift-left (int a) 24)
-              (bit-or (bit-shift-left (int r) 16)
-                      (bit-or (bit-shift-left (int g) 8) (int b))))
-      (.intValue)))
+  (int 
+    (bit-or (bit-shift-left (int a) 24)
+            (bit-or (bit-shift-left (int r) 16)
+                    (bit-or (bit-shift-left (int g) 8) (int b))))))
 
 (defn load-file-image
   "Returns a RGB Image from a file image."
-  [filepath]
+  [^String filepath]
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
@@ -53,13 +57,14 @@
     (dotimes [c nc]
       (dotimes [r nr]
         (let [int-pix (.getRGB buff c r)]
-          (aset-int rch r c (r<-intcolor int-pix))
-          (aset-int gch r c (g<-intcolor int-pix))
-          (aset-int bch r c (b<-intcolor int-pix)))))
+          (ut/mult-aset ints rch r c (r<-intcolor int-pix))
+          (ut/mult-aset ints gch r c (g<-intcolor int-pix))
+          (ut/mult-aset ints bch r c (b<-intcolor int-pix)))))
     (ipc/make-image [rch gch bch] :rgb)))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
+  ;; todo: avoid using setRGB, use the raster data.
   [img]
   {:pre [(ipc/image? img)]}
   (let [h (ipc/nrows img)
@@ -68,8 +73,10 @@
         rgb-img (if (= (:type img) :gray) (pr/gray-to-rgb img) img)]
     (dorun 
       (for [y (range h), x (range w)] 
-        (->> (ipc/get-pixel rgb-img x y)
-             (apply intcolor<-argb 255)
+        (->> (intcolor<-argb 255 
+                             (ipc/get-pixel rgb-img x y 0)
+                             (ipc/get-pixel rgb-img x y 1)
+                             (ipc/get-pixel rgb-img x y 2))
              (.setRGB buff x y))))
     buff))
 
