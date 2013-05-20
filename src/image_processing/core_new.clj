@@ -1,5 +1,6 @@
 (ns image-processing.core-new
   (:require 
+    [image-processing.utils :as ut]
     [incanter.core :as ic]
     ))
 
@@ -65,16 +66,18 @@
   returned; otherwise, a scalar is returned."
   ([img x y]
   (->> (:chs img)
-       (mapv #(aget % y x))))
+       (mapv #(aget ints % y x))))
   ([img x y ch]
-   (-> ((:chs img) ch)
-       (aget y x))))
+   (ut/mult-aget ints ((:chs img) ch) y x)))
 
 (defn set-pixel!
   "Sets the value of the [x, y] pixel."
-  [img x y ch val]
-  (-> ((:chs img) ch)
-      (aset-int val)))
+  ([img x y vals]
+   (dorun 
+     (map-indexed #(ut/mult-aset ints ((:chs img) %1) y x %2)
+                  vals)))
+  ([img x y ch val]
+   (ut/mult-aset ints ((:chs img) ch) y x val)))
 
 ;(defn img-map
 ;  "Applies a function f to each pixel of an image, over each channel of the pixel.
