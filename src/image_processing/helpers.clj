@@ -53,14 +53,14 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        [rch gch bch] (repeatedly 3 #(ipc/new-channel-matrix nr nc))]
+        img (ipc/new-image nr nc :rgb)]
     (dotimes [c nc]
       (dotimes [r nr]
         (let [int-pix (.getRGB buff c r)]
-          (ut/mult-aset ints rch r c (r<-intcolor int-pix))
-          (ut/mult-aset ints gch r c (g<-intcolor int-pix))
-          (ut/mult-aset ints bch r c (b<-intcolor int-pix)))))
-    (ipc/make-image [rch gch bch] :rgb)))
+          (ipc/set-pixel! img c r 0 (r<-intcolor int-pix))
+          (ipc/set-pixel! img c r 1 (g<-intcolor int-pix))
+          (ipc/set-pixel! img c r 2 (b<-intcolor int-pix)))))
+    img))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
