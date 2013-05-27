@@ -58,10 +58,8 @@
 
 (defn new-channel-matrix 
   "Returns a matrix used to represent a color channel data."
-  ;; todo: pull request to mikera to fill a matrix.
-  ;; problem with x y indexing
-  ([nrows ncols] 
-   (make-array Integer/TYPE nrows ncols)))
+  [nrows ncols] 
+  (make-array Integer/TYPE nrows ncols))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
@@ -75,9 +73,11 @@
              type (alength #^objects ch) (alength ^ints (aget #^objects ch 0))))))
 
 (defn new-image
-  "Returns an empty image with the given dimension and number of color channels."
-  [nrows ncols dim]
-  )
+  "Returns an empty image with the given dimension and color type."
+  [nrows ncols type]
+  {:pre [(contains? color-dimensions type)]}
+  (-> (repeatedly (type color-dimensions) #(new-channel-matrix nrows ncols))
+      (make-image type)))
 
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is

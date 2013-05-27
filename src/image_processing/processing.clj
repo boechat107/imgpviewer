@@ -13,14 +13,14 @@
   http://en.wikipedia.org/wiki/Grayscale"
   [img]
   {:pre [(= :rgb (:type img))]}
-  (let [ch (ipc/new-channel-matrix (ipc/nrows img) (ipc/ncols img))]
+  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)]
     (doall
       (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
                             (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
                             (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
-                            (ut/mult-aset ints ch %2 %1)) 
+                            (ipc/set-pixel! res %1 %2 0)) 
                       0 (ipc/ncols img) 0 (ipc/nrows img)))
-    (ipc/make-image [ch] :gray)))
+    res))
 
 (defn gray-to-rgb
   "Repeats the only grayscale channel for each color channel and returns a new RGB
@@ -29,15 +29,6 @@
   {:pre [(= :gray (:type img))]}
   (-> (repeatedly 3 #(ut/mult-aclone ints (first (:chs img))))
       (ipc/make-image :rgb)))
-
-;(defn- if-map 
-;  "If the argument is a collection, applies f to every element, returning a vector
-;  (mapv is used); otherwise, f is directly applied to the argument.
-;  The initial purpose of this function is apply operations to images of different
-;  color spaces, like grayscale (pixels value are just numbers) and rgb (pixels values
-;  are a vector of numbers)."
-;  [f a]
-;  (if (coll? a) (mapv f a) (f a)))
 
 (defn get-neighbour-pixels
   "Returns the 9 pixels of a squared area around the [x, y] pixel. If a neighbor
