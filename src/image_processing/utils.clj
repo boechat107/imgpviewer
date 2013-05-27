@@ -64,12 +64,10 @@ sorted by method name."
     `(let [~a-sym ~nested-array]
        (aset ~a-sym ~idx ~v))))
 
-(defmacro mult-aclone
+(defn mult-aclone
   "Returns a clone of a two dimensional array."
-  [hint array]
-  `(let [array# ~(vary-meta array assoc :tag 'objects)
-         m# (aclone array#)]
-     (dotimes [n# (alength array#)]
-       (let [a# (aget array# n#)]
-         (aset m# n# (aclone a#))))
-     m#))
+  [array]
+  (let [res (aclone array)]
+    (dotimes [n (alength array)]
+      (aset res n (aclone (aget array n))))
+    res))

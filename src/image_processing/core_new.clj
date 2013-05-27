@@ -79,6 +79,12 @@
   (-> (repeatedly (type color-dimensions) #(new-channel-matrix nrows ncols))
       (make-image type)))
 
+(defn copy-image
+  "Returns a copy of a given image."
+  [img]
+  (-> (map #(ut/mult-aclone %) (:chs img)) 
+      (make-image (:type img))))
+
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned."
@@ -134,9 +140,11 @@
 (defn grid-apply
   "Returns a lazy sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
-  [f x-min x-max y-min y-max]
-  (for [y (range y-min y-max), x (range x-min x-max)]
-    (f x y)))
+  ([f x-min x-max y-min y-max]
+   (for [y (range y-min y-max), x (range x-min x-max)]
+     (f x y)))
+  ([f img]
+   (grid-apply f 0 (ncols img) 0 (nrows img))))
 
 (defn pgrid-apply
   "Like grid-apply, but the rows are processed in parallel."
