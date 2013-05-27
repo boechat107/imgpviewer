@@ -17,12 +17,11 @@
   [img]
   {:pre [(= :rgb (:type img))]}
   (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)]
-    (dorun
-      (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
-                            (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
-                            (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
-                            (ipc/set-pixel! res %1 %2 0)) 
-                      0 (ipc/ncols img) 0 (ipc/nrows img)))
+    (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
+                          (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
+                          (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
+                          (ipc/set-pixel! res %1 %2 0)) 
+                    img)
     res))
 
 (defn gray-to-rgb
@@ -30,8 +29,13 @@
   Image."
   [img]
   {:pre [(= :gray (:type img))]}
-  (-> (repeatedly 3 #(ut/mult-aclone (first (:chs img))))
-      (ipc/make-image :rgb)))
+  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :rgb)]
+    (ipc/grid-apply #(let [p (ipc/get-pixel img %1 %2 0)]
+                       (ipc/set-pixel! res %1 %2 0 p)
+                       (ipc/set-pixel! res %1 %2 1 p)
+                       (ipc/set-pixel! res %1 %2 2 p))
+                    img)
+    res))
 
 (defn binarize
   "Returns a new Image where each pixel value is set to 0 or 255. If the original
@@ -39,14 +43,13 @@
   set to 255."
   [img th]
   (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) (:type img))
-        res-ch (first (:chs res))
         threshold (fn [n] (if (> n th) 255 0))]
-    (doseq [ch (:chs img)]
-      (dorun (ipc/grid-apply 
-               #(->> (ut/mult-aget ints ch %2 %1)
-                     threshold 
-                     (ut/mult-aset ints res-ch %2 %1))
-               img)))
+    (dotimes [ch (ipc/dimension img)]
+      (ipc/grid-apply 
+        #(->> (ipc/get-pixel img %1 %2 ch)
+              threshold 
+              (ipc/set-pixel! res %1 %2 ch))
+        img))
     res))
 
 (defn get-neighbour-pixels

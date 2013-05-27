@@ -65,11 +65,10 @@
   the value of each pixel a double value."
   ([data-chs type]
    {:pre [(valid-type? type) (mat? data-chs)]}
-   (let [ch (first data-chs)]
-     (Image. data-chs
-             type
-             (alength #^objects ch) 
-             (alength #^objects (aget #^objects ch 0))))))
+   (Image. data-chs
+           type
+           (alength #^objects data-chs) 
+           (alength #^objects (aget #^objects data-chs 0)))))
 
 (defn new-image
   "Returns an empty image with the given dimension and color type."
@@ -99,48 +98,17 @@
   ([img x y ch val]
    (ut/mult-aset ints (:mat img) y x ch val)))
 
-;(defn img-map
-;  "Applies a function f to each pixel of an image, over each channel of the pixel.
-;  The function f should accept a scalar representing the value of a color channel of
-;  the pixel.
-;  Returns a new image with the same color space."
-;  ([f img]
-;   (-> (mapv #(mx/emap f %) (:chs img))
-;       (make-image (:type img))))
-;  ([f img1 img2]
-;   {:pre [(= (:type img1) (:type img2))]}
-;   (-> (mapv #(mx/emap f %1 %2) (:chs img1) (:chs img2))
-;       (make-image (:type img1))))
-;  ([f img1 img2 & imgs]
-;   (->> (conj imgs img2 img1) 
-;        (map :chs)
-;        (apply mapv (fn [& ms] (apply mx/emap f ms)))
-;        (#(make-image % (:type img1))))))
-;  
-;(defn chs-map
-;  "Like img-map, but f should accept a vector of scalars, each one representing the pixel
-;  value of a color channel. 
-;  Returns a new image with just one color channel."
-;  [f img]
-;  (let [new-ch (mx/new-matrix (nrows img) (ncols img))
-;        n-chs (count (:chs img))
-;        chs-vals (double-array n-chs)]
-;    (dotimes [r (nrows img)]
-;      (dotimes [c (ncols img)]
-;        (->> (map #(mx/mget % r c) (:chs img))
-;             vec
-;             (apply f)
-;             (mx/mset! new-ch r c))))
-;    (make-image [new-ch] :gray)))
-
 (defn grid-apply
   "Returns a lazy sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
+  ;; todo: turn it into a side effect function.
   ([f x-min x-max y-min y-max]
    (for [y (range y-min y-max), x (range x-min x-max)]
      (f x y)))
   ([f img]
-   (grid-apply f 0 (ncols img) 0 (nrows img))))
+   (dotimes [x (ncols img)]
+     (dotimes [y (nrows img)]
+       (f x y)))))
 
 (defn pgrid-apply
   "Like grid-apply, but the rows are processed in parallel."
