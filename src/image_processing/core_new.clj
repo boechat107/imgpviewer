@@ -7,7 +7,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
 
-(defrecord Image [chs type nrows ncols])
+(defrecord Image [mat type nrows ncols])
 
 (def color-dimensions
   {:rgb 3
@@ -18,16 +18,13 @@
   [obj]
   (instance? Image obj))
 
-(defn channel?
-  [obj]
-  ;; todo: better definition.
-  (= (type obj) (type (make-array Integer/TYPE 1 1))))
-
 (defn valid-type?
   [type]
   (some #(= type %) [:argb :rgb :gray]))
 
-
+(defn mat?
+  [m]
+  (= (type m) (Class/forName "[[[I")))
 
 (defn color-type?
   [img]
@@ -58,8 +55,8 @@
 
 (defn new-channel-matrix 
   "Returns a matrix used to represent a color channel data."
-  [nrows ncols] 
-  (make-array Integer/TYPE nrows ncols))
+  [nrows ncols dim] 
+  (make-array Integer/TYPE nrows ncols dim))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
@@ -67,41 +64,40 @@
   The image data is stored as different channels, each one as a clojure.matrix, and
   the value of each pixel a double value."
   ([data-chs type]
-   {:pre [(valid-type? type) (every? channel? data-chs)]}
+   {:pre [(valid-type? type) (mat? data-chs)]}
    (let [ch (first data-chs)]
-     (Image. (if (vector? data-chs) data-chs (vec data-chs))
-             type (alength #^objects ch) (alength ^ints (aget #^objects ch 0))))))
+     (Image. data-chs
+             type
+             (alength #^objects ch) 
+             (alength #^objects (aget #^objects ch 0))))))
 
 (defn new-image
   "Returns an empty image with the given dimension and color type."
   [nrows ncols type]
   {:pre [(contains? color-dimensions type)]}
-  (-> (repeatedly (type color-dimensions) #(new-channel-matrix nrows ncols))
+  (-> (new-channel-matrix nrows ncols (type color-dimensions))
       (make-image type)))
 
-(defn copy-image
-  "Returns a copy of a given image."
-  [img]
-  (-> (map #(ut/mult-aclone %) (:chs img)) 
-      (make-image (:type img))))
+;(defn copy-image
+;  "Returns a copy of a given image."
+;  [img]
+;  (-> (map #(ut/mult-aclone %) (:mat img)) 
+;      (make-image (:type img))))
 
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned."
-  ([img x y]
-  (->> (:chs img)
-       (mapv #(ut/mult-aget ints % y x))))
-  ([img x y ch]
-   (ut/mult-aget ints ((:chs img) ch) y x)))
+  [img x y ch]
+   (ut/mult-aget ints (:mat img) y x ch))
 
 (defn set-pixel!
   "Sets the value of the [x, y] pixel."
   ([img x y vals]
    (dorun 
-     (map-indexed #(ut/mult-aset ints ((:chs img) %1) y x %2)
+     (map-indexed #(ut/mult-aset ints (:mat img) y x %1 %2)
                   vals)))
   ([img x y ch val]
-   (ut/mult-aset ints ((:chs img) ch) y x val)))
+   (ut/mult-aset ints (:mat img) y x ch val)))
 
 ;(defn img-map
 ;  "Applies a function f to each pixel of an image, over each channel of the pixel.
