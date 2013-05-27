@@ -7,6 +7,9 @@
     )
   )
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (defn rgb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
@@ -14,7 +17,7 @@
   [img]
   {:pre [(= :rgb (:type img))]}
   (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)]
-    (doall
+    (dorun
       (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
                             (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
                             (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
@@ -27,8 +30,24 @@
   Image."
   [img]
   {:pre [(= :gray (:type img))]}
-  (-> (repeatedly 3 #(ut/mult-aclone ints (first (:chs img))))
+  (-> (repeatedly 3 #(ut/mult-aclone (first (:chs img))))
       (ipc/make-image :rgb)))
+
+(defn binarize
+  "Returns a new Image where each pixel value is set to 0 or 255. If the original
+  pixel value is below the threshold, the value is set to 0; otherwise, the value is
+  set to 255."
+  [img th]
+  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) (:type img))
+        res-ch (first (:chs res))
+        threshold (fn [n] (if (> n th) 255 0))]
+    (doseq [ch (:chs img)]
+      (dorun (ipc/grid-apply 
+               #(->> (ut/mult-aget ints ch %2 %1)
+                     threshold 
+                     (ut/mult-aset ints res-ch %2 %1))
+               img)))
+    res))
 
 (defn get-neighbour-pixels
   "Returns the 9 pixels of a squared area around the [x, y] pixel. If a neighbor
@@ -84,14 +103,7 @@
 ;                corner  edge    corner]]
 ;      (convolve img mask))))
 ;
-;(defn binarize
-;  "Returns a new Image where each pixel value is set to 0 or 255. If the original
-;  pixel value is below the threshold, the value is set to 0; otherwise, the value is
-;  set to 255."
-;  [img th]
-;  (letfn [(threshold [n] (if (> n th) 255 0))]
-;    (-> (ipc/mat-map #(if-map threshold %) (:mat img))
-;        (ipc/make-image (:type img)))))
+
 ;
 ;(defn smoothing
 ;  "Returns a new Image resulting of the application of a edge preserving smoothing on
