@@ -9,6 +9,11 @@
 
 (defrecord Image [chs type nrows ncols])
 
+(def color-dimensions
+  {:rgb 3
+   :argb 4
+   :gray 1})
+
 (defn image?
   [obj]
   (instance? Image obj))
@@ -45,6 +50,11 @@
   "Returns the number of rows of an Image."
   [img]
   (:ncols img))
+
+(defn dimension 
+  "Returns the number of the dimensions of the image's color space."
+  [img]
+  ((:type img) color-dimensions))
 
 (defn new-channel-matrix 
   "Returns a matrix used to represent a color channel data."
