@@ -86,8 +86,10 @@
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned."
-  [img x y ch]
-   (ut/mult-aget ints (:mat img) y x ch))
+  ([img x y]
+   (mapv #(ut/mult-aget ints (:mat img) y x %) (range (dimension img))))
+  ([img x y ch]
+   (ut/mult-aget ints (:mat img) y x ch)))
 
 (defn set-pixel!
   "Sets the value of the [x, y] pixel."

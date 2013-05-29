@@ -58,41 +58,36 @@
   [0 1 2
   3 4 5
   6 7 8]"
-  [img x y]
+  [img x y ch]
   (let [real-xy (fn [c m] 
                   ;; Returns c if it is between the boundaries of the image. 
                   (min (dec m) (max 0 c)))]
     (for [ky (range (dec y) (+ 2 y)),
           kx (range (dec x) (+ 2 x))]
       (ipc/get-pixel img 
-                  (real-xy kx (ipc/ncols img))
-                  (real-xy ky (ipc/nrows img))))))
+                     (real-xy kx (ipc/ncols img))
+                     (real-xy ky (ipc/nrows img))
+                     ch))))
 
-;(defn apply-kernel 
-;  "Just applies a kernel mask to a [x, y] pixel and its neighbors."
-;  [img x y mask]
-;  (let [sample (ipc/get-xy img 0 0)
-;        ;; Dimensionality of the color space.
-;        nv (when (coll? sample) (count sample))]
-;    (->> (get-neighbour-pixels img x y)
-;         ;; Multiplication of each pixel of the mask.
-;         (map #(ut/mult-vec %1 %2) mask)
-;         ()
-;         (reduce #(if nv (map + %1 %2) (+ %1 %2)) 
-;                 (if nv (repeat nv 0) 0))
-;         (if-map #(min 255 %))
-;         (if-map #(max 0 %)))))
-;
-;(defn convolve
-;  [img mask]
-;  ;; todo: speed up with discrete Fourier transform.
-;  ;; variable mask size.
-;  (let [nr (ipc/nrows img)
-;        nc (ipc/ncols img)]
-;    (->> (pgrid-apply #(apply-kernel img %1 %2 mask) 0 nc 0 nr)
-;         (partition nc)
-;         (mapv vec)
-;         (#(ipc/make-image % (:type img))))))
+(defn apply-kernel 
+  "Returns a scalar value resulting of applying a kernel mask to a [x, y] pixel and
+  its neighbors."
+  [img x y ch mask]
+  (->> (get-neighbour-pixels img x y ch)
+       ;; Multiplication of each pixel of the mask.
+       (map #(* %1 %2) mask)
+       (reduce +)))
+
+(defn convolve
+  [img mask]
+  "Returns a new image resulting from the convolution of a given image and a mask."
+  ;; todo: speed up with discrete Fourier transform.
+  ;; variable mask size.
+  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) (:type img))]
+    (dotimes [ch (ipc/dimension img)]
+      (grid-apply #(->> (apply-kernel img %1 %2 ch mask)
+                        (ipc/set-pixel! res %1 %2 ch))
+                  res))))
 ;
 ;(defn erode
 ;  "Erodes a Image, a basic operation in the area of the mathematical morphology.
