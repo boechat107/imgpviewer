@@ -52,55 +52,44 @@
         img))
     res))
 
-(defn get-neighbour-pixels
-  "Returns the 9 pixels of a squared area around the [x, y] pixel. If a neighbor
-  pixel is outside the boundaries of the image, the nearest pixel is returned.
-  [0 1 2
-  3 4 5
-  6 7 8]"
-  [img x y ch]
-  (let [real-xy (fn [c m] 
-                  ;; Returns c if it is between the boundaries of the image. 
-                  (min (dec m) (max 0 c)))]
-    (for [ky (range (dec y) (+ 2 y)),
-          kx (range (dec x) (+ 2 x))]
-      (ipc/get-pixel img 
-                     (real-xy kx (ipc/ncols img))
-                     (real-xy ky (ipc/nrows img))
-                     ch))))
-
 (defn apply-kernel 
   "Returns a scalar value resulting of applying a kernel mask to a [x, y] pixel and
   its neighbors."
   [img x y ch mask]
-  (->> (get-neighbour-pixels img x y ch)
-       ;; Multiplication of each pixel of the mask.
-       (map #(* %1 %2) mask)
-       (reduce +)))
+  (loop [pos (long 0), res (double 0.0)]
+    (if (< pos 9)
+      (recur (inc pos)
+             (->> (ipc/get-neighbour img x y ch pos)
+                  (* (get mask pos))
+                  (+ res)))
+      res)))
 
 (defn convolve
   [img mask]
-  "Returns a new image resulting from the convolution of a given image and a mask."
-  ;; todo: speed up with discrete Fourier transform.
-  ;; variable mask size.
   (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) (:type img))]
     (dotimes [ch (ipc/dimension img)]
-      (grid-apply #(->> (apply-kernel img %1 %2 ch mask)
-                        (ipc/set-pixel! res %1 %2 ch))
-                  res))))
-;
-;(defn erode
-;  "Erodes a Image, a basic operation in the area of the mathematical morphology.
-;   http://homepages.inf.ed.ac.uk/rbf/HIPR2/erode.htm
-;   The corner and edge values of the mask can be specified. The default values are 0.2."
-;   ([img] (erode img 0.2 0.2))
-;   ([img corner edge]
-;    {:pre [(ipc/gray-type? img)]}
-;    (let [mask [corner  edge    corner
-;                edge    1.0     edge
-;                corner  edge    corner]]
-;      (convolve img mask))))
-;
+      (dotimes [y (ipc/nrows img)]
+        (dotimes [x (ipc/ncols img)]
+          (->> (apply-kernel img x y ch mask)
+               (ipc/set-pixel! res x y ch))
+          )
+        )
+      )
+    )
+  )
+
+(defn erode
+  "Erodes a Image, a basic operation in the area of the mathematical morphology.
+   http://homepages.inf.ed.ac.uk/rbf/HIPR2/erode.htm
+   The corner and edge values of the mask can be specified. The default values are 0.2."
+   ([img] (erode img 0.2 0.2))
+   ([img corner edge]
+    {:pre [(ipc/gray-type? img)]}
+    (let [mask [corner  edge    corner
+                edge    1.0     edge
+                corner  edge    corner]]
+      (convolve img mask))))
+
 
 ;
 ;(defn smoothing
