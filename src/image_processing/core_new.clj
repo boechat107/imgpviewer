@@ -91,6 +91,25 @@
   ([img x y ch]
    (ut/mult-aget ints (:mat img) y x ch)))
 
+(defn get-neighbour
+  "Returns the value of one of the pixels of a squared area around [x,y].
+  [x, y] has pos=4.
+  [0 1 2
+  3 4 5
+  6 7 8]
+  "
+  [img x y ch pos]
+  (let [real-xy (fn [c m]
+                  (let [c (long c), m (long m)]
+                    (min (dec m) (max 0 c))))
+        x (long x)
+        y (long y)
+        pos (long pos)]
+    (get-pixel img
+      (real-xy (+ (dec x) (rem pos 3)) (ncols img)) 
+      (real-xy (+ (dec y) (quot pos 3)) (nrows img))
+      ch)))
+
 (defn set-pixel!
   "Sets the value of the [x, y] pixel."
   ([img x y vals]
@@ -105,7 +124,7 @@
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
   ;; todo: turn it into a side effect function.
   ([f x-min x-max y-min y-max]
-   (for [y (range y-min y-max), x (range x-min x-max)]
+   (doseq [y (range y-min y-max), x (range x-min x-max)]
      (f x y)))
   ([f img]
    (dotimes [x (ncols img)]
