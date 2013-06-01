@@ -11,6 +11,9 @@
     )
   )
 
+(set! *unchecked-math* true)
+(set! *warn-on-reflection* true)
+
 (defn argb<-intcolor
   "Convert the 32 bits color to ARGB. It returns a map {:a :r :g :b}."
   [color]
@@ -22,15 +25,18 @@
 (defn intcolor<-argb
   "Converts the components ARGB to a 32 bits integer color."
   [argb]
-  (let [[a r g b] (map int argb)]
-    (-> (bit-or (bit-shift-left a 24)
-                (bit-or (bit-shift-left r 16)
-                        (bit-or (bit-shift-left g 8) b)))
-        (.intValue))))
+  (let [get-ch (fn [c] (int (argb c)))
+        a (get-ch 0)
+        r (get-ch 1)
+        g (get-ch 2)
+        b (get-ch 3)]
+    (bit-or (bit-shift-left a 24)
+            (bit-or (bit-shift-left r 16)
+                    (bit-or (bit-shift-left g 8) b)))))
 
 (defn load-file-image
   "Returns a RGB Image from a file image."
-  [filepath]
+  [^String filepath]
   (let [buff (ImageIO/read (File. filepath))]
     (-> (mapv (fn [y]
                 (mapv (comp (juxt :r :g :b)
@@ -55,6 +61,7 @@
       (doseq [[x elem] (map-indexed #(vector %1 %2) row)]
         (->> elem 
              intcolor<-argb
+             int
              (.setRGB buff x y))))
     buff))
 
