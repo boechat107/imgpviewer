@@ -12,6 +12,11 @@
   [obj]
   (instance? Image obj))
 
+(def color-dimensions
+  {:rgb 3
+   :argb 4
+   :gray 1})
+
 (defn valid-type?
   [type]
   (some #(= type %) [:argb :rgb :gray]))
@@ -46,6 +51,11 @@
   [^Image img]
   (:ncols img))
 
+(defn dimension 
+  "Returns the number of the dimensions of the image's color space."
+  [img]
+  ((:type img) color-dimensions))
+
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
   pixels and the color space of the image. 
@@ -67,8 +77,25 @@
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
   for columns."
-  [img x y]
-  (get-in (:mat img) [y x]))
+  ([img x y]
+   (((:mat img) y) x))
+  ([img x y ch]
+   {:pre [(> (dimension img) 1)]}
+   ((((:mat img) y) x) ch)))
+
+(defn get-neighbour
+  "Returns the value of one of the pixels of a squared area around [x,y].
+  [x, y] has pos=4.
+  [0 1 2
+  3 4 5
+  6 7 8]
+  "
+  [img x y pos]
+  (let [real-xy (fn [c m]
+                  (min (dec m) (max 0 c)))]
+    (get-xy img
+               (real-xy (+ (dec x) (rem pos 3)) (ncols img)) 
+               (real-xy (+ (dec y) (quot pos 3)) (nrows img)))))
 
 (defn mat-map
   "Applies a function f to each element of the matrix mat, returning a new mat
