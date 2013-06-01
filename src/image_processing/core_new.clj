@@ -3,6 +3,9 @@
     [incanter.core :as ic]
     ))
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (defrecord Image [mat type nrows ncols])
 
 (defn image?

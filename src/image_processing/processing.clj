@@ -7,6 +7,9 @@
     )
   )
 
+(set! *warn-on-reflection* true)
+(set! *unchecked-math* true)
+
 (defn rgb-to-gray
   "Returns a new Image whose color space is the grayscale.
   Reference:
