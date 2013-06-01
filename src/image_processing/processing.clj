@@ -87,25 +87,25 @@
 (defn apply-kernel 
   "Just applies a kernel mask to a [x, y] pixel and its neighbors."
   [img x y mask]
-  (let [sample (ipc/get-xy img 0 0)
-        ;; Dimensionality of the color space.
-        nv (when (coll? sample) (count sample))]
-    (->> (get-neighbour-pixels img x y)
-         ;; Multiplication of each pixel of the mask.
-         (map #(ut/mult-vec %1 %2) mask)
-         (reduce #(if nv (map + %1 %2) (+ %1 %2)) 
-                 (if nv (repeat nv 0) 0))
-         (if-map #(min 255 %))
-         (if-map #(max 0 %)))))
+  (mapv #(loop [pos (long 0), res (double 0.0)]
+           (if (< pos 9)
+             (recur (inc pos)
+                    (->> ((ipc/get-neighbour img x y pos) %)
+                         (* (get mask pos))
+                         (+ res)))
+             res))
+        (range (ipc/dimension img))))
 
 (defn apply-kernel-one
   "Applies a convolution kernel for one channel images."
   [img x y mask]
-  (->> (get-neighbour-pixels img x y)
-       (map * mask)
-       (reduce +)
-       (min 255)
-       (max 0)))
+  (loop [pos (long 0), res (double 0.0)]
+           (if (< pos 9)
+             (recur (inc pos)
+                    (->> (ipc/get-neighbour img x y pos)
+                         (* (get mask pos))
+                         (+ res)))
+             res)))
 
 (defn convolve
   [img mask]
