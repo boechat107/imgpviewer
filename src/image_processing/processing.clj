@@ -19,7 +19,7 @@
   (->> (:mat img)
        (ipc/mat-map #(let [[r g b] %]
                        (+ (* 0.2126 r) (* 0.7152 g) (* 0.0722 b))))
-       (#(ipc/make-image % :gray))))
+       (#(ipc/make-image % (ipc/nrows img) (ipc/ncols img) :gray))))
 
 (defn gray-to-rgb
   "Repeats the only grayscale channel for each color channel and returns a new RGB
@@ -27,29 +27,33 @@
   [img]
   {:pre [(= :gray (:type img))]}
   (-> (ipc/mat-map #(vector % % %) (:mat img))
-      (ipc/make-image :rgb)))
+      (ipc/make-image (ipc/nrows img) (ipc/ncols img) :rgb)))
 
 (defn rgb-to-argb 
   "Adds the transparency channel to a rgb Image."
   [img]
   {:pre [(= :rgb (:type img))]}
   (-> (ipc/mat-map #(concat [255] %) (:mat img))
-      (ipc/make-image :argb)))
+      (ipc/make-image (ipc/nrows img) (ipc/ncols img) :argb)))
 
 (defn gray-to-argb 
   "Converts the color space from grayscale to ARGB."
   [img]
   {:pre [(= :gray (:type img))]}
   (-> (ipc/mat-map #(vector 255 % % %) (:mat img))
-      (ipc/make-image :argb)))
+      (ipc/make-image (ipc/nrows img) (ipc/ncols img) :argb)))
 
 (defn grid-apply
   "Returns a sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
-  [f x-min x-max y-min y-max]
+  ([f x-min x-max y-min y-max]
   (mapv (fn [y]
           (mapv #(f % y) (range x-min x-max)))
         (range y-min y-max)))
+  ([f img]
+   (let [nc (ipc/ncols img)]
+     (mapv #(f (rem % nc) (quot % nc))
+           (range (* nc (ipc/nrows img)))))))
 
 (defn pgrid-apply
   "Like grid-apply, but the function is applied in parallel."
@@ -103,7 +107,7 @@
            (if (< pos 9)
              (recur (inc pos)
                     (->> (ipc/get-neighbour img x y pos)
-                         (* (get mask pos))
+                         (* (aget ^doubles mask pos))
                          (+ res)))
              res)))
 
@@ -113,8 +117,8 @@
   ;; variable mask size.
   (let [nr (ipc/nrows img)
         nc (ipc/ncols img)]
-    (->> (grid-apply #(apply-kernel-one img %1 %2 mask) 0 nc 0 nr)
-         (#(ipc/make-image % (:type img))))))
+    (->> (grid-apply #(apply-kernel-one img %1 %2 mask) img)
+         (#(ipc/make-image % (ipc/nrows img) (ipc/ncols img) (:type img))))))
 
 (defn erode
   "Erodes a Image, a basic operation in the area of the mathematical morphology.
@@ -123,9 +127,9 @@
    ([img] (erode img 0.2 0.2))
    ([img corner edge]
     {:pre [(ipc/gray-type? img)]}
-    (let [mask [corner  edge    corner
+    (let [mask (double-array [corner  edge    corner
                 edge    1.0     edge
-                corner  edge    corner]]
+                corner  edge    corner])]
       (convolve img mask))))
 
 (defn binarize
@@ -135,7 +139,7 @@
   [img th]
   (letfn [(threshold [n] (if (> n th) 255 0))]
     (-> (ipc/mat-map #(if-map threshold %) (:mat img))
-        (ipc/make-image (:type img)))))
+        (ipc/make-image (ipc/nrows img) (ipc/ncols img) (:type img)))))
 
 (defn smoothing
   "Returns a new Image resulting of the application of a edge preserving smoothing on
