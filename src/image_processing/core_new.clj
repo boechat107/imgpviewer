@@ -41,12 +41,12 @@
 
 (defn nrows
   "Returns the number of rows of an Image."
-  [img]
+  ^long [img]
   (:nrows img))
 
 (defn ncols
   "Returns the number of rows of an Image."
-  [img]
+  ^long [img]
   (:ncols img))
 
 (defn dimension 
@@ -92,11 +92,10 @@
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned."
-  ([img x y]
-   (mapv #(ut/mult-aget ints % (+ (* y (ncols img)) x)) 
-         (:mat img)))
-  ([img x y ch]
-   (ut/mult-aget ints ((:mat img) ch) (+ (* y (ncols img)) x))))
+  (^long [img x y ch]
+   (ut/mult-aget ints ((:mat img) ch) (+ (* y (ncols img)) x)))
+  (^long [img idx ch]
+   (ut/mult-aget ints ((:mat img) ch) idx)))
 
 (defn get-neighbour
   "Returns the value of one of the pixels of a squared area around [x,y].
@@ -106,26 +105,33 @@
   6 7 8]
   "
   [img x y ch pos]
-  (let [real-xy (fn [c m]
-                  (let [c (long c), m (long m)]
-                    (min (dec m) (max 0 c))))
+  (let [real-xy (fn ^long [^long c ^long m]
+                  (min (dec m) (max 0 c)))
         x (long x)
         y (long y)
         pos (long pos)]
     (get-pixel img
-      (real-xy (+ (dec x) (rem pos 3)) (ncols img)) 
-      (real-xy (+ (dec y) (quot pos 3)) (nrows img))
-      ch)))
+               (real-xy (cond
+                          (or (== pos 0) (== pos 3) (== pos 6)) 0
+                          (or (== pos 1) (== pos 4) (== pos 7)) 1
+                          :else 2)
+                        (ncols img))
+               (real-xy (cond
+                          (> 3 pos) 0
+                          (> 6 pos) 1
+                          :else 2)
+                        (nrows img))
+               ch)))
 
 (defn set-pixel!
   "Sets the value of the [x, y] pixel."
-;  ([img x y vals]
-;   (dorun 
-;     (map-indexed #(ut/mult-aset ints (:mat img) y x %1 %2)
-;                  vals)))
   ([img x y ch val]
    (ut/mult-aset ints ((:mat img) ch)
                  (+ x (* y (ncols img))) 
+                 val))
+  ([img idx ch val]
+   (ut/mult-aset ints ((:mat img) ch)
+                 idx 
                  val)))
 
 (defn grid-apply

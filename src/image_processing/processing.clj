@@ -16,11 +16,15 @@
   http://en.wikipedia.org/wiki/Grayscale"
   [img]
   {:pre [(= :rgb (:type img))]}
-  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)]
-    (ipc/grid-apply #(->> (* 0.2126 (ipc/get-pixel img %1 %2 0))
-                          (+ (* 0.7152 (ipc/get-pixel img %1 %2 1)))
-                          (+ (* 0.0722 (ipc/get-pixel img %1 %2 2)))
-                          (ipc/set-pixel! res %1 %2 0)) 
+  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)
+        rf 0.2126
+        gf 0.7152
+        bf 0.0722]
+    (ipc/grid-apply #(let [idx (* %1 %2)]
+                       (->> (* rf (ipc/get-pixel img idx 0))
+                            (+ (* gf (ipc/get-pixel img idx 1)))
+                            (+ (* bf (ipc/get-pixel img idx 2)))
+                            (ipc/set-pixel! res idx 0))) 
                     img)
     res))
 
@@ -60,7 +64,7 @@
     (if (< pos 9)
       (recur (inc pos)
              (->> (ipc/get-neighbour img x y ch pos)
-                  (* (get mask pos))
+                  (* (aget ^doubles mask pos))
                   (+ res)))
       res)))
 
@@ -71,7 +75,7 @@
       (dotimes [y (ipc/nrows img)]
         (dotimes [x (ipc/ncols img)]
           (->> (apply-kernel img x y ch mask)
-               (ipc/set-pixel! res x y ch))
+               (ipc/set-pixel! res (* x y) ch))
           )
         )
       )
@@ -85,9 +89,9 @@
    ([img] (erode img 0.2 0.2))
    ([img corner edge]
     {:pre [(ipc/gray-type? img)]}
-    (let [mask [corner  edge    corner
+    (let [mask (double-array [corner  edge    corner
                 edge    1.0     edge
-                corner  edge    corner]]
+                corner  edge    corner])]
       (convolve img mask))))
 
 
