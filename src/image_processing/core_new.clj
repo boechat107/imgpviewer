@@ -6,7 +6,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
 
-(defrecord Image [mat type nrows ncols])
+(defrecord Image [mat type ^long nrows ^long ncols])
 
 (defn image?
   [obj]
@@ -43,12 +43,12 @@
 
 (defn nrows
   "Returns the number of rows of an Image."
-  [^Image img]
+  ^long [^Image img]
   (:nrows img))
 
 (defn ncols
   "Returns the number of rows of an Image."
-  [^Image img]
+  ^long [^Image img]
   (:ncols img))
 
 (defn dimension 
@@ -70,18 +70,26 @@
     |                |
     |                |
     +----------------+ h*w - 1"
-  ([data-mat type]
-   {:pre [(valid-type? type) (vector? data-mat) (every? vector? data-mat)]}
-   (Image. data-mat type (count data-mat) (count (first data-mat)))))
+  ([data-mat nrows ncols type]
+   {:pre [(valid-type? type)]}
+   (Image. (if (vector? data-mat) data-mat (vec data-mat))
+           type nrows ncols)))
 
 (defn get-xy
   "Returns the value of the representation of pixel [x, y], where x increases 
   for columns."
-  ([img x y]
-   (((:mat img) y) x))
-  ([img x y ch]
+  (^long [img ^long x ^long y]
+   ((:mat img) (+ x (* y (ncols img)))))
+  (^long [img ^long x ^long y ch]
    {:pre [(> (dimension img) 1)]}
-   ((((:mat img) y) x) ch)))
+   (((:mat img) (+ x (* y (ncols img)))) ch)))
+
+(defn get-pix-1d
+  ([img idx]
+   ((:mat img) idx))
+  ([img idx ch]
+   {:pre [(> (dimension img) 1)]}
+   (((:mat img) idx) ch)))
 
 (defn get-neighbour
   "Returns the value of one of the pixels of a squared area around [x,y].
@@ -90,20 +98,27 @@
   3 4 5
   6 7 8]
   "
-  [img x y pos]
-  (let [real-xy (fn [c m]
+  ([img idx pos])
+  (^long [img x y pos]
+  (let [real-xy (fn ^long [^long c ^long m]
                   (min (dec m) (max 0 c)))]
     (get-xy img
-               (real-xy (+ (dec x) (rem pos 3)) (ncols img)) 
-               (real-xy (+ (dec y) (quot pos 3)) (nrows img)))))
+            (real-xy (cond
+                       (or (== pos 0) (== pos 3) (== pos 6)) 0
+                       (or (== pos 1) (== pos 4) (== pos 7)) 1
+                       :else 2)
+                     (ncols img))
+            (real-xy (cond
+                       (> 3 pos) 0
+                       (> 6 pos) 1
+                       :else 2)
+                     (nrows img))))))
 
 (defn mat-map
   "Applies a function f to each element of the matrix mat, returning a new mat
   structure (vector of vectors) with the new values."
   ([f mat]
-   (mapv #(mapv f %) mat))
-  ([f m & ms]
-   (apply mapv (fn [& a] (apply mapv f a)) m ms)))
+   (mapv f mat)))
 
 (defn mat-pmap
   "Like mat-map, except f is applied in parallel."

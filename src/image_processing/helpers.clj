@@ -37,14 +37,16 @@
 (defn load-file-image
   "Returns a RGB Image from a file image."
   [^String filepath]
-  (let [buff (ImageIO/read (File. filepath))]
-    (-> (mapv (fn [y]
-                (mapv (comp (juxt :r :g :b)
-                            argb<-intcolor 
-                            #(.getRGB buff % y)) 
-                      (range (.getWidth buff))))
-              (range (.getHeight buff)))
-        (ipc/make-image :rgb))))
+  (let [buff (ImageIO/read (File. filepath))
+        nc (.getWidth buff)
+        nr (.getHeight buff)
+        ba (.getDataElements (.getRaster buff) 0 0 nc nr nil)]
+    (-> (mapv (comp (juxt :r :g :b)
+                    argb<-intcolor 
+                    #(aget ^bytes ba %))
+              (range (* nc nr)))
+        (ipc/make-image nr nc :rgb))
+    ))
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
