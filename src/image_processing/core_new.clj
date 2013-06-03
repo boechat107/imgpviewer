@@ -147,11 +147,17 @@
      (dotimes [y nr]
        (f (+ x (* y nc)))))))
 
-(defmacro for-idx
+(defmacro for-img
   "Ex.:
   (for-idx [idx [nc nr]]
     body)"
-  )
+  [[idx img] & body]
+  `(let [nr# (nrows ~img)
+         nc# (ncols ~img)]
+     (dotimes [x# nc#]
+       (dotimes [y# nr#]
+         (let [~idx (+ x# (* y# nc#))]
+           ~@body)))))
 
 (defn pgrid-apply
   "Like grid-apply, but the rows are processed in parallel."
