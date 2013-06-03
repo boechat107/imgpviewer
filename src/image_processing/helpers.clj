@@ -26,17 +26,17 @@
 
 (defn r<-intcolor 
   "Returns the red value from a ARGB integer."
-  [color]
+  ^long [^long color]
   (bit-and (bit-shift-right color 16) 0xff))
 
 (defn g<-intcolor 
   "Returns the green value from a ARGB integer."
-  [color]
+  ^long [^long color]
   (bit-and (bit-shift-right color 8) 0xff))
 
 (defn b<-intcolor 
   "Returns the blue value from a ARGB integer."
-  [color]
+  ^long [^long color]
   (bit-and color 0xff))
 
 (defn intcolor<-argb
