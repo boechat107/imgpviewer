@@ -53,13 +53,15 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        img (ipc/new-image nr nc :rgb)]
+        img (ipc/new-image nr nc :rgb)
+        [rch gch bch] (:mat img)]
     (dotimes [c nc]
       (dotimes [r nr]
-        (let [int-pix (.getRGB buff c r)]
-          (ipc/set-pixel! img c r 0 (r<-intcolor int-pix))
-          (ipc/set-pixel! img c r 1 (g<-intcolor int-pix))
-          (ipc/set-pixel! img c r 2 (b<-intcolor int-pix)))))
+        (let [int-pix (.getRGB buff c r)
+              idx (+ c (* r nc))]
+          (ut/mult-aset ints rch idx (r<-intcolor int-pix))
+          (ut/mult-aset ints gch idx (g<-intcolor int-pix))
+          (ut/mult-aset ints bch idx (b<-intcolor int-pix)))))
     img))
 
 (defn to-buffered-image
