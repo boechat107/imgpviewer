@@ -22,13 +22,13 @@
         gray (first (:mat res))
         [rch gch bch] (:mat img)]
     (dotimes [y nr]
-        (dotimes [x nc]
-          (let [idx (+ x (* y nc))]
-            (->> (* 0.2126 (aget ^ints rch idx))
-                 (+ (* 0.7152 (aget ^ints gch idx)))
-                 (+ (* 0.0722 (aget ^ints bch idx)))
-                 int
-                 (ipc/set-pixel! res idx 0)))))
+      (dotimes [x nc]
+        (let [idx (+ x (* y nc))]
+          (->> (* 0.2126 (ut/mult-aget ints rch idx))
+               (+ (* 0.7152 (ut/mult-aget ints gch idx)))
+               (+ (* 0.0722 (ut/mult-aget ints bch idx)))
+               int
+               (ut/mult-aset ints gray idx)))))
     res))
 
 (defn gray-to-rgb
@@ -36,12 +36,17 @@
   Image."
   [img]
   {:pre [(= :gray (:type img))]}
-  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :rgb)]
-    (ipc/grid-apply #(let [p (ipc/get-pixel img %1 %2 0)]
-                       (ipc/set-pixel! res %1 %2 0 p)
-                       (ipc/set-pixel! res %1 %2 1 p)
-                       (ipc/set-pixel! res %1 %2 2 p))
-                    img)
+  (let [nr (ipc/nrows img)
+        nc (ipc/ncols img)
+        res (ipc/new-image nr nc :rgb)
+        [rch gch bch] (:mat res)]
+    (dotimes [y nr]
+      (dotimes [x nc]
+        (let [idx (+ x (* y nc))
+              p (ut/mult-aget ints ((:mat img) 0) idx)]
+          (ut/mult-aset ints rch idx p)
+          (ut/mult-aset ints gch idx p)
+          (ut/mult-aset ints bch idx p))))
     res))
 
 (defn binarize
