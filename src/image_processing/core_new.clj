@@ -124,7 +124,8 @@
                ch)))
 
 (defn set-pixel!
-  "Sets the value of the [x, y] pixel."
+  "Sets the value of the [x, y] pixel. For a better performance, use the macro
+  mult-aset."
   ([img x y ch val]
    (ut/mult-aset ints ((:mat img) ch)
                  (+ x (* y (ncols img))) 
@@ -141,10 +142,10 @@
   ([f x-min x-max y-min y-max]
    (doseq [y (range y-min y-max), x (range x-min x-max)]
      (f x y)))
-  ([f img]
-   (dotimes [x (ncols img)]
-     (dotimes [y (nrows img)]
-       (f x y)))))
+  ([^long nr ^long nc f]
+   (dotimes [x nc]
+     (dotimes [y nr]
+       (f (+ x (* y nc)))))))
 
 (defn pgrid-apply
   "Like grid-apply, but the rows are processed in parallel."
