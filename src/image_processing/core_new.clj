@@ -147,6 +147,12 @@
      (dotimes [y nr]
        (f (+ x (* y nc)))))))
 
+(defmacro for-idx
+  "Ex.:
+  (for-idx [idx [nc nr]]
+    body)"
+  )
+
 (defn pgrid-apply
   "Like grid-apply, but the rows are processed in parallel."
   [f x-min x-max y-min y-max]
