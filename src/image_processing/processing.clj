@@ -21,14 +21,11 @@
         res (ipc/new-image nr nc :gray)
         gray (first (:mat res))
         [rch gch bch] (:mat img)]
-    (dotimes [y nr]
-      (dotimes [x nc]
-        (let [idx (+ x (* y nc))]
-          (->> (* 0.2126 (ut/mult-aget ints rch idx))
-               (+ (* 0.7152 (ut/mult-aget ints gch idx)))
-               (+ (* 0.0722 (ut/mult-aget ints bch idx)))
-               int
-               (ut/mult-aset ints gray idx)))))
+    (ipc/for-img [idx img]
+      (->> (* 0.2126 (ut/mult-aget ints rch idx))
+           (+ (* 0.7152 (ut/mult-aget ints gch idx)))
+           (+ (* 0.0722 (ut/mult-aget ints bch idx)))
+           (ut/mult-aset ints gray idx)))
     res))
 
 (defn gray-to-rgb
@@ -38,15 +35,14 @@
   {:pre [(= :gray (:type img))]}
   (let [nr (ipc/nrows img)
         nc (ipc/ncols img)
+        gray ((:mat img) 0)
         res (ipc/new-image nr nc :rgb)
         [rch gch bch] (:mat res)]
-    (dotimes [y nr]
-      (dotimes [x nc]
-        (let [idx (+ x (* y nc))
-              p (ut/mult-aget ints ((:mat img) 0) idx)]
-          (ut/mult-aset ints rch idx p)
-          (ut/mult-aset ints gch idx p)
-          (ut/mult-aset ints bch idx p))))
+    (ipc/for-img [idx img]
+      (let [p (ut/mult-aget ints gray idx)]
+        (ut/mult-aset ints rch idx p)
+        (ut/mult-aset ints gch idx p)
+        (ut/mult-aset ints bch idx p)))
     res))
 
 (defn binarize
