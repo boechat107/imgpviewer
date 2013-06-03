@@ -16,16 +16,19 @@
   http://en.wikipedia.org/wiki/Grayscale"
   [img]
   {:pre [(= :rgb (:type img))]}
-  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) :gray)
-        rf 0.2126
-        gf 0.7152
-        bf 0.0722]
-    (ipc/grid-apply #(let [idx (* %1 %2)]
-                       (->> (* rf (ipc/get-pixel img idx 0))
-                            (+ (* gf (ipc/get-pixel img idx 1)))
-                            (+ (* bf (ipc/get-pixel img idx 2)))
-                            (ipc/set-pixel! res idx 0))) 
-                    img)
+  (let [nc (ipc/ncols img)
+        nr (ipc/nrows img)
+        res (ipc/new-image nr nc :gray)
+        gray (first (:mat res))
+        [rch gch bch] (:mat img)]
+    (dotimes [y nr]
+        (dotimes [x nc]
+          (let [idx (+ x (* y nc))]
+            (->> (* 0.2126 (aget ^ints rch idx))
+                 (+ (* 0.7152 (aget ^ints gch idx)))
+                 (+ (* 0.0722 (aget ^ints bch idx)))
+                 int
+                 (ipc/set-pixel! res idx 0)))))
     res))
 
 (defn gray-to-rgb
