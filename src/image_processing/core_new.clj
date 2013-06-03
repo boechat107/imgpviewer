@@ -51,7 +51,7 @@
 
 (defn dimension 
   "Returns the number of the dimensions of the image's color space."
-  [img]
+  ^long [img]
   ((:type img) color-dimensions))
 
 (defn new-channel-matrix 
@@ -91,11 +91,18 @@
 
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
-  returned; otherwise, a scalar is returned."
+  returned; otherwise, a scalar is returned.
+  For a better performance, use the macro mult-aget."
   (^long [img x y ch]
    (ut/mult-aget ints ((:mat img) ch) (+ (* y (ncols img)) x)))
   (^long [img idx ch]
    (ut/mult-aget ints ((:mat img) ch) idx)))
+
+(defmacro get-ch-pixel
+  "Returns the value of a pixel of a specific channel. ch-a should be a array of
+  ints."
+  [ch-a idx]
+  `(ut/mult-aget ~'ints ~ch-a ~idx))
 
 (defn get-neighbour
   "Returns the value of one of the pixels of a squared area around [x,y].
@@ -138,7 +145,6 @@
 (defn grid-apply
   "Returns a lazy sequence resulting from the application of the function f to each 
   value of the grid built with the rectangle x-min, x-max, y-min, y-max."
-  ;; todo: turn it into a side effect function.
   ([f x-min x-max y-min y-max]
    (doseq [y (range y-min y-max), x (range x-min x-max)]
      (f x y)))
@@ -148,8 +154,9 @@
        (f (+ x (* y nc)))))))
 
 (defmacro for-img
-  "Ex.:
-  (for-idx [idx [nc nr]]
+  "Iterates over all pixels of img, binding the pixel's index to idx.
+  Ex.:
+  (for-img [idx img]
     body)"
   [[idx img] & body]
   `(let [nr# (nrows ~img)
@@ -159,11 +166,11 @@
          (let [~idx (+ x# (* y# nc#))]
            ~@body)))))
 
-(defn pgrid-apply
-  "Like grid-apply, but the rows are processed in parallel."
-  [f x-min x-max y-min y-max]
-  (doall
-    (pmap (fn [y]
-            (doall
-              (map #(f % y) (range x-min x-max))))
-          (range y-min y-max))))
+(defmacro for-chs
+  "Binds the channels of images to a local variable.
+  Ex.:
+  (for-chs [img-ch img, res-ch res]
+    body)"
+  [chs-imgs & body]
+  `(let [])
+  )
