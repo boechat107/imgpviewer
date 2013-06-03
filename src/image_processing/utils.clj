@@ -53,7 +53,7 @@ sorted by method name."
   Reference:
   http://clj-me.cgrand.net/2009/10/15/multidim-arrays/"
   [hint array & idxsv]
-  (let [hints '{doubles double ints int}
+  (let [hints '{doubles double ints int bytes byte}
         [v idx & sxdi] (reverse idxsv)
         idxs (reverse sxdi)
         v (if-let [h (hints hint)] (list h v) v)
