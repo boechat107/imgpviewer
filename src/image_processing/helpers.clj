@@ -42,10 +42,14 @@
 (defn intcolor<-argb
   "Converts the components ARGB to a 32 bits integer color."
   [a r g b]
-  (int 
-    (bit-or (bit-shift-left (int a) 24)
-            (bit-or (bit-shift-left (int r) 16)
-                    (bit-or (bit-shift-left (int g) 8) (int b))))))
+  (bit-or (bit-shift-left (int a) 24)
+          (bit-or (bit-shift-left (int r) 16)
+                  (bit-or (bit-shift-left (int g) 8) (int b)))))
+
+(defn get-raster-array
+  "Returns the primitive array of a BufferedImage."
+  [^BufferedImage buff]
+  (.getDataElements (.getRaster buff) 0 0 (.getWidth buff) (.getHeight buff) nil))
 
 (defn load-file-image
   "Returns a RGB Image from a file image."
@@ -55,10 +59,10 @@
         nc (.getWidth buff)
         img (ipc/new-image nr nc :rgb)
         [rch gch bch] (:mat img)]
-    (dotimes [c nc]
-      (dotimes [r nr]
-        (let [int-pix (.getRGB buff c r)
-              idx (+ c (* r nc))]
+    (dotimes [x nc]
+      (dotimes [y nr]
+        (let [idx (+ x (* y nc))
+              int-pix (.getRGB buff x y)]
           (ut/mult-aset ints rch idx (r<-intcolor int-pix))
           (ut/mult-aset ints gch idx (g<-intcolor int-pix))
           (ut/mult-aset ints bch idx (b<-intcolor int-pix)))))
@@ -66,20 +70,21 @@
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
-  ;; todo: avoid using setRGB, use the raster data.
   [img]
   {:pre [(ipc/image? img)]}
   (let [h (ipc/nrows img)
         w (ipc/ncols img)
         buff (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
-        rgb-img (if (= (:type img) :gray) (pr/gray-to-rgb img) img)]
-    (dorun 
-      (for [y (range h), x (range w)] 
-        (->> (intcolor<-argb 255 
-                             (ipc/get-pixel rgb-img x y 0)
-                             (ipc/get-pixel rgb-img x y 1)
-                             (ipc/get-pixel rgb-img x y 2))
-             (.setRGB buff x y))))
+        rgb-img (if (= (:type img) :gray) (pr/gray-to-rgb img) img)
+        [rch gch bch] (:mat rgb-img)]
+    (dotimes [y h]
+      (dotimes [x w]
+        (let [idx (+ x (* y w))]
+          (->> (intcolor<-argb 255 
+                               (ut/mult-aget ints rch idx) 
+                               (ut/mult-aget ints gch idx) 
+                               (ut/mult-aget ints bch idx))
+               (.setRGB buff x y)))))
     buff))
 
 (defn view 
