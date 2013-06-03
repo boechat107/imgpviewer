@@ -50,14 +50,18 @@
   pixel value is below the threshold, the value is set to 0; otherwise, the value is
   set to 255."
   [img th]
-  (let [res (ipc/new-image (ipc/nrows img) (ipc/ncols img) (:type img))
-        threshold (fn [n] (if (> n th) 255 0))]
+  (let [th (long th)
+        nr (ipc/nrows img)
+        nc (ipc/ncols img)
+        res (ipc/new-image nr nc (:type img))
+        threshold (fn [^long n] (if (> n th) 255 0))]
     (dotimes [ch (ipc/dimension img)]
-      (ipc/grid-apply 
-        #(->> (ipc/get-pixel img %1 %2 ch)
-              threshold 
-              (ipc/set-pixel! res %1 %2 ch))
-        img))
+      (let [img-m ((:mat img) ch)
+            res-m ((:mat res) ch)]
+        (ipc/for-img [idx img]
+          (->> (ut/mult-aget ints img-m idx)
+               threshold 
+               (ut/mult-aset ints res-m idx)))))
     res))
 
 (defn apply-kernel 
