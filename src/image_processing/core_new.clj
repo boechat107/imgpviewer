@@ -78,11 +78,11 @@
       (repeatedly #(new-channel-matrix nrows ncols))
       (make-image nrows ncols type)))
 
-;(defn copy-image
-;  "Returns a copy of a given image."
-;  [img]
-;  (-> (map #(ut/mult-aclone %) (:mat img)) 
-;      (make-image (:type img))))
+(defn copy-image
+  "Returns a copy of a given image."
+  [img]
+  (->> (mapv #(aclone ^ints %) (:mat img)) 
+       (assoc img :mat)))
 
 (defn xy-to-pos 
   "Converts a index [x, y] to a index for a continuous array."
