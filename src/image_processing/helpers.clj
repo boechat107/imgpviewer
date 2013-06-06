@@ -1,6 +1,6 @@
 (ns image-processing.helpers 
   (:require 
-    [image-processing.core-new :as ipc]
+    [image-processing.core-new :as c]
     [image-processing.processing :as pr]
     [image-processing.utils :as ut]
     [seesaw.core :as w]
@@ -57,7 +57,7 @@
   (let [buff (ImageIO/read (File. filepath))
         nr (.getHeight buff)
         nc (.getWidth buff)
-        img (ipc/new-image nr nc :rgb)
+        img (c/new-image nr nc :rgb)
         [rch gch bch] (:mat img)]
     (dotimes [x nc]
       (dotimes [y nr]
@@ -71,9 +71,9 @@
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
   [img]
-  {:pre [(ipc/image? img)]}
-  (let [h (ipc/nrows img)
-        w (ipc/ncols img)
+  {:pre [(c/image? img)]}
+  (let [h (c/nrows img)
+        w (c/ncols img)
         buff (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
         rgb-img (if (= (:type img) :gray) (pr/gray-to-rgb img) img)
         [rch gch bch] (:mat rgb-img)]
