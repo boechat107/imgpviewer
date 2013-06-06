@@ -1,8 +1,6 @@
 (ns image-processing.core-new
   (:require 
-    [image-processing.utils :as ut]
-    [incanter.core :as ic]
-    ))
+    [incanter.core :as ic]))
 
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* true)
@@ -22,10 +20,18 @@
   [type]
   (some #(= type %) [:argb :rgb :gray]))
 
+(defn doubles?
+  [x]
+  (= (type x) (Class/forName "[D")))
+
+(defn ints?
+  [x]
+  (= (type x) (Class/forName "[I")))
+
 (defn mat?
   [m]
   (and (sequential? m)
-       (every? #(= (type %) (Class/forName "[I")) m)))
+       (every? doubles? m)))
 
 (defn color-type?
   [img]
@@ -57,7 +63,7 @@
 (defn new-channel-matrix 
   "Returns a matrix used to represent a color channel data."
   [nrows ncols] 
-  (make-array Integer/TYPE (* nrows ncols)))
+  (int-array (* nrows ncols)))
 
 (defn make-image
   "Returns an instance of Image for a given image data, its number of columns of
@@ -84,10 +90,16 @@
   (->> (mapv #(aclone ^ints %) (:mat img)) 
        (assoc img :mat)))
 
-(defn xy-to-pos 
-  "Converts a index [x, y] to a index for a continuous array."
-  [x y ncols]
-  (-> (* y ncols) (+ x)))
+(defmacro mult-aget
+  "Returns the value of an element of multiple dimensional arrays. Uses type hints to 
+  improve the performance of aget.
+  Reference:
+  http://clj-me.cgrand.net/2009/10/15/multidim-arrays/"
+  ([hint array idx]
+   `(aget ~(vary-meta array assoc :tag hint) ~idx))
+  ([hint array idx & idxs]
+   `(let [a# (aget ~(vary-meta array assoc :tag 'objects) ~idx)]
+      (mult-aget ~hint a# ~@idxs))))
 
 (defn get-pixel
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
@@ -106,31 +118,22 @@
   ([ch-a x y nc]
    `(ut/mult-aget ~'ints ~ch-a (+ ~x (* ~y ~nc)))))
 
-(defn get-neighbour
-  "Returns the value of one of the pixels of a squared area around [x,y].
-  [x, y] has pos=4.
-  [0 1 2
-  3 4 5
-  6 7 8]
-  "
-  [img x y ch pos]
-  (let [real-xy (fn ^long [^long c ^long m]
-                  (min (dec m) (max 0 c)))
-        x (long x)
-        y (long y)
-        pos (long pos)]
-    (get-pixel img
-               (real-xy (cond
-                          (or (== pos 0) (== pos 3) (== pos 6)) 0
-                          (or (== pos 1) (== pos 4) (== pos 7)) 1
-                          :else 2)
-                        (ncols img))
-               (real-xy (cond
-                          (> 3 pos) 0
-                          (> 6 pos) 1
-                          :else 2)
-                        (nrows img))
-               ch)))
+(defmacro mult-aset
+  "Sets the value of an element of a multiple dimensional array. Uses type hints to 
+  improve the performance of aset. (Only for double and int arrays for now)
+  Reference:
+  http://clj-me.cgrand.net/2009/10/15/multidim-arrays/"
+  [hint array & idxsv]
+  (let [hints '{doubles double ints int bytes byte longs long}
+        [v idx & sxdi] (reverse idxsv)
+        idxs (reverse sxdi)
+        v (if-let [h (hints hint)] (list h v) v)
+        nested-array (if (seq idxs)
+                       `(mult-aget ~'objects ~array ~@idxs)
+                       array)
+        a-sym (with-meta (gensym "a") {:tag hint})]
+    `(let [~a-sym ~nested-array]
+       (aset ~a-sym ~idx ~v))))
 
 (defn set-pixel!
   "Sets the value of the [x, y] pixel. For a better performance, use the macro
