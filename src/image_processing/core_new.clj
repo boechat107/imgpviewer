@@ -101,8 +101,10 @@
 (defmacro get-ch-pixel
   "Returns the value of a pixel of a specific channel. ch-a should be a array of
   ints."
-  [ch-a idx]
-  `(ut/mult-aget ~'ints ~ch-a ~idx))
+  ([ch-a idx]
+   `(ut/mult-aget ~'ints ~ch-a ~idx))
+  ([ch-a x y nc]
+   `(ut/mult-aget ~'ints ~ch-a (+ ~x (* ~y ~nc)))))
 
 (defn get-neighbour
   "Returns the value of one of the pixels of a squared area around [x,y].
@@ -153,10 +155,10 @@
      (dotimes [y nr]
        (f (+ x (* y nc)))))))
 
-(defmacro for-img
+(defmacro for-idx
   "Iterates over all pixels of img, binding the pixel's index to idx.
   Ex.:
-  (for-img [idx img]
+  (for-idx [idx img]
     body)"
   [[idx img] & body]
   `(let [nr# (nrows ~img)
@@ -165,6 +167,15 @@
        (dotimes [y# nr#]
          (let [~idx (+ x# (* y# nc#))]
            ~@body)))))
+
+(defmacro for-xy
+  "Iterates over all pixels of an image, binding the pixels' index to [x, y]."
+  [[x y img] & body]
+  `(let [nr# (nrows ~img)
+         nc# (ncols ~img)]
+     (dotimes [~x nc#]
+       (dotimes [~y nr#]
+         ~@body))))
 
 (defmacro for-chs
   "Binds the channels of images to a local variable.
