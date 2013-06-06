@@ -64,8 +64,13 @@
     res))
 
 (defn convolve
+  "Applies a convolution mask over an image.
+  mask is an one dimensional collection or array with (* mask-size mask-size)
+  elements."
+  ;; todo: Write a macro for the loops over the mask elements. 
   [img mask ^long mask-size]
-  (let [nc (c/ncols img)
+  (let [mask (if (c/doubles? mask) mask (into-array Double/TYPE mask))
+        nc (c/ncols img)
         nr (c/nrows img)
         res (c/new-image nr nc (:type img))
         offset (long (/ mask-size 2))]
@@ -75,15 +80,19 @@
         (c/for-xy 
           [x y img]
           (loop [xn (long 0), kv (double 0.0)]
+            ;; Loop over the x values of the mask.
             (if (< xn mask-size)
               (recur 
                 (inc xn)
                 (+ kv
                    (loop [yn (long 0), kyv (double 0.0)]
+                     ;; Loop over the y values of the mask.
                      (if (< yn mask-size)
                        (recur (inc yn)
                               (->> (c/get-pixel
                                      img-m 
+                                     ;; Ensures that the coordinates are out of the
+                                     ;; image's bounds.
                                      (-> (+ xn (- x offset))
                                          (max 0)
                                          (min (dec nc)))
@@ -104,9 +113,9 @@
    ([img] (erode img 0.2 0.2))
    ([img corner edge]
     {:pre [(c/gray-type? img)]}
-    (let [mask (double-array [corner  edge    corner
+    (let [mask [corner  edge    corner
                 edge    1.0     edge
-                corner  edge    corner])]
+                corner  edge    corner]]
       (convolve img mask 3))))
 
 
