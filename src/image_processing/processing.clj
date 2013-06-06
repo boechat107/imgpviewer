@@ -21,7 +21,7 @@
         res (c/new-image nr nc :gray)
         gray (first (:mat res))
         [rch gch bch] (:mat img)]
-    (c/for-img [idx img]
+    (c/for-idx [idx img]
       (->> (* 0.2126 (c/get-ch-pixel rch idx))
            (+ (* 0.7152 (c/get-ch-pixel gch idx)))
            (+ (* 0.0722 (c/get-ch-pixel bch idx)))
@@ -38,7 +38,7 @@
         gray ((:mat img) 0)
         res (c/new-image nr nc :rgb)
         [rch gch bch] (:mat res)]
-    (c/for-img [idx img]
+    (c/for-idx [idx img]
       (let [p (c/get-ch-pixel gray idx)]
         (ut/mult-aset ints rch idx p)
         (ut/mult-aset ints gch idx p)
@@ -58,13 +58,13 @@
     (dotimes [ch (c/dimension img)]
       (let [img-m ((:mat img) ch)
             res-m ((:mat res) ch)]
-        (c/for-img [idx img]
+        (c/for-idx [idx img]
           (->> (c/get-ch-pixel img-m idx)
                threshold 
                (ut/mult-aset ints res-m idx)))))
     res))
 
-(defn apply-kernel 
+(defn calc-kernel-val
   "Returns a scalar value resulting of applying a kernel mask to a [x, y] pixel and
   its neighbors."
   [img x y ch mask]
@@ -72,23 +72,44 @@
     (if (< pos 9)
       (recur (inc pos)
              (->> (c/get-neighbour img x y ch pos)
-                  (* (aget ^doubles mask pos))
+                  (* (ut/mult-aget doubles mask pos))
                   (+ res)))
       res)))
 
 (defn convolve
-  [img mask]
-  (let [res (c/new-image (c/nrows img) (c/ncols img) (:type img))]
+  [img mask ^long mask-size]
+  ;; todo: use a mask offset to get the neighbors. It is independent of the mask
+  ;; size.
+  (let [nc (c/ncols img)
+        nr (c/nrows img)
+        res (c/new-image nr nc (:type img))
+        offset (long (/ mask-size 2))
+        check-xy (fn ^long [^long c ^long m]
+                   (min (dec m) (max 0 c)))]
     (dotimes [ch (c/dimension img)]
-      (dotimes [y (c/nrows img)]
-        (dotimes [x (c/ncols img)]
-          (->> (apply-kernel img x y ch mask)
-               (c/set-pixel! res (* x y) ch))
-          )
-        )
-      )
-    )
-  )
+      (let [res-m ((:mat res) ch)
+            img-m ((:mat img) ch)]
+        (c/for-xy 
+          [x y img]
+          (loop [xn (long 0), kv (double 0.0)]
+            (if (< xn mask-size)
+              (recur 
+                (inc xn)
+                (+ kv
+                   (loop [yn (long 0), kyv (double 0.0)]
+                     (if (< yn mask-size)
+                       (recur (inc yn)
+                              (->> (c/get-ch-pixel img-m 
+                                                   (check-xy (+ xn (- x offset)) nc)
+                                                   (check-xy (+ yn (- y offset)) nr)
+                                                   nc)
+                                   (* (ut/mult-aget doubles mask (+ xn (* yn mask-size))))
+                                   (+ kyv)))
+                       kyv))))
+              (ut/mult-aset ints res-m (* x y) kv)
+              )
+            )
+          )))))
 
 (defn erode
   "Erodes a Image, a basic operation in the area of the mathematical morphology.
@@ -100,7 +121,7 @@
     (let [mask (double-array [corner  edge    corner
                 edge    1.0     edge
                 corner  edge    corner])]
-      (convolve img mask))))
+      (convolve img mask 3))))
 
 
 ;
