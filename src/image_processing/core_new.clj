@@ -31,7 +31,7 @@
 (defn mat?
   [m]
   (and (sequential? m)
-       (every? doubles? m)))
+       (every? ints? m)))
 
 (defn color-type?
   [img]
@@ -101,22 +101,22 @@
    `(let [a# (aget ~(vary-meta array assoc :tag 'objects) ~idx)]
       (mult-aget ~hint a# ~@idxs))))
 
-(defn get-pixel
+(defmacro get-pixel
+  "Returns a primitive integer value from a channel's array ach. If coordinates 
+  [x, y] and ncols are provided, the array is handled as 2D matrix."
+  ([ach idx]
+   `(mult-aget ~'ints ~ach ~idx))
+  ([ach x y nc]
+   `(mult-aget ~'ints ~ach (+ ~x (* ~y ~nc)))))
+
+(defn get-pixel*
   "Returns the value of the pixel [x, y]. If no channel is specified, a vector is
   returned; otherwise, a scalar is returned.
-  For a better performance, use the macro mult-aget."
+  For a better performance, use the macro get-pixel."
   (^long [img x y ch]
-   (ut/mult-aget ints ((:mat img) ch) (+ (* y (ncols img)) x)))
+   (mult-aget ints ((:mat img) ch) (+ (* y (ncols img)) x)))
   (^long [img idx ch]
-   (ut/mult-aget ints ((:mat img) ch) idx)))
-
-(defmacro get-ch-pixel
-  "Returns the value of a pixel of a specific channel. ch-a should be a array of
-  ints."
-  ([ch-a idx]
-   `(ut/mult-aget ~'ints ~ch-a ~idx))
-  ([ch-a x y nc]
-   `(ut/mult-aget ~'ints ~ch-a (+ ~x (* ~y ~nc)))))
+   (mult-aget ints ((:mat img) ch) idx)))
 
 (defmacro mult-aset
   "Sets the value of an element of a multiple dimensional array. Uses type hints to 
@@ -135,28 +135,25 @@
     `(let [~a-sym ~nested-array]
        (aset ~a-sym ~idx ~v))))
 
-(defn set-pixel!
+(defmacro set-pixel! 
+  "Sets the value of a pixel for a given channel's array. If coordinates [x, y] and
+  ncols are provided, the array is handled as 2D matrix."
+  ([ach idx val]
+   `(mult-aset ~'ints ~ach ~idx ~val))
+  ([ach x y ncols val]
+   `(mult-aset ~'ints ~ach (+ ~x (* ~y ~ncols)))))
+
+(defn set-pixel!*
   "Sets the value of the [x, y] pixel. For a better performance, use the macro
-  mult-aset."
+  set-pixel!."
   ([img x y ch val]
-   (ut/mult-aset ints ((:mat img) ch)
+   (mult-aset ints ((:mat img) ch)
                  (+ x (* y (ncols img))) 
                  val))
   ([img idx ch val]
-   (ut/mult-aset ints ((:mat img) ch)
+   (mult-aset ints ((:mat img) ch)
                  idx 
                  val)))
-
-(defn grid-apply
-  "Returns a lazy sequence resulting from the application of the function f to each 
-  value of the grid built with the rectangle x-min, x-max, y-min, y-max."
-  ([f x-min x-max y-min y-max]
-   (doseq [y (range y-min y-max), x (range x-min x-max)]
-     (f x y)))
-  ([^long nr ^long nc f]
-   (dotimes [x nc]
-     (dotimes [y nr]
-       (f (+ x (* y nc)))))))
 
 (defmacro for-idx
   "Iterates over all pixels of img, binding the pixel's index to idx.

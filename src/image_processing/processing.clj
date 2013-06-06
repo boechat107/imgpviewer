@@ -1,7 +1,6 @@
 (ns image-processing.processing
   (:require 
     [image-processing.core-new :as c]
-    [image-processing.utils :as ut]
     [image-processing.rgb-color :as rgb]
     [incanter.core :as ic]
     )
@@ -22,10 +21,10 @@
         gray (first (:mat res))
         [rch gch bch] (:mat img)]
     (c/for-idx [idx img]
-      (->> (* 0.2126 (c/get-ch-pixel rch idx))
-           (+ (* 0.7152 (c/get-ch-pixel gch idx)))
-           (+ (* 0.0722 (c/get-ch-pixel bch idx)))
-           (ut/mult-aset ints gray idx)))
+      (->> (* 0.2126 (c/get-pixel rch idx))
+           (+ (* 0.7152 (c/get-pixel gch idx)))
+           (+ (* 0.0722 (c/get-pixel bch idx)))
+           (c/set-pixel! gray idx)))
     res))
 
 (defn gray-to-rgb
@@ -39,10 +38,10 @@
         res (c/new-image nr nc :rgb)
         [rch gch bch] (:mat res)]
     (c/for-idx [idx img]
-      (let [p (c/get-ch-pixel gray idx)]
-        (ut/mult-aset ints rch idx p)
-        (ut/mult-aset ints gch idx p)
-        (ut/mult-aset ints bch idx p)))
+      (let [p (c/get-pixel gray idx)]
+        (c/set-pixel! rch idx p)
+        (c/set-pixel! gch idx p)
+        (c/set-pixel! bch idx p)))
     res))
 
 (defn binarize
@@ -59,9 +58,9 @@
       (let [img-m ((:mat img) ch)
             res-m ((:mat res) ch)]
         (c/for-idx [idx img]
-          (->> (c/get-ch-pixel img-m idx)
+          (->> (c/get-pixel img-m idx)
                threshold 
-               (ut/mult-aset ints res-m idx)))))
+               (c/set-pixel! res-m idx)))))
     res))
 
 (defn convolve
@@ -83,7 +82,7 @@
                    (loop [yn (long 0), kyv (double 0.0)]
                      (if (< yn mask-size)
                        (recur (inc yn)
-                              (->> (c/get-ch-pixel
+                              (->> (c/get-pixel
                                      img-m 
                                      (-> (+ xn (- x offset))
                                          (max 0)
@@ -92,10 +91,10 @@
                                          (max 0)
                                          (min (dec nr)))
                                      nc)
-                                   (* (ut/mult-aget doubles mask (+ xn (* yn mask-size))))
+                                   (* (c/mult-aget doubles mask (+ xn (* yn mask-size))))
                                    (+ kyv)))
                        kyv))))
-              (ut/mult-aset ints res-m (+ x (* y nc)) kv))))))
+              (c/set-pixel! res-m (+ x (* y nc)) kv))))))
     res))
 
 (defn erode

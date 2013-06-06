@@ -2,7 +2,6 @@
   (:require 
     [image-processing.core-new :as c]
     [image-processing.processing :as pr]
-    [image-processing.utils :as ut]
     [seesaw.core :as w]
     )
   (:import 
@@ -63,9 +62,9 @@
       (dotimes [y nr]
         (let [idx (+ x (* y nc))
               int-pix (.getRGB buff x y)]
-          (ut/mult-aset ints rch idx (r<-intcolor int-pix))
-          (ut/mult-aset ints gch idx (g<-intcolor int-pix))
-          (ut/mult-aset ints bch idx (b<-intcolor int-pix)))))
+          (c/set-pixel! rch idx (r<-intcolor int-pix))
+          (c/set-pixel! gch idx (g<-intcolor int-pix))
+          (c/set-pixel! bch idx (b<-intcolor int-pix)))))
     img))
 
 (defn to-buffered-image
@@ -81,9 +80,9 @@
       (dotimes [x w]
         (let [idx (+ x (* y w))]
           (->> (intcolor<-argb 255 
-                               (ut/mult-aget ints rch idx) 
-                               (ut/mult-aget ints gch idx) 
-                               (ut/mult-aget ints bch idx))
+                               (c/get-pixel rch idx) 
+                               (c/get-pixel gch idx) 
+                               (c/get-pixel bch idx))
                (.setRGB buff x y)))))
     buff))
 
