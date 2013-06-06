@@ -64,28 +64,12 @@
                (ut/mult-aset ints res-m idx)))))
     res))
 
-(defn calc-kernel-val
-  "Returns a scalar value resulting of applying a kernel mask to a [x, y] pixel and
-  its neighbors."
-  [img x y ch mask]
-  (loop [pos (long 0), res (double 0.0)]
-    (if (< pos 9)
-      (recur (inc pos)
-             (->> (c/get-neighbour img x y ch pos)
-                  (* (ut/mult-aget doubles mask pos))
-                  (+ res)))
-      res)))
-
 (defn convolve
   [img mask ^long mask-size]
-  ;; todo: use a mask offset to get the neighbors. It is independent of the mask
-  ;; size.
   (let [nc (c/ncols img)
         nr (c/nrows img)
         res (c/new-image nr nc (:type img))
-        offset (long (/ mask-size 2))
-        check-xy (fn ^long [^long c ^long m]
-                   (min (dec m) (max 0 c)))]
+        offset (long (/ mask-size 2))]
     (dotimes [ch (c/dimension img)]
       (let [res-m ((:mat res) ch)
             img-m ((:mat img) ch)]
@@ -99,17 +83,20 @@
                    (loop [yn (long 0), kyv (double 0.0)]
                      (if (< yn mask-size)
                        (recur (inc yn)
-                              (->> (c/get-ch-pixel img-m 
-                                                   (check-xy (+ xn (- x offset)) nc)
-                                                   (check-xy (+ yn (- y offset)) nr)
-                                                   nc)
+                              (->> (c/get-ch-pixel
+                                     img-m 
+                                     (-> (+ xn (- x offset))
+                                         (max 0)
+                                         (min (dec nc)))
+                                     (-> (+ yn (- y offset))
+                                         (max 0)
+                                         (min (dec nr)))
+                                     nc)
                                    (* (ut/mult-aget doubles mask (+ xn (* yn mask-size))))
                                    (+ kyv)))
                        kyv))))
-              (ut/mult-aset ints res-m (* x y) kv)
-              )
-            )
-          )))))
+              (ut/mult-aset ints res-m (+ x (* y nc)) kv))))))
+    res))
 
 (defn erode
   "Erodes a Image, a basic operation in the area of the mathematical morphology.
