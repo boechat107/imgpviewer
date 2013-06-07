@@ -18,7 +18,7 @@
   (let [nc (c/ncols img)
         nr (c/nrows img)
         res (c/new-image nr nc :gray)
-        gray (first (:mat res))
+        gray ((:mat res) 0)
         [rch gch bch] (:mat img)]
     (c/for-idx [idx img]
       (->> (* 0.2126 (c/get-pixel rch idx))
@@ -103,7 +103,9 @@
                                    (* (c/mult-aget doubles mask (+ xn (* yn mask-size))))
                                    (+ kyv)))
                        kyv))))
-              (c/set-pixel! res-m (+ x (* y nc)) kv))))))
+              (c/set-pixel! res-m
+                            (+ x (* y nc))
+                            (-> (max 0.0 kv) (min 255.0))))))))
     res))
 
 (defn erode
