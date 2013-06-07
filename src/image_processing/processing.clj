@@ -120,6 +120,31 @@
                 corner  edge    corner]]
       (convolve img mask 3))))
 
+(defn small-blur 
+  "Blurs an image by taking the average of 4 neighbour pixels. The default mask is
+  [0    0.2   0
+   0.2  0.2   0.2
+   0    0.2   0]
+  http://lodev.org/cgtutor/filtering.html"
+  ([img] (small-blur img 0.2))
+  ([img factor]
+   (let [mask [0 factor 0
+               factor factor factor
+               0 factor 0]]
+     (convolve img mask 3))))
+
+(defn big-blur 
+  "Like small-blur, but with a 5x5 mask.
+  http://lodev.org/cgtutor/filtering.html"
+  ([img] (big-blur img (/ 1 13)))
+  ([img factor]
+   (let [factor (double factor)
+         mask [0 0 factor 0 0
+               0 factor factor factor 0
+               factor factor factor factor factor
+               0 factor factor factor 0
+               0 0 factor 0 0]]
+     (convolve img mask 5))))
 
 ;
 ;(defn smoothing
