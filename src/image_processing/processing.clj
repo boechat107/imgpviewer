@@ -18,8 +18,8 @@
   (let [nc (c/ncols img)
         nr (c/nrows img)
         res (c/new-image nr nc :gray)
-        gray ((:mat res) 0)
-        [rch gch bch] (:mat img)]
+        gray (c/get-channel res 0) 
+        [rch gch bch] (c/get-channel img)]
     (c/for-idx [idx img]
       (->> (* 0.2126 (c/get-pixel rch idx))
            (+ (* 0.7152 (c/get-pixel gch idx)))
@@ -34,9 +34,9 @@
   {:pre [(= :gray (:type img))]}
   (let [nr (c/nrows img)
         nc (c/ncols img)
-        gray ((:mat img) 0)
+        gray (c/get-channel img 0)
         res (c/new-image nr nc :rgb)
-        [rch gch bch] (:mat res)]
+        [rch gch bch] (c/get-channel res)]
     (c/for-idx [idx img]
       (let [p (c/get-pixel gray idx)]
         (c/set-pixel! rch idx p)
@@ -55,8 +55,8 @@
         res (c/new-image nr nc (:type img))
         threshold (fn [^long n] (if (> n th) 255 0))]
     (dotimes [ch (c/dimension img)]
-      (let [img-m ((:mat img) ch)
-            res-m ((:mat res) ch)]
+      (let [img-m (c/get-channel img ch)
+            res-m (c/get-channel res ch)]
         (c/for-idx [idx img]
           (->> (c/get-pixel img-m idx)
                threshold 
@@ -75,8 +75,8 @@
         res (c/new-image nr nc (:type img))
         offset (long (/ mask-size 2))]
     (dotimes [ch (c/dimension img)]
-      (let [res-m ((:mat res) ch)
-            img-m ((:mat img) ch)]
+      (let [res-m (c/get-channel res ch)
+            img-m (c/get-channel img ch)]
         (c/for-xy 
           [x y img]
           (loop [xn (long 0), kv (double 0.0)]

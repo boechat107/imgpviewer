@@ -90,6 +90,14 @@
   (->> (mapv #(aclone ^ints %) (:mat img)) 
        (assoc img :mat)))
 
+(defn get-channel
+  "Returns a channel data structure of a given image. If the channel number is not
+  specified, all channels are returned as a vector."
+  ([img] 
+   (:mat img))
+  ([img ch]
+   ((:mat img) ch)))
+
 (defmacro mult-aget
   "Returns the value of an element of multiple dimensional arrays. Uses type hints to 
   improve the performance of aget.
@@ -160,6 +168,7 @@
   Ex.:
   (for-idx [idx img]
     body)"
+  ;; Make a single one macro for-img which embodies for-idx and for-xy
   [[idx img] & body]
   `(let [nr# (nrows ~img)
          nc# (ncols ~img)]
