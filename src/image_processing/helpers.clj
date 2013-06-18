@@ -69,7 +69,7 @@
 
 (defn to-buffered-image
   "Converts an ARGB Image to a BufferedImage."
-  [img]
+  ^BufferedImage [img]
   {:pre [(c/image? img)]}
   (let [h (c/nrows img)
         w (c/ncols img)
@@ -102,3 +102,10 @@
                  :content grid)
         w/pack!
         w/show!)))
+
+(defn save-to-file!
+  "Saves an image in a file (fp)."
+  ([img fp] (save-to-file! img fp "png"))
+  ([img ^String fp ^String ext]
+   (-> (to-buffered-image img)
+       (ImageIO/write ext (File. fp)))))
