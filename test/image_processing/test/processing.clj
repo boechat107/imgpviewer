@@ -15,12 +15,9 @@
     (set-pixel! rch 0 255)
     (set-pixel! gch 0 255)
     (set-pixel! bch 0 255)
-    (set-pixel! gch 5 255)
-    (set-pixel! bch 5 255)
-    (set-pixel! rch 10 255)
-    (set-pixel! bch 10 255)
-    (set-pixel! rch 15 255)
-    (set-pixel! gch 15 255)
+    (set-pixel! rch 5 255)
+    (set-pixel! gch 10 255)
+    (set-pixel! bch 15 255)
     img))
 
 (defn time-test 
