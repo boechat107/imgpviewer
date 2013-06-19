@@ -8,19 +8,20 @@
     [image-processing.helpers :as ih])
   )
 
-(defn img-test
+(def img-test
   "A manually created image."
-  (let [img (c/new-image 4 4 :rgb)
-        [rch gch bch] (c/get-channel img)]
-    (c/set-pixel! rch 0 255)
-    (c/set-pixel! gch 0 255)
-    (c/set-pixel! bch 0 255)
-    (c/set-pixel! gch 5 255)
-    (c/set-pixel! bch 5 255)
-    (c/set-pixel! rch 10 255)
-    (c/set-pixel! bch 10 255)
-    (c/set-pixel! rch 15 255)
-    (c/set-pixel! gch 15 255)))
+  (let [img (new-image 4 4 :rgb)
+        [rch gch bch] (get-channel img)]
+    (set-pixel! rch 0 255)
+    (set-pixel! gch 0 255)
+    (set-pixel! bch 0 255)
+    (set-pixel! gch 5 255)
+    (set-pixel! bch 5 255)
+    (set-pixel! rch 10 255)
+    (set-pixel! bch 10 255)
+    (set-pixel! rch 15 255)
+    (set-pixel! gch 15 255)
+    img))
 
 (defn time-test 
   []
